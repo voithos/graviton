@@ -27,24 +27,30 @@ Array.prototype.remove = function(start, count) {
 	return this.splice(start, count ? count : 1);
 };
 
-
 var nBodyApplication = makeClass();
 nBodyApplication.prototype = {
-	init: function() {
-		// Attach a canvas to the page, to house the simulations
-		this.grid = document.createElement('canvas');
-				
-		this.grid.width = window.innerWidth - 50;
-		this.grid.height = window.innerHeight - 50;
-		this.grid.style.display = 'block';
-		this.grid.style.marginLeft = 'auto';
-		this.grid.style.marginRight = 'auto';
-		this.grid.style.borderStyle = 'solid';
-		this.grid.style.borderWidth = 'medium';
-		this.grid.style.borderColor = '#CCCCCC';
-		this.grid.style.backgroundColor = '#1F263B';
+	// Member variables
+	//-----------------
+	
+	options: {},
+	
+	sim: undefined,
+	
+	grid: undefined,
+	
+	// Member functions
+	//-----------------
+	
+	init: function(args) {
+		if (!args) {
+			args = {};
+		}
 		
-		document.body.appendChild(this.grid);
+		this.options.width = args.width || document.body.clientWidth - 50;
+		this.options.height = args.height || document.body.clientHeight - 50;
+		this.options.backgroundColor = args.backgroundColor || '#1F263B';
+		
+		this._generateGrid(this.options.width, this.options.height, this.options.backgroundColor);
 		
 		// Create simulation
 		this.sim = new nBodySimulation({ grid: this.grid });
@@ -65,12 +71,34 @@ nBodyApplication.prototype = {
 		if (event.which == 27) {
 			this.sim.stop();
 		}
+	},
+	
+	// Private functions
+	//------------------
+	
+	_generateGrid: function(width, height, backgroundColor) {
+		// Attach a canvas to the page, to house the simulations
+		this.grid = document.createElement('canvas');
+				
+		this.grid.width = width;
+		this.grid.height = height;
+		this.grid.style.display = 'block';
+		this.grid.style.marginLeft = 'auto';
+		this.grid.style.marginRight = 'auto';
+		this.grid.style.borderStyle = 'solid';
+		this.grid.style.borderWidth = 'medium';
+		this.grid.style.borderColor = '#CCCCCC';
+		this.grid.style.backgroundColor = backgroundColor;
+		
+		document.body.appendChild(this.grid);
 	}
 };
 
 var nBodySimulation = makeClass();
 nBodySimulation.prototype = {
 	// Member variables
+	//-----------------
+	
 	running: false,
 	
 	intervalId: 0,
@@ -83,12 +111,15 @@ nBodySimulation.prototype = {
 	
 	graphics: undefined,
 	
+	// Member functions
+	//-----------------
+	
 	init: function(args) {
 		if (!args)
 			args = {};
 		
 		this.options.G = args.G || 6.67384 * Math.pow(10, -11); // Gravitational constant
-		this.options.deltaT = args.deltaT || 25000; // Timestep
+		this.options.deltaT = args.deltaT || 15000; // Timestep
 		this.options.interval = args.interval || 10; // Computation interval
 		this.options.collisions = args.collision || true;
 		this.options.scatterLimit = args.scatterLimit || 10000;
@@ -96,9 +127,11 @@ nBodySimulation.prototype = {
 		this.graphics = new nBodyGraphics(args); // Pass on the arguments to the graphics object
 	},
 	
-	addNewBody: function(xPos, yPos) {
-		this.bodies.push(new gBody({ x: xPos, y: yPos }));
+	addNewBody: function(xPos, yPos, velX, velY, m) {
+		var newIndex = this.bodies.push(new gBody({ x: xPos, y: yPos, velX: velX, velY: velY, mass: m }));
 		this.graphics.draw(this.bodies);
+		
+		return this.bodies[newIndex];
 	},
 	
 	start: function() {
@@ -137,6 +170,15 @@ nBodySimulation.prototype = {
 			this.options.collisions = state;
 		}
 	},
+	
+	setScatterLimit: function(limit) {
+		if (typeof(limit) === 'number') {
+			this.options.scatterLimit = limit;
+		}
+	},
+	
+	// Private functions
+	//------------------
 	
 	_run: function() {		
 		for (var i = 0; i < this.bodies.length; i++) {
@@ -239,7 +281,13 @@ nBodySimulation.prototype = {
 
 var nBodyGraphics = makeClass();
 nBodyGraphics.prototype = {
+	// Member variables
+	//-----------------
+	
 	options: {},
+	
+	// Member functions
+	//-----------------
 	
 	init: function(args) {
 		if (!args)
@@ -271,6 +319,9 @@ nBodyGraphics.prototype = {
 
 var gBody = makeClass();
 gBody.prototype = {
+	// Member variables
+	//-----------------
+	
 	x: 0,
 	y: 0,
 	
@@ -280,6 +331,9 @@ gBody.prototype = {
 	mass: 0,
 	
 	model: {},
+	
+	// Member functions
+	//-----------------
 	
 	init: function(args) {
 		if (!args)
