@@ -91,6 +91,7 @@ nBodySimulation.prototype = {
 		this.options.deltaT = args.deltaT || 25000; // Timestep
 		this.options.interval = args.interval || 10; // Computation interval
 		this.options.collisions = args.collision || true;
+		this.options.scatterLimit = args.scatterLimit || 10000;
 		
 		this.graphics = new nBodyGraphics(args); // Pass on the arguments to the graphics object
 	},
@@ -101,29 +102,15 @@ nBodySimulation.prototype = {
 	},
 	
 	start: function() {
-		this.running = true;
-		this.intervalId = setInterval(this._run.bind(this), this.options.interval);
+		if (this.running === false) {
+			this.running = true;
+			this.intervalId = setInterval(this._run.bind(this), this.options.interval);
+		}
 	},
 	
 	stop: function() {
-		this.running = false;
-	},
-	
-	_run: function() {		
-		for (var i = 0; i < this.bodies.length; i++) {
-			this._calculatePosition(this.bodies[i], i, this.options.deltaT);
-			
-			if (this.options.collisions === true) {
-				this._detectCollision(this.bodies[i], i);
-			}
-		}
-		
-		this.time += this.options.deltaT; // Increment runtime
-		this.graphics.draw(this.bodies);
-		
-		// Check if running flag has been lowered
-		if (this.running === false) {
-			clearInterval(this.intervalId);
+		if (this.running === true) {
+			this.running = false;
 		}
 	},
 	
@@ -151,7 +138,27 @@ nBodySimulation.prototype = {
 		}
 	},
 	
-	_calculatePosition: function(body, index, deltaT) {
+	_run: function() {		
+		for (var i = 0; i < this.bodies.length; i++) {
+			if (this.options.collisions === true) {
+				this._detectCollision(this.bodies[i], i);
+			}
+			
+			this._calculateNewPosition(this.bodies[i], i, this.options.deltaT);
+			
+			this._removeScattered(this.bodies[i], i);
+		}
+		
+		this.time += this.options.deltaT; // Increment runtime
+		this.graphics.draw(this.bodies);
+		
+		// Check if running flag has been lowered
+		if (this.running === false) {
+			clearInterval(this.intervalId);
+		}
+	},
+	
+	_calculateNewPosition: function(body, index, deltaT) {
 		var netFx = 0;
 		var netFy = 0;
 		
@@ -160,17 +167,13 @@ nBodySimulation.prototype = {
 			if (i !== index) {
 				var attractor = this.bodies[i];
 				
-				// Calculate the delta in positions
-				var dx = attractor.x - body.x;
-				var dy = attractor.y - body.y;
-				
-				// Obtain the distance between the objects (hypotenuse)
-				var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+				// Get the distance and position deltas
+				var D = this._calculateDistance(body, attractor, true);
 				
 				// Calculate force using Newtonian gravity, separate out into x and y components
-				var F = (this.options.G * body.mass * attractor.mass) / Math.pow(r, 2);
-				var Fx = F * (dx / r);
-				var Fy = F * (dy / r);
+				var F = (this.options.G * body.mass * attractor.mass) / Math.pow(D.r, 2);
+				var Fx = F * (D.dx / D.r);
+				var Fy = F * (D.dy / D.r);
 				
 				netFx += Fx;
 				netFy += Fy;
@@ -190,11 +193,46 @@ nBodySimulation.prototype = {
 		body.y += deltaT * body.velY;
 	},
 	
+	_calculateDistance: function(body, other, full) {
+		var D = {};
+		
+		// Calculate the delta in positions
+		D.dx = other.x - body.x;
+		D.dy = other.y - body.y;
+		
+		// Obtain the distance between the objects (hypotenuse)
+		D.r = Math.sqrt(Math.pow(D.dx, 2) + Math.pow(D.dy, 2));
+		
+		if (full === true) {
+			return D;
+		} else {
+			return D.r;
+		}
+	},
+	
 	_detectCollision: function(body, index) {
 		for (var i = 0; i < this.bodies.length; i++) {
 			if (i !== index) {
+				var collider = this.bodies[i];
+			
+				var r = this._calculateDistance(body, collider);
+				var clearance = body.radius + collider.radius;
 				
+				if (r <= clearance) {
+					// Collision detected
+					
+				}
 			}
+		}
+	},
+	
+	_removeScattered: function(body, index) {
+		if (body.x > this.options.scatterLimit ||
+			body.x < -this.options.scatterLimit ||
+			body.y > this.options.scatterLimit ||
+			body.y < -this.options.scatterLimit) {
+			// Remove from body collection
+			return this.bodies.remove(index);
 		}
 	}
 };
