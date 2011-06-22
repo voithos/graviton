@@ -22,6 +22,11 @@ Function.prototype.bind = function(obj) {
 	};
 };
 
+// remove -- Removes a given element from an array
+Array.prototype.remove = function(start, count) {
+	return this.splice(start, count ? count : 1);
+};
+
 
 var nBodyApplication = makeClass();
 nBodyApplication.prototype = {
@@ -37,7 +42,7 @@ nBodyApplication.prototype = {
 		this.grid.style.borderStyle = 'solid';
 		this.grid.style.borderWidth = 'medium';
 		this.grid.style.borderColor = '#CCCCCC';
-		this.grid.style.backgroundColor = '#000000';
+		this.grid.style.backgroundColor = '#1F263B';
 		
 		document.body.appendChild(this.grid);
 		
@@ -83,8 +88,10 @@ nBodySimulation.prototype = {
 			args = {};
 		
 		this.options.G = args.G || 6.67384 * Math.pow(10, -11); // Gravitational constant
-		this.options.deltaT = args.deltaT || 500; // Timestep
+		this.options.deltaT = args.deltaT || 25000; // Timestep
 		this.options.interval = args.interval || 10; // Computation interval
+		this.options.collisions = args.collision || true;
+		
 		this.graphics = new nBodyGraphics(args); // Pass on the arguments to the graphics object
 	},
 	
@@ -105,13 +112,42 @@ nBodySimulation.prototype = {
 	_run: function() {		
 		for (var i = 0; i < this.bodies.length; i++) {
 			this._calculatePosition(this.bodies[i], i, this.options.deltaT);
+			
+			if (this.options.collisions === true) {
+				this._detectCollision(this.bodies[i], i);
+			}
 		}
 		
 		this.time += this.options.deltaT; // Increment runtime
 		this.graphics.draw(this.bodies);
 		
+		// Check if running flag has been lowered
 		if (this.running === false) {
 			clearInterval(this.intervalId);
+		}
+	},
+	
+	setG: function(G) {
+		if (typeof(G) === 'number') {
+			this.options.G = G;
+		}
+	},
+	
+	setDeltaT: function(deltaT) {
+		if (typeof(deltaT) === 'number') {
+			this.options.deltaT = deltaT;
+		}
+	},
+	
+	setCompInterval: function(interval) {
+		if (typeof(interval) === 'number') {
+			this.options.interval = interval;
+		}
+	},
+	
+	setCollisions: function(state) {
+		if (typeof(state) === 'boolean') {
+			this.options.collisions = state;
 		}
 	},
 	
@@ -154,21 +190,11 @@ nBodySimulation.prototype = {
 		body.y += deltaT * body.velY;
 	},
 	
-	setG: function(G) {
-		if (typeof(G) === 'number') {
-			this.options.G = G;
-		}
-	},
-	
-	setDeltaT: function(deltaT) {
-		if (typeof(deltaT) === 'number') {
-			this.options.deltaT = deltaT;
-		}
-	},
-	
-	setCompInterval: function(interval) {
-		if (typeof(interval) === 'number') {
-			this.options.interval = interval;
+	_detectCollision: function(body, index) {
+		for (var i = 0; i < this.bodies.length; i++) {
+			if (i !== index) {
+				
+			}
 		}
 	}
 };
@@ -198,7 +224,7 @@ nBodyGraphics.prototype = {
 			ctx.fillStyle = body.model.color;
 			
 			ctx.beginPath();
-			ctx.arc(body.x, body.y, body.model.radius, 0, Math.PI * 2, true);
+			ctx.arc(body.x, body.y, body.radius, 0, Math.PI * 2, true);
 			
 			ctx.fill();
 		}
@@ -229,10 +255,10 @@ gBody.prototype = {
 		
 		this.velX = args.velX || 0;
 		this.velY = args.velY || 0;
-		this.mass = args.mass || 1000;
+		this.mass = args.mass || 10;
+		this.radius = args.radius || 4;
 		
 		this.model.color = args.color || '#FFFFFF';
-		this.model.radius = args.radius || 4;
 	},
 	
 	setColor: function(color) {
@@ -243,7 +269,7 @@ gBody.prototype = {
 	
 	setRadius: function(radius) {
 		if (typeof(radius) === 'number') {
-			this.model.radius = radius;
+			this.radius = radius;
 		}
 	}
 };
