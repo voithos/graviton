@@ -28,7 +28,7 @@ Array.prototype.remove = function(start, count) {
 };
 
 function random(from, to) {
-	return Math.random() * (to - from + 1) + from;
+	return Math.random() * (to - from) + from;
 }
 
 function randomDirectional(from, to) {
@@ -110,9 +110,9 @@ nBodyApplication.prototype = {
 		var maxY = args.maxY || this.options.height;
 		
 		var minVelX = args.minVelX || 0;
-		var maxVelX = args.maxVelX || -1;
+		var maxVelX = args.maxVelX || 0.00001;
 		var minVelY = args.minVelY || 0;
-		var maxVelY = args.maxVelY || -1;
+		var maxVelY = args.maxVelY || 0.00001;
 		
 		var minMass = args.minMass || 1;
 		var maxMass = args.maxMass || 150;
@@ -127,14 +127,14 @@ nBodyApplication.prototype = {
 				color = randomColor();
 			}
 		
-			this.sim.addNewBody(
-				random(minX, maxX),
-				random(minY, maxY),
-				randomDirectional(minVelX, maxVelX),
-				randomDirectional(minVelY, maxVelY),
-				random(minMass, maxMass),
-				random(minRadius, maxRadius),
-				color);
+			this.sim.addNewBody({
+				x: random(minX, maxX),
+				y: random(minY, maxY),
+				velX: randomDirectional(minVelX, maxVelX),
+				velY: randomDirectional(minVelY, maxVelY),
+				mass: random(minMass, maxMass),
+				radius: random(minRadius, maxRadius),
+				color: color});
 		}
 	},
 	
@@ -144,16 +144,31 @@ nBodyApplication.prototype = {
 	},
 	
 	_handleClick: function(event) {
-		this.sim.addNewBody(event.clientX - this.grid.offsetLeft, event.clientY - this.grid.offsetTop);
+		this.sim.addNewBody({x: event.clientX - this.grid.offsetLeft, y: event.clientY - this.grid.offsetTop});
 	},
 	
 	_handleKeyDown: function(event) {
-		if (event.which == 13) {
-			this.sim.start();
-		}
-		
-		if (event.which == 27) {
-			this.sim.stop();
+		switch (event.which) {
+			// 'Enter'
+			case 13:
+				this.sim.toggle();
+				break;
+			
+			// 'C'
+			case 67:
+				this.sim.clear();
+				break;
+			
+			// 'R'
+			case 82:
+				this._generateBodies(10, {randomColors: true});
+				break;
+			
+			// T for test
+			case 84:
+				this.sim.addNewBody({x: this.options.width / 2, y: this.options.height / 2, velX: 0, velY: 0, mass: 200000, radius: 50, color: '#5A5A5A'});
+				this.sim.addNewBody({x: this.options.width - 400, y: this.options.height / 2, velX: 0, velY: 0.000025, mass: 1, radius: 5, color: '#787878'});
+				break;
 		}
 	}
 };
@@ -186,7 +201,7 @@ nBodySimulation.prototype = {
 		this.bodies = [];
 		
 		this.options.G = args.G || 6.67384 * Math.pow(10, -11); // Gravitational constant
-		this.options.deltaT = args.deltaT || 15000; // Timestep
+		this.options.deltaT = args.deltaT || 25000; // Timestep
 		this.options.interval = args.interval || 10; // Computation interval
 		this.options.collisions = args.collision || true;
 		this.options.scatterLimit = args.scatterLimit || 10000;
@@ -194,8 +209,8 @@ nBodySimulation.prototype = {
 		this.graphics = new nBodyGraphics(args); // Pass on the arguments to the graphics object
 	},
 	
-	addNewBody: function(xPos, yPos, xVel, yVel, m, rad, col) {
-		var newIndex = this.bodies.push(new gBody({ x: xPos, y: yPos, velX: xVel, velY: yVel, mass: m, radius: rad, color: col }));
+	addNewBody: function(args) {
+		var newIndex = this.bodies.push(new gBody(args));
 		this.graphics.draw(this.bodies);
 		
 		return this.bodies[newIndex];
@@ -218,8 +233,22 @@ nBodySimulation.prototype = {
 		}
 	},
 	
+	toggle: function() {
+		if (this.running === false) {
+			this.start();
+		} else {
+			this.stop();
+		}
+	},
+	
+	clear: function() {
+		this.bodies.length = 0; // Remove all bodies from collection
+		this.stop();
+		this.graphics.draw(); // Clear grid
+	},
+	
 	setG: function(G) {
-		if (typeof(G) === 'number') {
+		if (typeof G === 'number') {
 			this.options.G = G;
 		} else {
 			throw 'setG: Argument was not a number.';
@@ -227,7 +256,7 @@ nBodySimulation.prototype = {
 	},
 	
 	setDeltaT: function(deltaT) {
-		if (typeof(deltaT) === 'number') {
+		if (typeof deltaT === 'number') {
 			this.options.deltaT = deltaT;
 		} else {
 			throw 'setDeltaT: Argument was not a number.';
@@ -235,7 +264,7 @@ nBodySimulation.prototype = {
 	},
 	
 	setCompInterval: function(interval) {
-		if (typeof(interval) === 'number') {
+		if (typeof interval === 'number') {
 			this.options.interval = interval;
 		} else {
 			throw 'setCompInterval: Argument was not a number.';
@@ -243,7 +272,7 @@ nBodySimulation.prototype = {
 	},
 	
 	setCollisions: function(state) {
-		if (typeof(state) === 'boolean') {
+		if (typeof state === 'boolean') {
 			this.options.collisions = state;
 		} else {
 			throw 'setCollisions: Argument was not boolean.';
@@ -251,7 +280,7 @@ nBodySimulation.prototype = {
 	},
 	
 	setScatterLimit: function(limit) {
-		if (typeof(limit) === 'number') {
+		if (typeof limit === 'number') {
 			this.options.scatterLimit = limit;
 		} else {
 			throw 'setScatterLimit: Argument was not a number.';
@@ -278,6 +307,7 @@ nBodySimulation.prototype = {
 		// Check if running flag has been lowered
 		if (this.running === false) {
 			clearInterval(this.intervalId);
+			this.intervalId = 0;
 		}
 	},
 	
@@ -390,8 +420,8 @@ nBodyGraphics.prototype = {
 
 		this.options = {};
 		
-		this.grid = typeof(args.grid) === 'string' ? document.getElementById(args.grid) : args.grid;
-		if (typeof(this.grid) === 'undefined') {
+		this.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
+		if (typeof this.grid === 'undefined') {
 			throw 'No usable canvas element was found.';
 		}
 	},
@@ -399,17 +429,19 @@ nBodyGraphics.prototype = {
 	draw: function(bodies) {
 		this.grid.width = this.grid.width;
 		
-		var ctx = this.grid.getContext('2d');
-		
-		for (var i = 0; i < bodies.length; i++) {
-			var body = bodies[i];
+		if (typeof bodies !== 'undefined') {
+			var ctx = this.grid.getContext('2d');
 			
-			ctx.fillStyle = body.color;
-			
-			ctx.beginPath();
-			ctx.arc(body.x, body.y, body.radius, 0, Math.PI * 2, true);
-			
-			ctx.fill();
+			for (var i = 0; i < bodies.length; i++) {
+				var body = bodies[i];
+				
+				ctx.fillStyle = body.color;
+				
+				ctx.beginPath();
+				ctx.arc(body.x, body.y, body.radius, 0, Math.PI * 2, true);
+				
+				ctx.fill();
+			}
 		}
 	}
 };
@@ -438,7 +470,7 @@ gBody.prototype = {
 		
 		this.x = args.x;
 		this.y = args.y;
-		if (typeof(this.x) !== 'number' || typeof(this.y) !== 'number') {
+		if (typeof this.x !== 'number' || typeof this.y !== 'number') {
 			throw 'Correct positions were not given for the body.';
 		}
 		
@@ -451,7 +483,7 @@ gBody.prototype = {
 	},
 	
 	setColor: function(color) {
-		if (typeof(color) === 'string') {
+		if (typeof color === 'string') {
 			this.color = color;
 		} else {
 			throw 'setColor: Argument was not a string.';
@@ -459,7 +491,7 @@ gBody.prototype = {
 	},
 	
 	setRadius: function(radius) {
-		if (typeof(radius) === 'number') {
+		if (typeof radius === 'number') {
 			this.radius = radius;
 		} else {
 			throw 'setRadius: Argument was not a number.';
