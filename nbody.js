@@ -44,6 +44,14 @@ function randomColor() {
 	return '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).substr(-6);
 }
 
+var LogLevel = {
+	LOG: 0,
+	DEBUG: 1,
+	INFO: 2,
+	WARN: 3,
+	ERROR: 4
+};
+
 var nBodyApplication = makeClass();
 nBodyApplication.prototype = {
 	// Member variables
@@ -69,11 +77,15 @@ nBodyApplication.prototype = {
 		this.options.height = args.height || document.body.clientHeight - 50;
 		this.options.backgroundColor = args.backgroundColor || '#1F263B';
 		
-		this._generateGrid(this.options.width, this.options.height, this.options.backgroundColor);
+		this.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
 		
-		// Update grid argument
-		args.grid = this.grid;
+		if (typeof this.grid === 'undefined') {
+			this._generateGrid(this.options.width, this.options.height, this.options.backgroundColor);
 		
+			// Update grid argument
+			args.grid = this.grid;
+		}
+
 		// Create simulation
 		this.sim = new nBodySimulation(args);
 		
@@ -149,24 +161,29 @@ nBodyApplication.prototype = {
 	
 	_handleKeyDown: function(event) {
 		switch (event.which) {
-			// 'Enter'
+			// 'Enter' - Start or stop simulation
 			case 13:
 				this.sim.toggle();
 				break;
 			
-			// 'C'
+			// 'C' - Clear simulation
 			case 67:
 				this.sim.clear();
 				break;
+
+			// 'P' - Toggle trails
+			case 80:
+				this.sim.togglePaths();
+				break;
 			
-			// 'R'
+			// 'R' - Generate random objects
 			case 82:
 				this._generateBodies(10, {randomColors: true});
 				break;
 			
 			// T for test
 			case 84:
-				this.sim.addNewBody({x: this.options.width / 2, y: this.options.height / 2, velX: 0, velY: 0, mass: 200000, radius: 50, color: '#5A5A5A'});
+				this.sim.addNewBody({x: this.options.width / 2, y: this.options.height / 2, velX: 0, velY: 0, mass: 2000, radius: 50, color: '#5A5A5A'});
 				this.sim.addNewBody({x: this.options.width - 400, y: this.options.height / 2, velX: 0, velY: 0.000025, mass: 1, radius: 5, color: '#787878'});
 				break;
 		}
@@ -244,6 +261,7 @@ nBodySimulation.prototype = {
 	clear: function() {
 		this.bodies.length = 0; // Remove all bodies from collection
 		this.stop();
+		this.setPaths(false); // Turn off residual paths
 		this.graphics.draw(); // Clear grid
 	},
 	
@@ -285,6 +303,14 @@ nBodySimulation.prototype = {
 		} else {
 			throw 'setScatterLimit: Argument was not a number.';
 		}
+	},
+
+	setPaths: function(paths) {
+		this.graphics.setPaths(paths);
+	},
+
+	togglePaths: function() {
+		this.graphics.togglePaths();
 	},
 	
 	// Private functions
@@ -373,6 +399,7 @@ nBodySimulation.prototype = {
 				
 				if (r <= clearance) {
 					// Collision detected
+					this._log('Collision detected!!');
 					
 				}
 			}
@@ -386,6 +413,39 @@ nBodySimulation.prototype = {
 			body.y < -this.options.scatterLimit) {
 			// Remove from body collection
 			return this.bodies.remove(index);
+		}
+	},
+
+	_log: function(message, level) {
+		if (console) {
+			var now = new Date();
+			var stamp = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate() + 'T' + 
+				now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ':' + now.getMilliseconds();
+			
+			message = stamp + ' ' + message;
+
+			level = level || LogLevel.LOG;
+
+			switch (Number(level)) {
+				case LogLevel.LOG:
+					console.log(message);
+					break;
+
+				case LogLevel.DEBUG:
+					console.debug(message);
+					break;
+
+				case LogLevel.INFO:
+					console.info(message);
+					break;
+
+				case LogLevel.WARN:
+					console.warn(message);
+					break;
+
+				case LogLevel.ERROR:
+					console.error(message);
+			}
 		}
 	}
 };
@@ -420,6 +480,8 @@ nBodyGraphics.prototype = {
 
 		this.options = {};
 		
+		this.options.paths = args.paths || false;
+		
 		this.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
 		if (typeof this.grid === 'undefined') {
 			throw 'No usable canvas element was found.';
@@ -427,8 +489,10 @@ nBodyGraphics.prototype = {
 	},
 	
 	draw: function(bodies) {
-		this.grid.width = this.grid.width;
-		
+		if (!this.options.paths) {
+			this.grid.width = this.grid.width;
+		}
+
 		if (typeof bodies !== 'undefined') {
 			var ctx = this.grid.getContext('2d');
 			
@@ -443,7 +507,20 @@ nBodyGraphics.prototype = {
 				ctx.fill();
 			}
 		}
+	},
+
+	setPaths: function(paths) {
+		if (typeof paths === 'boolean') {
+			this.options.paths = paths;
+		} else {
+			throw 'setPaths: Argument was not boolean.';
+		}
+	},
+
+	togglePaths: function() {
+		this.options.paths = !this.options.paths;
 	}
+
 };
 
 var gBody = makeClass();
