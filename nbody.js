@@ -223,6 +223,8 @@ nBodySimulation.prototype = {
 		this.options.collisions = args.collision || true;
 		this.options.scatterLimit = args.scatterLimit || 10000;
 		
+		this.options.logging = args.logging || true;
+		
 		this.graphics = new nBodyGraphics(args); // Pass on the arguments to the graphics object
 	},
 	
@@ -417,34 +419,36 @@ nBodySimulation.prototype = {
 	},
 
 	_log: function(message, level) {
-		if (console) {
-			var now = new Date();
-			var stamp = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate() + 'T' + 
-				now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ':' + now.getMilliseconds();
-			
-			message = stamp + ' ' + message;
+		if (this.options.logging === true) {
+			if (typeof console !== 'undefined') {
+				var now = new Date();
+				var stamp = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate() + 'T' + 
+					now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ':' + now.getMilliseconds();
+				
+				message = stamp + ' ' + message;
 
-			level = level || LogLevel.LOG;
+				level = level || LogLevel.LOG;
 
-			switch (Number(level)) {
-				case LogLevel.LOG:
-					console.log(message);
-					break;
+				switch (Number(level)) {
+					case LogLevel.LOG:
+						console.log(message);
+						break;
 
-				case LogLevel.DEBUG:
-					console.debug(message);
-					break;
+					case LogLevel.DEBUG:
+						console.debug(message);
+						break;
 
-				case LogLevel.INFO:
-					console.info(message);
-					break;
+					case LogLevel.INFO:
+						console.info(message);
+						break;
 
-				case LogLevel.WARN:
-					console.warn(message);
-					break;
+					case LogLevel.WARN:
+						console.warn(message);
+						break;
 
-				case LogLevel.ERROR:
-					console.error(message);
+					case LogLevel.ERROR:
+						console.error(message);
+				}
 			}
 		}
 	}
