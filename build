@@ -1,3 +1,0 @@
-#!/bin/bash
-sudo cp nbody.html /var/www/kado/
-sudo cp nbody.js /var/www/kado/
