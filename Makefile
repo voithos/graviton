@@ -15,7 +15,8 @@ DIST_DIR = ${PREFIX}/dist
 COMPILER = ${BUILD_DIR}/compiler.jar
 
 ## Files are listed in order of dependencies
-BASE_FILES = ${SRC_DIR}/util.js\
+BASE_FILES = ${SRC_DIR}/heading.js\
+			 ${SRC_DIR}/util.js\
 			 ${SRC_DIR}/app.js\
 			 ${SRC_DIR}/sim.js\
 			 ${SRC_DIR}/data.js\
@@ -29,6 +30,9 @@ NBODY_MIN = ${DIST_DIR}/nbody.min.js
 
 NBODY_VERSION = $(shell cat version.txt)
 VERSION_STAMP = sed "s/@VERSION/${NBODY_VERSION}/"
+
+NBODY_REVISION = $(shell hg parent --template '{rev} : {node}')
+REVISION_STAMP = sed "s/@REVISION/$(NBODY_REVISION)/"
 
 ##
 ## Targets
@@ -44,7 +48,8 @@ ${NBODY}: ${DIST_DIR}
 	@@echo 'Building' ${NBODY}
 
 	@@cat ${MODULES} | \
-		${VERSION_STAMP} > ${NBODY};
+		${VERSION_STAMP} | \
+		${REVISION_STAMP} > ${NBODY};
 
 ${DIST_DIR}:
 	@@mkdir -p ${DIST_DIR}

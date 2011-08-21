@@ -3,6 +3,8 @@ nBodyApplication.prototype = {
 	// Member variables
 	//-----------------
 	
+	version: '@VERSION',
+
 	options: undefined,
 	
 	sim: undefined,

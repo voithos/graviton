@@ -11,6 +11,8 @@ nBodySimulation.prototype = {
 	// Member variables
 	//-----------------
 	
+	version: '@VERSION',
+	
 	running: false,
 	
 	intervalId: 0,
