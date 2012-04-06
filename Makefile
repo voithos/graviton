@@ -31,7 +31,7 @@ NBODY_MIN = ${DIST_DIR}/nbody.min.js
 NBODY_VERSION = $(shell cat version.txt)
 VERSION_STAMP = sed "s/@VERSION/${NBODY_VERSION}/"
 
-NBODY_REVISION = $(shell hg parent --template '{rev} : {node}')
+NBODY_REVISION = $(shell hg id -i)
 REVISION_STAMP = sed "s/@REVISION/$(NBODY_REVISION)/"
 
 ##
