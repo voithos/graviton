@@ -28,7 +28,7 @@ MODULES = ${BASE_FILES}
 NBODY = ${DIST_DIR}/nbody.js
 NBODY_MIN = ${DIST_DIR}/nbody.min.js
 
-NBODY_VERSION = $(shell cat version.txt)
+NBODY_VERSION = $(shell cat VERSION)
 VERSION_STAMP = sed "s/@VERSION/${NBODY_VERSION}/"
 
 NBODY_REVISION = $(shell hg parent --template '{rev} : {node}')
