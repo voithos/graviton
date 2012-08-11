@@ -6,8 +6,8 @@ var LogLevel = {
 	ERROR: 4
 };
 
-var nBodySimulation = makeClass();
-nBodySimulation.prototype = {
+var gtSimulation = makeClass();
+gtSimulation.prototype = {
 	// Member variables
 	//-----------------
 	
@@ -43,7 +43,7 @@ nBodySimulation.prototype = {
 		
 		this.options.logging = args.logging || true;
 		
-		this.graphics = new nBodyGraphics(args); // Pass on the arguments to the graphics object
+		this.graphics = new gtGraphics(args); // Pass on the arguments to the graphics object
 	},
 	
 	addNewBody: function(args) {

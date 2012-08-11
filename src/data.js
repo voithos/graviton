@@ -1,5 +1,5 @@
-var nBodyData = makeClass();
-nBodyData.prototype = {
+var gtData = makeClass();
+gtData.prototype = {
 	ref: undefined,
 	
 	init: function(args) {

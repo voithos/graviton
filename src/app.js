@@ -1,5 +1,5 @@
-var nBodyApplication = makeClass();
-nBodyApplication.prototype = {
+var gtApplication = makeClass();
+gtApplication.prototype = {
 	// Member variables
 	//-----------------
 	
@@ -35,7 +35,7 @@ nBodyApplication.prototype = {
 		}
 
 		// Create simulation
-		this.sim = new nBodySimulation(args);
+		this.sim = new gtSimulation(args);
 		
 		this._wireupEvents();
 	},

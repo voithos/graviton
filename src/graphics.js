@@ -1,5 +1,5 @@
-var nBodyGraphics = makeClass();
-nBodyGraphics.prototype = {
+var gtGraphics = makeClass();
+gtGraphics.prototype = {
 	// Member variables
 	//-----------------
 	

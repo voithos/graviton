@@ -1,7 +1,7 @@
 /*
- * nbody v@VERSION
+ * graviton v@VERSION
  *
- * JavaScript N-body Simulation
+ * JavaScript N-body Gravitational Simulator
  *
  * Revision: 
  *	@REVISION
