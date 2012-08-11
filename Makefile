@@ -25,14 +25,14 @@ BASE_FILES = ${SRC_DIR}/heading.js\
 
 MODULES = ${BASE_FILES}
 
-NBODY = ${DIST_DIR}/nbody.js
-NBODY_MIN = ${DIST_DIR}/nbody.min.js
+GRAVITON = ${DIST_DIR}/graviton.js
+GRAVITON_MIN = ${DIST_DIR}/graviton.min.js
 
-NBODY_VERSION = $(shell cat VERSION)
-VERSION_STAMP = sed "s/@VERSION/${NBODY_VERSION}/"
+GRAVITON_VERSION = $(shell cat VERSION)
+VERSION_STAMP = sed "s/@VERSION/${GRAVITON_VERSION}/"
 
-NBODY_REVISION = $(shell hg id -i)
-REVISION_STAMP = sed "s/@REVISION/$(NBODY_REVISION)/"
+GRAVITON_REVISION = $(shell git rev-parse HEAD)
+REVISION_STAMP = sed "s/@REVISION/$(GRAVITON_REVISION)/"
 
 ##
 ## Targets
@@ -40,31 +40,31 @@ REVISION_STAMP = sed "s/@REVISION/$(NBODY_REVISION)/"
 
 all: core
 
-core: nbody min
+core: graviton min
 
-nbody: ${NBODY}
+graviton: ${GRAVITON}
 
-${NBODY}: ${DIST_DIR}
-	@@echo 'Building' ${NBODY}
+${GRAVITON}: ${DIST_DIR}
+	@@echo 'Building' ${GRAVITON}
 
 	@@cat ${MODULES} | \
 		${VERSION_STAMP} | \
-		${REVISION_STAMP} > ${NBODY};
+		${REVISION_STAMP} > ${GRAVITON};
 
 ${DIST_DIR}:
 	@@mkdir -p ${DIST_DIR}
 
-min: nbody ${NBODY_MIN}
+min: graviton ${GRAVITON_MIN}
 
-${NBODY_MIN}: ${NBODY}
-	@@echo 'Building' ${NBODY_MIN}
+${GRAVITON_MIN}: ${GRAVITON}
+	@@echo 'Building' ${GRAVITON_MIN}
 
 	@@# Compiles using Closure Compiler
-	@@java -jar ${COMPILER} --js ${NBODY} --js_output_file ${NBODY_MIN}
+	@@java -jar ${COMPILER} --js ${GRAVITON} --js_output_file ${GRAVITON_MIN}
 
 clean: 
 	@@echo 'Removing distribution directory:' ${DIST_DIR}
 	@@rm -r ${DIST_DIR}
 
-.PHONY: all nbody min clean
+.PHONY: all graviton min clean
 
