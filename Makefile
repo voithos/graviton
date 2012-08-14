@@ -14,16 +14,8 @@ DIST_DIR = ${PREFIX}/dist
 
 COMPILER = ${BUILD_DIR}/compiler.jar
 
-## Files are listed in order of dependencies
-BASE_FILES = ${SRC_DIR}/heading.js\
-			 ${SRC_DIR}/util.js\
-			 ${SRC_DIR}/app.js\
-			 ${SRC_DIR}/sim.js\
-			 ${SRC_DIR}/data.js\
-			 ${SRC_DIR}/graphics.js\
-			 ${SRC_DIR}/gbody.js
-
-MODULES = ${BASE_FILES}
+SOURCE_DIR = ${PREFIX}/src
+SOURCE = ${SOURCE_DIR}/graviton.js
 
 GRAVITON = ${DIST_DIR}/graviton.js
 GRAVITON_MIN = ${DIST_DIR}/graviton.min.js
@@ -47,7 +39,7 @@ graviton: ${GRAVITON}
 ${GRAVITON}: ${DIST_DIR}
 	@@echo 'Building' ${GRAVITON}
 
-	@@cat ${MODULES} | \
+	@@cat ${SOURCE} | \
 		${VERSION_STAMP} | \
 		${REVISION_STAMP} > ${GRAVITON};
 
