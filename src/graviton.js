@@ -13,9 +13,8 @@
 (function(global) {
 
     /**
-     * Apply shims for certain functions
+     * Shims for certain utility functions
      */
-
     if (!Function.prototype.bind) {
         /**
          * bind -- Allow a specific object to be carried
@@ -38,6 +37,9 @@
         };
     }
 
+    /**
+     * random -- A collection of random generator functions
+     */
     var random = {
         /**
          * random.number -- Generate a random number between the given start
@@ -79,7 +81,30 @@
         color: function() {
             return '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).substr(-6);
         }
-    };
+    }; // end random
+
+    /**
+     * log -- Logging functions
+     */
+    var log = {
+        write: function(message, level) {
+            if (typeof console !== 'undefined') {
+                var now = new Date();
+                var stamp = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate() + 'T' +
+                    now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ':' + now.getMilliseconds();
+
+                message = stamp + ' ' + message;
+
+                level = (level || 'debug').toLowerCase();
+
+                if (console[level]) {
+                    console[level](message);
+                } else {
+                    throw new TypeError('Log level does not exist.');
+                }
+            }
+        }
+    }; // end log
 
 
     var gtApplication = function(args) {
@@ -219,14 +244,6 @@
 
         return me;
     }; // end gtApplication
-
-    var LogLevel = {
-        LOG: 0,
-        DEBUG: 1,
-        INFO: 2,
-        WARN: 3,
-        ERROR: 4
-    };
 
     var gtSimulation = function(args) {
         var me = {
@@ -420,7 +437,8 @@
 
                         if (r <= clearance) {
                             // Collision detected
-                            this._log('Collision detected!!');
+                            if (this.options.logging)
+                                log.write('Collision detected!!');
 
                         }
                     }
@@ -434,41 +452,6 @@
                     body.y < -this.options.scatterLimit) {
                     // Remove from body collection
                     return this.bodies.remove(index);
-                }
-            },
-
-            _log: function(message, level) {
-                if (this.options.logging === true) {
-                    if (typeof console !== 'undefined') {
-                        var now = new Date();
-                        var stamp = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate() + 'T' +
-                            now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ':' + now.getMilliseconds();
-
-                        message = stamp + ' ' + message;
-
-                        level = level || LogLevel.LOG;
-
-                        switch (Number(level)) {
-                            case LogLevel.LOG:
-                                console.log(message);
-                                break;
-
-                            case LogLevel.DEBUG:
-                                console.debug(message);
-                                break;
-
-                            case LogLevel.INFO:
-                                console.info(message);
-                                break;
-
-                            case LogLevel.WARN:
-                                console.warn(message);
-                                break;
-
-                            case LogLevel.ERROR:
-                                console.error(message);
-                        }
-                    }
                 }
             }
         };
@@ -621,8 +604,10 @@
         return me;
     }; // end gtBody
 
+
     // Export utilities
     global.random = random;
+    global.log = log;
 
     // Export components
     global.gt = {
