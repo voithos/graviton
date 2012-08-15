@@ -36,7 +36,7 @@ core: graviton min
 
 graviton: ${GRAVITON}
 
-${GRAVITON}: ${DIST_DIR}
+${GRAVITON}: ${SOURCE} ${DIST_DIR}
 	@@echo 'Building' ${GRAVITON}
 
 	@@cat ${SOURCE} | \
