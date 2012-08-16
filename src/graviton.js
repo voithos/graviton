@@ -12,6 +12,9 @@
 
 (function(global) {
 
+    // Utility functions
+    //==================================================
+
     /**
      * Shims for certain utility functions
      */
@@ -34,6 +37,19 @@
          */
         Array.prototype.remove = function(start, count) {
             return this.splice(start, count ? count : 1);
+        };
+    }
+
+    if (!Element.prototype.addEvent) {
+        /**
+         * addEvent -- Attach an event handler to an element
+         */
+        Element.prototype.addEvent = Object.prototype.addEvent = function(event, fn) {
+            if (this.addEventListener) {
+                this.addEventListener(event, fn, false);
+            } else if (this.attachEvent) {
+                this.attachEvent('on' + event, method);
+            }
         };
     }
 
@@ -106,6 +122,8 @@
         }
     }; // end log
 
+    //==================================================
+
 
     /**
      * gtApplication -- The interactive graviton application
@@ -167,23 +185,23 @@
 
                 for (var i = 0; i < num; i++) {
                     if (args.randomColors === true) {
-                        color = randomColor();
+                        color = random.color();
                     }
 
                     this.sim.addNewBody({
-                        x: random(minX, maxX),
-                        y: random(minY, maxY),
-                        velX: randomDirectional(minVelX, maxVelX),
-                        velY: randomDirectional(minVelY, maxVelY),
-                        mass: random(minMass, maxMass),
-                        radius: random(minRadius, maxRadius),
+                        x: random.number(minX, maxX),
+                        y: random.number(minY, maxY),
+                        velX: random.directional(minVelX, maxVelX),
+                        velY: random.directional(minVelY, maxVelY),
+                        mass: random.number(minMass, maxMass),
+                        radius: random.number(minRadius, maxRadius),
                         color: color});
                 }
             },
 
             _wireupEvents: function() {
-                this.grid.addEventListener('click', this._handleClick.bind(this), false);
-                document.addEventListener('keydown', this._handleKeyDown.bind(this), false);
+                this.grid.addEvent('mousedown', this._handleClick.bind(this));
+                document.addEvent('keydown', this._handleKeyDown.bind(this));
             },
 
             _handleClick: function(event) {
