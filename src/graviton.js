@@ -53,6 +53,52 @@
         };
     }
 
+    if (!Element.prototype.width) {
+        /**
+         * width -- Get the width of an element
+         */
+        Element.prototype.width = function() {
+            // Get window width
+            if (this == this.window) {
+                return this.document.documentElement.clientWidth;
+            }
+
+            // Get document width
+            if (this.nodeType === 9) {
+                var doc = this.documentElement;
+
+                return Math.max(
+                    this.body.scrollWidth, doc.scrollWidth,
+                    this.body.offsetWidth, doc.offsetWidth,
+                    doc.clientWidth
+                );
+            }
+        };
+    }
+
+    if (!Element.prototype.height) {
+        /**
+         * height -- Get the height of an element
+         */
+        Element.prototype.height = function() {
+            // Get window height
+            if (this == this.window) {
+                return this.document.documentElement.clientHeight;
+            }
+
+            // Get document height
+            if (this.nodeType === 9) {
+                var doc = this.documentElement;
+
+                return Math.max(
+                    this.body.scrollHeight, doc.scrollHeight,
+                    this.body.offsetHeight, doc.offsetHeight,
+                    doc.clientHeight
+                );
+            }
+        };
+    }
+
     /**
      * random -- A collection of random generator functions
      */
@@ -144,21 +190,28 @@
             // Functions
             //------------------
 
-            _generateGrid: function(width, height, backgroundColor) {
+            _generateGrid: function(width, height, style, target) {
                 // Attach a canvas to the page, to house the simulations
+                if (!style)
+                    style = {}
+
                 this.grid = document.createElement('canvas');
 
                 this.grid.width = width;
                 this.grid.height = height;
                 this.grid.style.display = 'block';
-                this.grid.style.marginLeft = 'auto';
-                this.grid.style.marginRight = 'auto';
-                this.grid.style.borderStyle = 'solid';
-                this.grid.style.borderWidth = 'medium';
-                this.grid.style.borderColor = '#CCCCCC';
-                this.grid.style.backgroundColor = backgroundColor;
+                this.grid.style.marginLeft = style.marginLeft || 'auto';
+                this.grid.style.marginRight = style.marginRight || 'auto';
+                this.grid.style.borderStyle = style.borderStyle || 'solid';
+                this.grid.style.borderWidth = style.borderWidth || 'medium';
+                this.grid.style.borderColor = style.borderColor || '#CCCCCC';
+                this.grid.style.backgroundColor = style.backgroundColor || backgroundColor;
 
-                document.body.appendChild(this.grid);
+                if (target) {
+                    target.appendChild(this.grid);
+                } else {
+                    document.body.appendChild(this.grid);
+                }
             },
 
             _generateBodies: function(num, args) {
@@ -195,7 +248,8 @@
                         velY: random.directional(minVelY, maxVelY),
                         mass: random.number(minMass, maxMass),
                         radius: random.number(minRadius, maxRadius),
-                        color: color});
+                        color: color
+                    });
                 }
             },
 
@@ -205,28 +259,35 @@
             },
 
             _handleClick: function(event) {
-                this.sim.addNewBody({x: event.clientX - this.grid.offsetLeft, y: event.clientY - this.grid.offsetTop});
+                this.sim.addNewBody({
+                    x: event.clientX - this.grid.offsetLeft,
+                    y: event.clientY - this.grid.offsetTop
+                });
             },
 
             _handleKeyDown: function(event) {
                 switch (event.which) {
-                    // 'Enter' - Start or stop simulation
+                    // 'Enter'
                     case 13:
+                        // Start or stop simulation
                         this.sim.toggle();
                         break;
 
-                    // 'C' - Clear simulation
+                    // 'C'
                     case 67:
+                        // Clear simulation
                         this.sim.clear();
                         break;
 
-                    // 'P' - Toggle trails
+                    // 'P'
                     case 80:
+                        // Toggle trails
                         this.sim.togglePaths();
                         break;
 
-                    // 'R' - Generate random objects
+                    // 'R'
                     case 82:
+                        // Generate random objects
                         this._generateBodies(10, {randomColors: true});
                         break;
 
@@ -252,7 +313,7 @@
         me.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
 
         if (typeof me.grid === 'undefined') {
-            me._generateGrid(me.options.width, me.options.height, me.options.backgroundColor);
+            me._generateGrid(me.options.width, me.options.height, {backgroundColor: me.options.backgroundColor});
 
             // Update grid argument
             args.grid = me.grid;
@@ -334,7 +395,7 @@
                 if (typeof G === 'number') {
                     this.options.G = G;
                 } else {
-                    throw 'setG: Argument was not a number.';
+                    throw new TypeError('Argument was not a number.');
                 }
             },
 
@@ -342,7 +403,7 @@
                 if (typeof deltaT === 'number') {
                     this.options.deltaT = deltaT;
                 } else {
-                    throw 'setDeltaT: Argument was not a number.';
+                    throw new TypeError('Argument was not a number.');
                 }
             },
 
@@ -350,7 +411,7 @@
                 if (typeof interval === 'number') {
                     this.options.interval = interval;
                 } else {
-                    throw 'setCompInterval: Argument was not a number.';
+                    throw new TypeError('Argument was not a number.');
                 }
             },
 
@@ -358,7 +419,7 @@
                 if (typeof state === 'boolean') {
                     this.options.collisions = state;
                 } else {
-                    throw 'setCollisions: Argument was not boolean.';
+                    throw new TypeError('Argument was not boolean.');
                 }
             },
 
@@ -366,7 +427,7 @@
                 if (typeof limit === 'number') {
                     this.options.scatterLimit = limit;
                 } else {
-                    throw 'setScatterLimit: Argument was not a number.';
+                    throw new TypeError('Argument was not a number.');
                 }
             },
 
