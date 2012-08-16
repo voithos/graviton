@@ -1,4 +1,4 @@
-/*
+/**
  * graviton v@VERSION
  *
  * JavaScript N-body Gravitational Simulator
@@ -107,6 +107,9 @@
     }; // end log
 
 
+    /**
+     * gtApplication -- The interactive graviton application
+     */
     var gtApplication = function(args) {
         var me = {
             // Attributes
@@ -245,6 +248,9 @@
         return me;
     }; // end gtApplication
 
+    /**
+     * gtSimulation -- The gravitational simulator
+     */
     var gtSimulation = function(args) {
         var me = {
             // Attributes
@@ -475,6 +481,9 @@
         return me;
     }; // end gtSimulation
 
+    /**
+     * gtData -- The data of the simulator
+     */
     var gtData = function(args) {
         var me = {
             ref: undefined
@@ -488,6 +497,9 @@
         return me;
     }; // end gtData
 
+    /**
+     * gtGraphics -- The graphics object
+     */
     var gtGraphics = function(args) {
         var me = {
             // Attributes
@@ -550,6 +562,9 @@
         return me;
     }; // end gtGraphics
 
+    /**
+     * gtBody -- The gravitational body
+     */
     var gtBody = function(args) {
         var me = {
             // Attributes
