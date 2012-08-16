@@ -16,88 +16,79 @@
     //==================================================
 
     /**
-     * Shims for certain utility functions
+     * Lambda library -- Collection of utility functions
      */
-    if (!Function.prototype.bind) {
+    var L = {
         /**
          * bind -- Allow a specific object to be carried
          * with a function reference as the execution context
          */
-        Function.prototype.bind = function(context) {
-            var fn = this;
+        bind: function(fn, context) {
             return function() {
                 return fn.apply(context, arguments);
             };
-        };
-    }
+        },
 
-    if (!Array.prototype.remove) {
         /**
          * remove -- Remove a given element from an array
          */
-        Array.prototype.remove = function(start, count) {
-            return this.splice(start, count ? count : 1);
-        };
-    }
+        remove: function(arr, start, count) {
+            return arr.splice(start, count ? count : 1);
+        },
 
-    if (!Element.prototype.addEvent) {
         /**
          * addEvent -- Attach an event handler to an element
          */
-        Element.prototype.addEvent = Object.prototype.addEvent = function(event, fn) {
-            if (this.addEventListener) {
-                this.addEventListener(event, fn, false);
-            } else if (this.attachEvent) {
-                this.attachEvent('on' + event, method);
+        addEvent: function(event, el, fn) {
+            if (el.addEventListener) {
+                el.addEventListener(event, fn, false);
+            } else if (el.attachEvent) {
+                el.attachEvent('on' + event, method);
             }
-        };
-    }
+        },
 
-    if (!Element.prototype.width) {
         /**
          * width -- Get the width of an element
          */
-        Element.prototype.width = function() {
+        width: function(el) {
             // Get window width
-            if (this == this.window) {
-                return this.document.documentElement.clientWidth;
+            if (el == el.window) {
+                return el.document.documentElement.clientWidth;
             }
 
             // Get document width
-            if (this.nodeType === 9) {
-                var doc = this.documentElement;
+            if (el.nodeType === 9) {
+                var doc = el.documentElement;
 
                 return Math.max(
-                    this.body.scrollWidth, doc.scrollWidth,
-                    this.body.offsetWidth, doc.offsetWidth,
+                    el.body.scrollWidth, doc.scrollWidth,
+                    el.body.offsetWidth, doc.offsetWidth,
                     doc.clientWidth
                 );
             }
-        };
-    }
+        },
 
-    if (!Element.prototype.height) {
         /**
          * height -- Get the height of an element
          */
-        Element.prototype.height = function() {
+        height: function(el) {
             // Get window height
-            if (this == this.window) {
-                return this.document.documentElement.clientHeight;
+            if (el == el.window) {
+                return el.document.documentElement.clientHeight;
             }
 
             // Get document height
-            if (this.nodeType === 9) {
-                var doc = this.documentElement;
+            if (el.nodeType === 9) {
+                var doc = el.documentElement;
 
                 return Math.max(
-                    this.body.scrollHeight, doc.scrollHeight,
-                    this.body.offsetHeight, doc.offsetHeight,
+                    el.body.scrollHeight, doc.scrollHeight,
+                    el.body.offsetHeight, doc.offsetHeight,
                     doc.clientHeight
                 );
             }
-        };
-    }
+        }
+    };
 
     /**
      * random -- A collection of random generator functions
@@ -254,8 +245,8 @@
             },
 
             _wireupEvents: function() {
-                this.grid.addEvent('mousedown', this._handleClick.bind(this));
-                document.addEvent('keydown', this._handleKeyDown.bind(this));
+                L.addEvent('mousedown', this.grid, L.bind(this._handleClick, this));
+                L.addEvent('keydown', document, L.bind(this._handleKeyDown, this));
             },
 
             _handleClick: function(event) {
@@ -306,8 +297,8 @@
 
         me.options = {};
 
-        me.options.width = args.width || document.body.clientWidth - 50;
-        me.options.height = args.height || document.body.clientHeight - 50;
+        me.options.width = args.width || L.width(document) * 0.95;
+        me.options.height = args.height || L.height(document) * 0.95;
         me.options.backgroundColor = args.backgroundColor || '#1F263B';
 
         me.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
@@ -360,13 +351,13 @@
             },
 
             removeBody: function(index) {
-                this.bodies.remove(index);
+                L.remove(this.bodies, index);
             },
 
             start: function() {
                 if (this.running === false) {
                     this.running = true;
-                    this.intervalId = setInterval(this._run.bind(this), this.options.interval);
+                    this.intervalId = setInterval(L.bind(this._run, this), this.options.interval);
                 }
             },
 
@@ -536,7 +527,7 @@
                     body.y > this.options.scatterLimit ||
                     body.y < -this.options.scatterLimit) {
                     // Remove from body collection
-                    return this.bodies.remove(index);
+                    return L.remove(this.bodies, index);
                 }
             }
         };
