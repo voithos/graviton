@@ -171,12 +171,10 @@
             //-----------------
 
             version: '@VERSION',
-
             options: undefined,
-
             sim: undefined,
-
             grid: undefined,
+            interaction: {},
 
             // Functions
             //------------------
@@ -196,7 +194,8 @@
                 this.grid.style.borderStyle = style.borderStyle || 'solid';
                 this.grid.style.borderWidth = style.borderWidth || 'medium';
                 this.grid.style.borderColor = style.borderColor || '#CCCCCC';
-                this.grid.style.backgroundColor = style.backgroundColor || backgroundColor;
+                this.grid.style.borderRadius = style.borderRadius || '15px';
+                this.grid.style.backgroundColor = style.backgroundColor || '#000000';
 
                 if (target) {
                     target.appendChild(this.grid);
@@ -244,16 +243,85 @@
                 }
             },
 
+            _redrawVector: function(args) {
+                // Erase old vector, and draw new one
+                this._eraseVector(args);
+                this._drawVector(args);
+
+                // Redraw body
+                this.sim.graphics.drawBody(this.interaction.body);
+
+                // Save previous location
+                this.interaction.previous = args.to;
+            },
+
+            _eraseVector: function(args) {
+                this.sim.graphics.drawLine({
+                    strokeStyle: this.options.backgroundColor,
+                    from: args.from,
+                    to: this.interaction.previous
+                });
+            },
+
+            _drawVector: function(args) {
+                this.sim.graphics.drawLine({
+                    from: args.from,
+                    to: args.to
+                });
+            },
+
             _wireupEvents: function() {
-                L.addEvent('mousedown', this.grid, L.bind(this._handleClick, this));
+                // Grid mouse events
+                L.addEvent('mousedown', this.grid, L.bind(this._handleMouseDown, this));
+                L.addEvent('mousemove', this.grid, L.bind(this._handleMouseMove, this));
+                L.addEvent('mouseup', this.grid, L.bind(this._handleMouseUp, this));
+
                 L.addEvent('keydown', document, L.bind(this._handleKeyDown, this));
             },
 
-            _handleClick: function(event) {
-                this.sim.addNewBody({
-                    x: event.clientX - this.grid.offsetLeft,
-                    y: event.clientY - this.grid.offsetTop
+            _handleMouseDown: function(event) {
+                // Add flag to signal other events
+                this.interaction.started = true;
+
+                this.interaction.body = this.sim.addNewBody({
+                    x: event.offsetX,
+                    y: event.offsetY
                 });
+
+                this.interaction.previous = {
+                    x: event.offsetX,
+                    y: event.offsetY
+                };
+            },
+
+            _handleMouseMove: function(event) {
+                if (this.interaction.started) {
+                    this._redrawVector({
+                        from: {
+                            x: this.interaction.body.x,
+                            y: this.interaction.body.y
+                        },
+                        to: {
+                            x: event.offsetX,
+                            y: event.offsetY
+                        }
+                    });
+                }
+            },
+
+            _handleMouseUp: function(event) {
+                if (this.interaction.started) {
+                    this.interaction.started = false;
+                    
+                    var x = event.offsetX,
+                        y = event.offsetY,
+                        body = this.interaction.body;
+
+                    body.velX = (x - body.x) * 0.0000001;
+                    body.velY = (y - body.y) * 0.0000001;
+
+                    this.sim.redraw();
+                }
             },
 
             _handleKeyDown: function(event) {
@@ -326,28 +394,23 @@
             // Attributes
             //-----------------
 
-            version: '@VERSION',
-
             running: false,
-
             intervalId: 0,
-
             time: 0,
-
             options: undefined,
-
             bodies: undefined,
-
             graphics: undefined,
 
             // Functions
             //-----------------
 
             addNewBody: function(args) {
-                var newIndex = this.bodies.push(gtBody(args));
-                this.graphics.draw(this.bodies);
+                var body = gtBody(args);
+                var newIndex = this.bodies.push(body);
+                this.graphics.clear();
+                this.graphics.drawBodies(this.bodies);
 
-                return this.bodies[newIndex];
+                return body;
             },
 
             removeBody: function(index) {
@@ -373,11 +436,16 @@
                 }
             },
 
+            redraw: function() {
+                this.graphics.clear();
+                this.graphics.drawBodies(this.bodies);
+            },
+
             clear: function() {
                 this.bodies.length = 0; // Remove all bodies from collection
                 this.stop();
                 this.options.trails = false; // Turn off trails
-                this.graphics.draw(); // Clear grid
+                this.graphics.clear(); // Clear grid
             },
 
             _run: function() {
@@ -392,7 +460,8 @@
                 }
 
                 this.time += this.options.deltaT; // Increment runtime
-                this.graphics.draw(this.bodies);
+                this.graphics.clear();
+                this.graphics.drawBodies(this.bodies);
 
                 // Check if running flag has been lowered
                 if (this.running === false) {
@@ -526,33 +595,41 @@
             //-----------------
 
             options: undefined,
-
             grid: undefined,
+            ctx: undefined,
 
             // Functions
             //-----------------
 
-            draw: function(bodies) {
+            clear: function() {
                 if (!this.options.trails) {
                     // Setting the width has the side effect
                     // of clearing the canvas
                     this.grid.width = this.grid.width;
                 }
-
-                if (typeof bodies !== 'undefined') {
-                    var ctx = this.grid.getContext('2d');
-
-                    for (var i = 0; i < bodies.length; i++) {
-                        var body = bodies[i];
-
-                        ctx.fillStyle = body.color;
-
-                        ctx.beginPath();
-                        ctx.arc(body.x, body.y, body.radius, 0, Math.PI * 2, true);
-
-                        ctx.fill();
-                    }
+            },
+                    
+            drawBodies: function(bodies) {
+                for (var i = 0; i < bodies.length; i++) {
+                    this.drawBody(bodies[i]);
                 }
+            },
+
+            drawBody: function(body) {
+                this.ctx.fillStyle = body.color;
+
+                this.ctx.beginPath();
+                this.ctx.arc(body.x, body.y, body.radius, 0, Math.PI * 2, true);
+
+                this.ctx.fill();
+            },
+
+            drawLine: function(args) {
+                this.ctx.strokeStyle = args.strokeStyle || '#DD2222';
+                this.ctx.beginPath();
+                this.ctx.moveTo(args.from.x, args.from.y);
+                this.ctx.lineTo(args.to.x, args.to.y);
+                this.ctx.stroke();
             },
 
             toggleTrails: function() {
@@ -568,8 +645,10 @@
         me.options.trails = args.trails || false;
 
         me.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
+        me.ctx = me.grid.getContext('2d');
+
         if (typeof me.grid === 'undefined') {
-            throw 'No usable canvas element was found.';
+            throw new TypeError('No usable canvas element was found.');
         }
 
         return me;
@@ -591,26 +670,10 @@
 
             mass: 0,
             radius: 0,
-            color: '',
+            color: ''
 
             // Functions
             //-----------------
-
-            setColor: function(color) {
-                if (typeof color === 'string') {
-                    this.color = color;
-                } else {
-                    throw 'setColor: Argument was not a string.';
-                }
-            },
-
-            setRadius: function(radius) {
-                if (typeof radius === 'number') {
-                    this.radius = radius;
-                } else {
-                    throw 'setRadius: Argument was not a number.';
-                }
-            }
         };
 
         if (!args)
