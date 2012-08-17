@@ -273,7 +273,7 @@
                     // 'P'
                     case 80:
                         // Toggle trails
-                        this.sim.togglePaths();
+                        this.sim.graphics.toggleTrails();
                         break;
 
                     // 'R'
@@ -326,7 +326,7 @@
             // Attributes
             //-----------------
 
-            version: '0.1.0',
+            version: '@VERSION',
 
             running: false,
 
@@ -355,20 +355,18 @@
             },
 
             start: function() {
-                if (this.running === false) {
+                if (!this.running) {
                     this.running = true;
                     this.intervalId = setInterval(L.bind(this._run, this), this.options.interval);
                 }
             },
 
             stop: function() {
-                if (this.running === true) {
-                    this.running = false;
-                }
+                this.running = false;
             },
 
             toggle: function() {
-                if (this.running === false) {
+                if (!this.running) {
                     this.start();
                 } else {
                     this.stop();
@@ -378,56 +376,8 @@
             clear: function() {
                 this.bodies.length = 0; // Remove all bodies from collection
                 this.stop();
-                this.setPaths(false); // Turn off residual paths
+                this.options.trails = false; // Turn off trails
                 this.graphics.draw(); // Clear grid
-            },
-
-            setG: function(G) {
-                if (typeof G === 'number') {
-                    this.options.G = G;
-                } else {
-                    throw new TypeError('Argument was not a number.');
-                }
-            },
-
-            setDeltaT: function(deltaT) {
-                if (typeof deltaT === 'number') {
-                    this.options.deltaT = deltaT;
-                } else {
-                    throw new TypeError('Argument was not a number.');
-                }
-            },
-
-            setCompInterval: function(interval) {
-                if (typeof interval === 'number') {
-                    this.options.interval = interval;
-                } else {
-                    throw new TypeError('Argument was not a number.');
-                }
-            },
-
-            setCollisions: function(state) {
-                if (typeof state === 'boolean') {
-                    this.options.collisions = state;
-                } else {
-                    throw new TypeError('Argument was not boolean.');
-                }
-            },
-
-            setScatterLimit: function(limit) {
-                if (typeof limit === 'number') {
-                    this.options.scatterLimit = limit;
-                } else {
-                    throw new TypeError('Argument was not a number.');
-                }
-            },
-
-            setPaths: function(paths) {
-                this.graphics.setPaths(paths);
-            },
-
-            togglePaths: function() {
-                this.graphics.togglePaths();
             },
 
             _run: function() {
@@ -583,7 +533,9 @@
             //-----------------
 
             draw: function(bodies) {
-                if (!this.options.paths) {
+                if (!this.options.trails) {
+                    // Setting the width has the side effect
+                    // of clearing the canvas
                     this.grid.width = this.grid.width;
                 }
 
@@ -603,18 +555,9 @@
                 }
             },
 
-            setPaths: function(paths) {
-                if (typeof paths === 'boolean') {
-                    this.options.paths = paths;
-                } else {
-                    throw 'setPaths: Argument was not boolean.';
-                }
-            },
-
-            togglePaths: function() {
-                this.options.paths = !this.options.paths;
+            toggleTrails: function() {
+                this.options.trails = !this.options.trails;
             }
-
         };
 
         if (!args)
@@ -622,7 +565,7 @@
 
         me.options = {};
 
-        me.options.paths = args.paths || false;
+        me.options.trails = args.trails || false;
 
         me.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
         if (typeof me.grid === 'undefined') {
@@ -691,6 +634,7 @@
 
 
     // Export utilities
+    global.L = L;
     global.random = random;
     global.log = log;
 
