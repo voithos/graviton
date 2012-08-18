@@ -283,14 +283,17 @@
                 // Add flag to signal other events
                 this.interaction.started = true;
 
+                var eventX = event.clientX - this.grid.offsetLeft,
+                    eventY = event.clientY - this.grid.offsetTop;
+
                 this.interaction.body = this.sim.addNewBody({
-                    x: event.offsetX,
-                    y: event.offsetY
+                    x: eventX,
+                    y: eventY
                 });
 
                 this.interaction.previous = {
-                    x: event.offsetX,
-                    y: event.offsetY
+                    x: eventX,
+                    y: eventY
                 };
             },
 
