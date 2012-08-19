@@ -88,7 +88,7 @@
                 );
             }
         }
-    };
+    }; // end Lambda library
 
     /**
      * random -- A collection of random generator functions
@@ -171,9 +171,9 @@
             //-----------------
 
             version: '@VERSION',
-            options: undefined,
-            sim: undefined,
-            grid: undefined,
+            options: null,
+            sim: null,
+            grid: null,
             interaction: {},
 
             // Functions
@@ -400,9 +400,9 @@
             running: false,
             intervalId: 0,
             time: 0,
-            options: undefined,
-            bodies: undefined,
-            graphics: undefined,
+            options: null,
+            bodies: null,
+            graphics: null,
 
             // Functions
             //-----------------
@@ -578,7 +578,7 @@
      */
     var gtData = function(args) {
         var me = {
-            ref: undefined
+            ref: null
         };
 
         if (!args)
@@ -597,9 +597,9 @@
             // Attributes
             //-----------------
 
-            options: undefined,
-            grid: undefined,
-            ctx: undefined,
+            options: null,
+            grid: null,
+            ctx: null,
 
             // Functions
             //-----------------
