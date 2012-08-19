@@ -299,6 +299,8 @@
                 // Add flag to signal other events
                 this.interaction.started = true;
 
+                // Calculate offset on the grid from clientX/Y, because
+                // some browsers don't have event.offsetX/Y
                 var eventX = event.clientX - this.grid.offsetLeft,
                     eventY = event.clientY - this.grid.offsetTop;
 
