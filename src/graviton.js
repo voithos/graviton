@@ -139,25 +139,41 @@
     /**
      * log -- Logging functions
      */
-    var log = {
-        write: function(message, level) {
-            if (typeof console !== 'undefined') {
-                var now = new Date();
-                var stamp = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate() + 'T' +
-                    now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ':' + now.getMilliseconds();
+    var log = (function() {
+        var config = {
+            logLevel: null
+        };
 
-                message = stamp + ' ' + message;
+        return {
+            write: function(message, level) {
+                if (typeof console !== 'undefined') {
+                    var now = new Date();
+                    var stamp = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate() + 'T' +
+                        now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ':' + now.getMilliseconds();
 
-                level = (level || 'debug').toLowerCase();
+                    message = stamp + ' ' + message;
+
+                    level = (level || config.logLevel || 'debug').toLowerCase();
+
+                    if (console[level]) {
+                        console[level](message);
+                    } else {
+                        throw new TypeError('Log level does not exist.');
+                    }
+                }
+            },
+
+            setLevel: function(level) {
+                level = level.toLowerCase();
 
                 if (console[level]) {
-                    console[level](message);
+                    config.logLevel = level;
                 } else {
                     throw new TypeError('Log level does not exist.');
                 }
             }
-        }
-    }; // end log
+        };
+    })() // end log
 
     //==================================================
 
