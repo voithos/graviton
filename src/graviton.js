@@ -21,6 +21,13 @@
      */
     var L = {
         /**
+         * isArray -- Test if an object is an array
+         */
+        isArray: function(obj) {
+            return Object.prototype.toString.call(obj) === '[object Array]';
+        },
+
+        /**
          * bind -- Allow a specific object to be carried
          * with a function reference as the execution context
          */
@@ -28,6 +35,39 @@
             return function() {
                 return fn.apply(context, arguments);
             };
+        },
+
+        /**
+         * foreach -- Iterate through a collection (array or object) using an
+         * iterator function
+         */
+        foreach: function(obj, fn, context) {
+            var returned;
+
+            // Use native `forEach` if available
+            if (Array.prototype.forEach && obj.forEach === Array.prototype.forEach) {
+                obj.forEach(fn, context);
+            } else if (L.isArray(obj)) {
+                // Loop through arrays
+                for (var i = 0; i < obj.length; i++) {
+                    returned = iterator.call(context, obj[i], i, obj);
+
+                    // Break if signaled
+                    if (returned === false) {
+                        return;
+                    }
+                }
+            } else {
+                // Assume object
+                for (var key in obj) {
+                    returned = iterator.call(context, obj[key], key, obj);
+
+                    // Break if signaled
+                    if (returned === false) {
+                        return;
+                    }
+                }
+            }
         },
 
         /**
@@ -176,7 +216,7 @@
                 }
             }
         };
-    })() // end log
+    })(); // end log
 
     //==================================================
 
@@ -194,6 +234,7 @@
             sim: null,
             grid: null,
             events: null,
+            timer: null,
             // interaction: {},
 
             // Functions
@@ -301,6 +342,7 @@
         me.options.height = args.height || L.height(document) * 0.95;
         me.options.backgroundColor = args.backgroundColor || '#1F263B';
 
+        // Retrieve canvas, or build one with arguments
         me.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
 
         if (typeof me.grid === 'undefined') {
@@ -310,9 +352,10 @@
             args.grid = me.grid;
         }
 
-        // Create components
+        // Create components -- order is important
+        me.timer = args.timer = gtTimer(args);
+        me.events = args.events = gtEvents(args);
         me.sim = gtSimulation(args);
-        me.events = gtEvents(args);
 
         return me;
     }; // end gtApplication
@@ -325,8 +368,6 @@
             // Attributes
             //-----------------
 
-            running: false,
-            intervalId: 0,
             time: 0,
             options: null,
             bodies: null,
@@ -353,10 +394,6 @@
                     this.running = true;
                     this.intervalId = setInterval(L.bind(this._run, this), this.options.interval);
                 }
-            },
-
-            stop: function() {
-                this.running = false;
             },
 
             toggle: function() {
@@ -963,6 +1000,69 @@
         return me;
     }; // end gtEvents
 
+    /**
+     * gtTimer -- Sim timer and FPS limiter
+     */
+    var gtTimer = function(args) {
+        var me = {
+            // Attributes
+            //-----------------
+
+            callbacks: [],
+            running: false,
+
+            // Functions
+            //------------------
+
+            addCallback: function(func, context, fps) {
+                if (typeof fps === 'undefined') {
+                    fps = 30;
+                }
+
+                // Compute the delay in milliseconds
+                var timeout = parseInt(1000 / fps, 10);
+
+                var callback = {
+                    fn: func,
+                    context: context,
+                    delay: timeout,
+                    intervalId: null
+                };
+                this.callbacks.push(callback);
+
+                // Start interval if running
+                if (this.running) {
+                    callback.intervalId = setInterval(L.bind(callback.fn, callback.context), callback.delay);
+                }
+            },
+
+            removeCallback: function(func) {
+                L.foreach(this.callbacks, function(callback) {
+                    if (callback.fn === func) {
+                        clearInterval(callback.intervalId);
+                        return false;
+                    }
+                });
+            },
+
+            start: function() {
+                this.running = true;
+
+                L.foreach(this.callbacks, function(callback) {
+                    callback.intervalId = setInterval(L.bind(callback.fn, callback.context), callback.delay);
+                });
+            },
+
+            stop: function() {
+                this.running = false;
+
+                L.foreach(this.callbacks, function(callback) {
+                    clearInterval(callback.intervalId);
+                });
+        };
+
+        return me;
+    };
 
     // Export utilities
     global.L = L;
@@ -976,7 +1076,8 @@
         body: gtBody,
         data: gtData,
         gfx: gtGraphics,
-        events: gtEvents
+        events: gtEvents,
+        timer: gtTimer
     };
 
 })(this);
