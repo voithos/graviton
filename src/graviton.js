@@ -11,6 +11,7 @@
  */
 
 (function(global) {
+    'use strict';
 
     // Utility functions
     //==================================================
@@ -155,6 +156,8 @@
 
                     level = (level || config.logLevel || 'debug').toLowerCase();
 
+                    // Write to console -- currently, `log`, `debug`, `info`, `warn`, and `error`
+                    // are available
                     if (console[level]) {
                         console[level](message);
                     } else {
