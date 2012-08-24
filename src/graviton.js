@@ -230,17 +230,146 @@
             //-----------------
 
             version: '@VERSION',
-            options: null,
-            sim: null,
+            options: {},
             grid: null,
+
             events: null,
             timer: null,
-            // interaction: {},
+
+            sim: null,
+            gfx: null,
+
+            interaction: {},
 
             // Functions
             //------------------
 
-            _generateGrid: function(width, height, style, target) {
+            /**
+             * main -- Main 'game' loop
+             */
+            main: function() {
+                // Event processing
+                //--------------------
+                var eventcodes = this.events.eventcodes;
+
+                L.foreach(this.events.qget(), function(event, i) {
+                    switch (event.type) {
+                        case eventcodes.MOUSEDOWN:
+                            // Add flag to signal other events
+                            this.interaction.started = true;
+
+                            this.interaction.body = this.sim.addNewBody({
+                                x: event.position.x,
+                                y: event.position.y
+                            });
+
+                            this.interaction.previous = {
+                                x: event.position.x,
+                                y: event.position.y
+                            };
+                            break; // end MOUSEDOWN
+
+                        case eventcodes.MOUSEUP:
+                            if (this.interaction.started) {
+                                this.interaction.started = false;
+
+                                var body = this.interaction.body;
+
+                                body.velX = (event.position.x - body.x) * 0.0000001;
+                                body.velY = (event.position.y - body.y) * 0.0000001;
+                            }
+                            break;
+
+                        case eventcodes.MOUSEMOVE:
+                            if (this.interaction.started) {
+                                this.redrawVector({
+                                    from: {
+                                        x: this.interaction.body.x,
+                                        y: this.interaction.body.y
+                                    },
+                                    to: {
+                                        x: event.position.x,
+                                        y: event.position.y
+                                    }
+                                });
+                            }
+                            break; // end MOUSEMOVE
+
+                        case eventcodes.MOUSEWHEEL:
+                            break; // end MOUSEWHEEL
+
+                        case eventcodes.KEYDOWN:
+                            var keycodes = this.events.keycodes;
+
+                            switch (event.keycode) {
+                                case keycodes.K_ENTER:
+                                    // Start or stop simulation
+                                    this.toggle();
+                                    break;
+
+                                case keycodes.K_C:
+                                    // Clear simulation
+                                    this.sim.clear();
+                                    this.gfx.clear();
+                                    this.timer.stop();
+                                    return false;
+                                    break;
+
+                                case keycodes.K_P:
+                                    // Toggle trails
+                                    this.gfx.noclear = !this.gfx.noclear;
+                                    break;
+
+                                case keycodes.K_R:
+                                    // Generate random objects
+                                    this.generateBodies(10, {randomColors: true});
+                                    break;
+
+                                case keycodes.K_T:
+                                    this.sim.addNewBody({x: this.options.width / 2, y: this.options.height / 2, velX: 0, velY: 0, mass: 2000, radius: 50, color: '#5A5A5A'});
+                                    this.sim.addNewBody({x: this.options.width - 400, y: this.options.height / 2, velX: 0, velY: 0.000025, mass: 1, radius: 5, color: '#787878'});
+                                    break;
+                            }
+                            break; // end KEYDOWN
+                    }
+                }, this);
+
+                // Redraw screen
+                this.redraw();
+            },
+
+            initComponents: function() {
+                // Create components -- order is important
+                this.timer = args.timer = gtTimer(args);
+                this.events = args.events = gtEvents(args);
+                this.sim = gtSimulation(args);
+                this.gfx = gtGraphics(args);
+            },
+
+            initTimers: function() {
+                // Add `main` loop, and start immediately
+                this.timer.addCallback(this.main, this, 30, {autostart: true, nostop: true});
+                this.timer.addCallback(this.sim.step, this.sim, 30);
+            },
+
+            start: function() {
+                this.timer.start();
+            },
+
+            stop: function() {
+                this.timer.stop();
+            },
+
+            toggle: function() {
+                this.timer.toggle();
+            },
+
+            redraw: function() {
+                this.gfx.clear();
+                this.gfx.drawBodies(this.sim.bodies);
+            },
+
+            generateGrid: function(width, height, style, target) {
                 // Attach a canvas to the page, to house the simulations
                 if (!style)
                     style = {}
@@ -265,9 +394,8 @@
                 }
             },
 
-            _generateBodies: function(num, args) {
-                if (!args)
-                    args = {};
+            generateBodies: function(num, args) {
+                args = args || {};
 
                 var minX = args.minX || 0;
                 var maxX = args.maxX || this.options.width;
@@ -304,40 +432,38 @@
                 }
             },
 
-            _redrawVector: function(args) {
+            redrawVector: function(args) {
                 // Erase old vector, and draw new one
-                this._eraseVector(args);
-                this._drawVector(args);
+                this.eraseVector(args);
+                this.drawVector(args);
 
                 // Redraw body
-                this.sim.graphics.drawBody(this.interaction.body);
+                this.gfx.drawBody(this.interaction.body);
 
                 // Save previous location
                 this.interaction.previous = args.to;
             },
 
-            _eraseVector: function(args) {
-                this.sim.graphics.drawLine({
+            eraseVector: function(args) {
+                this.gfx.drawLine({
                     strokeStyle: this.options.backgroundColor,
                     from: args.from,
                     to: this.interaction.previous
                 });
             },
 
-            _drawVector: function(args) {
-                this.sim.graphics.drawLine({
+            drawVector: function(args) {
+                this.gfx.drawLine({
                     from: args.from,
                     to: args.to
                 });
             }
         };
 
-        if (!args) {
-            args = {};
-        }
+        args = args || {};
 
-        me.options = {};
-
+        // Process arguments
+        //------------------
         me.options.width = args.width || L.width(document) * 0.95;
         me.options.height = args.height || L.height(document) * 0.95;
         me.options.backgroundColor = args.backgroundColor || '#1F263B';
@@ -346,16 +472,15 @@
         me.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
 
         if (typeof me.grid === 'undefined') {
-            me._generateGrid(me.options.width, me.options.height, {backgroundColor: me.options.backgroundColor});
+            me.generateGrid(me.options.width, me.options.height, {backgroundColor: me.options.backgroundColor});
 
             // Update grid argument
             args.grid = me.grid;
         }
 
-        // Create components -- order is important
-        me.timer = args.timer = gtTimer(args);
-        me.events = args.events = gtEvents(args);
-        me.sim = gtSimulation(args);
+        // Initialize
+        me.initComponents();
+        me.initTimers();
 
         return me;
     }; // end gtApplication
@@ -368,87 +493,36 @@
             // Attributes
             //-----------------
 
+            options: {},
+            bodies: [],
             time: 0,
-            options: null,
-            bodies: null,
-            graphics: null,
 
             // Functions
             //-----------------
 
-            addNewBody: function(args) {
-                var body = gtBody(args);
-                var newIndex = this.bodies.push(body);
-                this.graphics.clear();
-                this.graphics.drawBodies(this.bodies);
-
-                return body;
-            },
-
-            removeBody: function(index) {
-                L.remove(this.bodies, index);
-            },
-
-            start: function() {
-                if (!this.running) {
-                    this.running = true;
-                    this.intervalId = setInterval(L.bind(this._run, this), this.options.interval);
-                }
-            },
-
-            toggle: function() {
-                if (!this.running) {
-                    this.start();
-                } else {
-                    this.stop();
-                }
-            },
-
-            redraw: function() {
-                this.graphics.clear();
-                this.graphics.drawBodies(this.bodies);
-            },
-
-            clear: function() {
-                this.bodies.length = 0; // Remove all bodies from collection
-                this.stop();
-                this.options.trails = false; // Turn off trails
-                this.graphics.clear(); // Clear grid
-            },
-
-            _run: function() {
-                for (var i = 0; i < this.bodies.length; i++) {
+            step: function() {
+                L.foreach(this.bodies, function(body, i) {
                     if (this.options.collisions === true) {
-                        this._detectCollision(this.bodies[i], i);
+                        this.detectCollision(this.bodies[i], i);
                     }
 
-                    this._calculateNewPosition(this.bodies[i], i, this.options.deltaT);
+                    this.calculateNewPosition(body, i, this.options.deltaT);
 
-                    this._removeScattered(this.bodies[i], i);
-                }
+                    this.removeScattered(body, i);
+                }, this);
 
                 this.time += this.options.deltaT; // Increment runtime
-                this.graphics.clear();
-                this.graphics.drawBodies(this.bodies);
-
-                // Check if running flag has been lowered
-                if (this.running === false) {
-                    clearInterval(this.intervalId);
-                    this.intervalId = 0;
-                }
             },
 
-            _calculateNewPosition: function(body, index, deltaT) {
+            calculateNewPosition: function(body, index, deltaT) {
                 var netFx = 0;
                 var netFy = 0;
 
                 // Iterate through all bodies and sum the forces exerted
-                for (var i = 0; i < this.bodies.length; i++) {
+                L.foreach(this.bodies, function(attractor, i) {
                     if (i !== index) {
-                        var attractor = this.bodies[i];
-
                         // Get the distance and position deltas
-                        var D = this._calculateDistance(body, attractor, true);
+                        var D = this.calculateDistance(body, attractor);
 
                         // Calculate force using Newtonian gravity, separate out into x and y components
                         var F = (this.options.G * body.mass * attractor.mass) / Math.pow(D.r, 2);
@@ -458,13 +532,13 @@
                         netFx += Fx;
                         netFy += Fy;
                     }
-                }
+                }, this);
 
                 // Calculate accelerations
                 var ax = netFx / body.mass;
                 var ay = netFy / body.mass;
 
-                // Calculate new velocities
+                // Calculate new velocities, normalized by the 'time' interval
                 body.velX += deltaT * ax;
                 body.velY += deltaT * ay;
 
@@ -473,42 +547,34 @@
                 body.y += deltaT * body.velY;
             },
 
-            _calculateDistance: function(body, other, full) {
+            calculateDistance: function(body, other) {
                 var D = {};
 
-                // Calculate the delta in positions
+                // Calculate the change in position along the two dimensions
                 D.dx = other.x - body.x;
                 D.dy = other.y - body.y;
 
                 // Obtain the distance between the objects (hypotenuse)
                 D.r = Math.sqrt(Math.pow(D.dx, 2) + Math.pow(D.dy, 2));
 
-                if (full === true) {
-                    return D;
-                } else {
-                    return D.r;
-                }
+                return D;
             },
 
-            _detectCollision: function(body, index) {
-                for (var i = 0; i < this.bodies.length; i++) {
+            detectCollision: function(body, index) {
+                L.foreach(this.bodies, function(collider, i) {
                     if (i !== index) {
-                        var collider = this.bodies[i];
-
-                        var r = this._calculateDistance(body, collider);
+                        var r = this.calculateDistance(body, collider).r;
                         var clearance = body.radius + collider.radius;
 
                         if (r <= clearance) {
                             // Collision detected
-                            if (this.options.logging)
-                                log.write('Collision detected!!', 'debug');
-
+                            log.write('Collision detected!!', 'debug');
                         }
                     }
-                }
+                }, this);
             },
 
-            _removeScattered: function(body, index) {
+            removeScattered: function(body, index) {
                 if (body.x > this.options.scatterLimit ||
                     body.x < -this.options.scatterLimit ||
                     body.y > this.options.scatterLimit ||
@@ -516,24 +582,32 @@
                     // Remove from body collection
                     return L.remove(this.bodies, index);
                 }
+            },
+
+            addNewBody: function(args) {
+                var body = gtBody(args);
+                var newIndex = this.bodies.push(body);
+
+                return body;
+            },
+
+            removeBody: function(index) {
+                L.remove(this.bodies, index);
+            },
+
+            clear: function() {
+                this.bodies.length = 0; // Remove all bodies from collection
             }
         };
 
-        if (!args)
-            args = {};
+        args = args || {};
 
-        me.options = {};
-        me.bodies = [];
-
+        // Process arguments
+        //------------------
         me.options.G = args.G || 6.67384 * Math.pow(10, -11); // Gravitational constant
         me.options.deltaT = args.deltaT || 25000; // Timestep
-        me.options.interval = args.interval || 10; // Computation interval
         me.options.collisions = args.collision || true;
         me.options.scatterLimit = args.scatterLimit || 10000;
-
-        me.options.logging = args.logging || true;
-
-        me.graphics = gtGraphics(args); // Pass on the arguments to the graphics object
 
         return me;
     }; // end gtSimulation
@@ -560,13 +634,14 @@
             //-----------------
         };
 
-        if (!args)
-            args = {};
+        args = args || {};
 
+        // Process arguments
+        //------------------
         me.x = args.x;
         me.y = args.y;
         if (typeof me.x !== 'number' || typeof me.y !== 'number') {
-            throw 'Correct positions were not given for the body.';
+            throw new TypeError('Correct positions were not given for the body.');
         }
 
         me.velX = args.velX || 0;
@@ -580,22 +655,6 @@
     }; // end gtBody
 
     /**
-     * gtData -- The data of the simulator
-     */
-    var gtData = function(args) {
-        var me = {
-            ref: null
-        };
-
-        if (!args)
-            args = {};
-
-        me.ref = args.sim;
-
-        return me;
-    }; // end gtData
-
-    /**
      * gtGraphics -- The graphics object
      */
     var gtGraphics = function(args) {
@@ -603,7 +662,7 @@
             // Attributes
             //-----------------
 
-            options: null,
+            options: {},
             grid: null,
             ctx: null,
 
@@ -611,11 +670,9 @@
             //-----------------
 
             clear: function() {
-                if (!this.options.trails) {
-                    // Setting the width has the side effect
-                    // of clearing the canvas
-                    this.grid.width = this.grid.width;
-                }
+                // Setting the width has the side effect
+                // of clearing the canvas
+                this.grid.width = this.grid.width;
             },
                     
             drawBodies: function(bodies) {
@@ -639,19 +696,14 @@
                 this.ctx.moveTo(args.from.x, args.from.y);
                 this.ctx.lineTo(args.to.x, args.to.y);
                 this.ctx.stroke();
-            },
-
-            toggleTrails: function() {
-                this.options.trails = !this.options.trails;
             }
         };
 
-        if (!args)
-            args = {};
+        args = args || {};
 
-        me.options = {};
-
-        me.options.trails = args.trails || false;
+        // Process arguments
+        //------------------
+        me.options.noclear = args.noclear || false;
 
         me.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
         me.ctx = me.grid.getContext('2d');
@@ -833,19 +885,6 @@
                     ctrl: event.ctrlKey,
                     timestamp: event.timeStamp
                 });
-
-                // Add flag to signal other events
-                // this.interaction.started = true;
-
-                // this.interaction.body = this.sim.addNewBody({
-                    // x: eventX,
-                    // y: eventY
-                // });
-
-                // this.interaction.previous = {
-                    // x: eventX,
-                    // y: eventY
-                // };
             },
 
             handleMouseUp: function(event) {
@@ -859,18 +898,6 @@
                     ctrl: event.ctrlKey,
                     timestamp: event.timeStamp
                 });
-                // if (this.interaction.started) {
-                    // this.interaction.started = false;
-
-                    // var x = event.offsetX,
-                        // y = event.offsetY,
-                        // body = this.interaction.body;
-
-                    // body.velX = (x - body.x) * 0.0000001;
-                    // body.velY = (y - body.y) * 0.0000001;
-
-                    // this.sim.redraw();
-                // }
             },
 
             handleMouseMove: function(event) {
@@ -879,19 +906,6 @@
                     position: this.getPosition(event),
                     timestamp: event.timeStamp
                 });
-
-                // if (this.interaction.started) {
-                    // this._redrawVector({
-                        // from: {
-                            // x: this.interaction.body.x,
-                            // y: this.interaction.body.y
-                        // },
-                        // to: {
-                            // x: event.offsetX,
-                            // y: event.offsetY
-                        // }
-                    // });
-                // }
             },
 
             handleMouseWheel: function(event) {
@@ -928,37 +942,6 @@
                     ctrl: event.ctrlKey,
                     timestamp: event.timeStamp
                 });
-                // switch (event.which) {
-                    // // 'Enter'
-                    // case 13:
-                        // // Start or stop simulation
-                        // this.sim.toggle();
-                        // break;
-
-                    // // 'C'
-                    // case 67:
-                        // // Clear simulation
-                        // this.sim.clear();
-                        // break;
-
-                    // // 'P'
-                    // case 80:
-                        // // Toggle trails
-                        // this.sim.graphics.toggleTrails();
-                        // break;
-
-                    // // 'R'
-                    // case 82:
-                        // // Generate random objects
-                        // this._generateBodies(10, {randomColors: true});
-                        // break;
-
-                    // // T for test
-                    // case 84:
-                        // this.sim.addNewBody({x: this.options.width / 2, y: this.options.height / 2, velX: 0, velY: 0, mass: 2000, radius: 50, color: '#5A5A5A'});
-                        // this.sim.addNewBody({x: this.options.width - 400, y: this.options.height / 2, velX: 0, velY: 0.000025, mass: 1, radius: 5, color: '#787878'});
-                        // break;
-                // }
             },
 
             handleKeyUp: function(event) {
@@ -986,9 +969,7 @@
             }
         };
 
-        if (!args) {
-            args = {};
-        }
+        args = args || {};
 
         if (typeof args.grid === 'undefined') {
             throw new TypeError('No usable canvas element was given.');
@@ -1014,10 +995,9 @@
             // Functions
             //------------------
 
-            addCallback: function(func, context, fps) {
-                if (typeof fps === 'undefined') {
-                    fps = 30;
-                }
+            addCallback: function(func, context, fps, options) {
+                fps = fps || 30;
+                options = options || {};
 
                 // Compute the delay in milliseconds
                 var timeout = parseInt(1000 / fps, 10);
@@ -1026,39 +1006,59 @@
                     fn: func,
                     context: context,
                     delay: timeout,
-                    intervalId: null
+                    intervalId: null,
+                    started: false,
+                    nostop: options.nostop || false
                 };
                 this.callbacks.push(callback);
 
-                // Start interval if running
-                if (this.running) {
+                // Start interval if running, or if `autostart` is given
+                if (this.running || options.autostart) {
                     callback.intervalId = setInterval(L.bind(callback.fn, callback.context), callback.delay);
+                    callback.started = true;
                 }
             },
 
             removeCallback: function(func) {
-                L.foreach(this.callbacks, function(callback) {
+                L.foreach(this.callbacks, function(callback, i) {
                     if (callback.fn === func) {
                         clearInterval(callback.intervalId);
+                        L.remove(this.callbacks, i);
                         return false;
                     }
-                });
+                }, this);
             },
 
             start: function() {
                 this.running = true;
 
                 L.foreach(this.callbacks, function(callback) {
-                    callback.intervalId = setInterval(L.bind(callback.fn, callback.context), callback.delay);
-                });
+                    if (!callback.started) {
+                        callback.intervalId = setInterval(L.bind(callback.fn, callback.context), callback.delay);
+                        callback.started = true;
+                    }
+                }, this);
             },
 
             stop: function() {
                 this.running = false;
 
                 L.foreach(this.callbacks, function(callback) {
-                    clearInterval(callback.intervalId);
-                });
+                    if (!callback.nostop) {
+                        clearInterval(callback.intervalId);
+                        callback.intervalId = null;
+                        callback.started = false;
+                    }
+                }, this);
+            },
+
+            toggle: function() {
+                if (this.running) {
+                    this.stop();
+                } else {
+                    this.start();
+                }
+            }
         };
 
         return me;
@@ -1074,7 +1074,6 @@
         app: gtApplication,
         sim: gtSimulation,
         body: gtBody,
-        data: gtData,
         gfx: gtGraphics,
         events: gtEvents,
         timer: gtTimer
