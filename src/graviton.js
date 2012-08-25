@@ -50,7 +50,7 @@
             } else if (L.isArray(obj)) {
                 // Loop through arrays
                 for (var i = 0; i < obj.length; i++) {
-                    returned = iterator.call(context, obj[i], i, obj);
+                    returned = fn.call(context, obj[i], i, obj);
 
                     // Break if signaled
                     if (returned === false) {
@@ -60,11 +60,13 @@
             } else {
                 // Assume object
                 for (var key in obj) {
-                    returned = iterator.call(context, obj[key], key, obj);
+                    if (obj.hasOwnProperty(key)) {
+                        returned = fn.call(context, obj[key], key, obj);
 
-                    // Break if signaled
-                    if (returned === false) {
-                        return;
+                        // Break if signaled
+                        if (returned === false) {
+                            return;
+                        }
                     }
                 }
             }
@@ -84,7 +86,7 @@
             if (el.addEventListener) {
                 el.addEventListener(event, fn, false);
             } else if (el.attachEvent) {
-                el.attachEvent('on' + event, method);
+                el.attachEvent('on' + event, fn);
             }
         },
 
@@ -93,7 +95,7 @@
          */
         width: function(el) {
             // Get window width
-            if (el == el.window) {
+            if (el === el.window) {
                 return el.document.documentElement.clientWidth;
             }
 
@@ -114,7 +116,7 @@
          */
         height: function(el) {
             // Get window height
-            if (el == el.window) {
+            if (el === el.window) {
                 return el.document.documentElement.clientHeight;
             }
 
@@ -140,7 +142,7 @@
          * and end points
          */
         number: function(from, to) {
-            if (arguments.length == 1) {
+            if (arguments.length === 1) {
                 to = from;
                 from = 0;
             }
@@ -225,7 +227,7 @@
      * gtApplication -- The interactive graviton application
      */
     var gtApplication = function(args) {
-        var me = {
+        var self = {
             // Attributes
             //-----------------
 
@@ -252,7 +254,9 @@
                 //--------------------
                 var eventcodes = this.events.eventcodes;
 
-                L.foreach(this.events.qget(), function(event, i) {
+                L.foreach(this.events.qget(), function(event) {
+                    var retval;
+
                     switch (event.type) {
                         case eventcodes.MOUSEDOWN:
                             // Add flag to signal other events
@@ -312,7 +316,7 @@
                                     this.sim.clear();
                                     this.gfx.clear();
                                     this.timer.stop();
-                                    return false;
+                                    retval = false;
                                     break;
 
                                 case keycodes.K_P:
@@ -332,6 +336,8 @@
                             }
                             break; // end KEYDOWN
                     }
+
+                    return retval;
                 }, this);
 
                 // Redraw screen
@@ -371,8 +377,9 @@
 
             generateGrid: function(width, height, style, target) {
                 // Attach a canvas to the page, to house the simulations
-                if (!style)
-                    style = {}
+                if (!style) {
+                    style = {};
+                }
 
                 this.grid = document.createElement('canvas');
 
@@ -464,32 +471,32 @@
 
         // Process arguments
         //------------------
-        me.options.width = args.width || L.width(document) * 0.95;
-        me.options.height = args.height || L.height(document) * 0.95;
-        me.options.backgroundColor = args.backgroundColor || '#1F263B';
+        self.options.width = args.width || L.width(document) * 0.95;
+        self.options.height = args.height || L.height(document) * 0.95;
+        self.options.backgroundColor = args.backgroundColor || '#1F263B';
 
         // Retrieve canvas, or build one with arguments
-        me.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
+        self.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
 
-        if (typeof me.grid === 'undefined') {
-            me.generateGrid(me.options.width, me.options.height, {backgroundColor: me.options.backgroundColor});
+        if (typeof self.grid === 'undefined') {
+            self.generateGrid(self.options.width, self.options.height, {backgroundColor: self.options.backgroundColor});
 
             // Update grid argument
-            args.grid = me.grid;
+            args.grid = self.grid;
         }
 
         // Initialize
-        me.initComponents();
-        me.initTimers();
+        self.initComponents();
+        self.initTimers();
 
-        return me;
+        return self;
     }; // end gtApplication
 
     /**
      * gtSimulation -- The gravitational simulator
      */
     var gtSimulation = function(args) {
-        var me = {
+        var self = {
             // Attributes
             //-----------------
 
@@ -586,7 +593,7 @@
 
             addNewBody: function(args) {
                 var body = gtBody(args);
-                var newIndex = this.bodies.push(body);
+                this.bodies.push(body);
 
                 return body;
             },
@@ -604,19 +611,19 @@
 
         // Process arguments
         //------------------
-        me.options.G = args.G || 6.67384 * Math.pow(10, -11); // Gravitational constant
-        me.options.deltaT = args.deltaT || 25000; // Timestep
-        me.options.collisions = args.collision || true;
-        me.options.scatterLimit = args.scatterLimit || 10000;
+        self.options.G = args.G || 6.67384 * Math.pow(10, -11); // Gravitational constant
+        self.options.deltaT = args.deltaT || 25000; // Timestep
+        self.options.collisions = args.collision || true;
+        self.options.scatterLimit = args.scatterLimit || 10000;
 
-        return me;
+        return self;
     }; // end gtSimulation
 
     /**
      * gtBody -- The gravitational body
      */
     var gtBody = function(args) {
-        var me = {
+        var self = {
             // Attributes
             //-----------------
 
@@ -638,27 +645,27 @@
 
         // Process arguments
         //------------------
-        me.x = args.x;
-        me.y = args.y;
-        if (typeof me.x !== 'number' || typeof me.y !== 'number') {
+        self.x = args.x;
+        self.y = args.y;
+        if (typeof self.x !== 'number' || typeof self.y !== 'number') {
             throw new TypeError('Correct positions were not given for the body.');
         }
 
-        me.velX = args.velX || 0;
-        me.velY = args.velY || 0;
-        me.mass = args.mass || 10;
-        me.radius = args.radius || 4;
+        self.velX = args.velX || 0;
+        self.velY = args.velY || 0;
+        self.mass = args.mass || 10;
+        self.radius = args.radius || 4;
 
-        me.color = args.color || '#FFFFFF';
+        self.color = args.color || '#FFFFFF';
 
-        return me;
+        return self;
     }; // end gtBody
 
     /**
      * gtGraphics -- The graphics object
      */
     var gtGraphics = function(args) {
-        var me = {
+        var self = {
             // Attributes
             //-----------------
 
@@ -703,23 +710,23 @@
 
         // Process arguments
         //------------------
-        me.options.noclear = args.noclear || false;
+        self.options.noclear = args.noclear || false;
 
-        me.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
-        me.ctx = me.grid.getContext('2d');
+        self.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
+        self.ctx = self.grid.getContext('2d');
 
-        if (typeof me.grid === 'undefined') {
+        if (typeof self.grid === 'undefined') {
             throw new TypeError('No usable canvas element was given.');
         }
 
-        return me;
+        return self;
     }; // end gtGraphics
 
     /**
      * gtEvents -- Event queueing and processing
      */
     var gtEvents = function(args) {
-        var me = {
+        var self = {
             // Constants
             //-----------------
 
@@ -974,21 +981,22 @@
         if (typeof args.grid === 'undefined') {
             throw new TypeError('No usable canvas element was given.');
         }
-        me.grid = args.grid;
+        self.grid = args.grid;
 
-        me.wireupEvents();
+        self.wireupEvents();
 
-        return me;
+        return self;
     }; // end gtEvents
 
     /**
      * gtTimer -- Sim timer and FPS limiter
      */
     var gtTimer = function(args) {
-        var me = {
+        var self = {
             // Attributes
             //-----------------
 
+            options: {},
             callbacks: [],
             running: false,
 
@@ -996,7 +1004,7 @@
             //------------------
 
             addCallback: function(func, context, fps, options) {
-                fps = fps || 30;
+                fps = fps || this.options.defaultFps;
                 options = options || {};
 
                 // Compute the delay in milliseconds
@@ -1014,7 +1022,9 @@
 
                 // Start interval if running, or if `autostart` is given
                 if (this.running || options.autostart) {
-                    callback.intervalId = setInterval(L.bind(callback.fn, callback.context), callback.delay);
+                    callback.intervalId = setInterval(
+                        L.bind(callback.fn, callback.context),
+                        callback.delay);
                     callback.started = true;
                 }
             },
@@ -1034,7 +1044,9 @@
 
                 L.foreach(this.callbacks, function(callback) {
                     if (!callback.started) {
-                        callback.intervalId = setInterval(L.bind(callback.fn, callback.context), callback.delay);
+                        callback.intervalId = setInterval(
+                            L.bind(callback.fn, callback.context),
+                            callback.delay);
                         callback.started = true;
                     }
                 }, this);
@@ -1061,7 +1073,9 @@
             }
         };
 
-        return me;
+        self.options.defaultFps = args.defaultFps || 30;
+
+        return self;
     };
 
     // Export utilities
