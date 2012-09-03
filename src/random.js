@@ -20,7 +20,7 @@ define({
      * positions
      */
     integer: function() {
-        return Math.round(random.number.apply(this, arguments));
+        return Math.round(this.number.apply(this, arguments));
     },
 
     /**
@@ -28,7 +28,7 @@ define({
      * between the given positions
      */
     directional: function() {
-        var rand = random.number.apply(this, arguments);
+        var rand = this.number.apply(this, arguments);
         if (Math.random() > 0.5) {
             rand = -rand;
         }
