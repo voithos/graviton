@@ -1,5 +1,5 @@
 /**
- * gtBody -- The gravitational body
+ * graviton/body -- The gravitational body
  */
 define(function() {
     'use strict';
@@ -41,5 +41,5 @@ define(function() {
         self.color = args.color || '#FFFFFF';
 
         return self;
-    }; // end gtBody
+    }; // end graviton/body
 });

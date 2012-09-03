@@ -1,5 +1,5 @@
 /**
- * gtGraphics -- The graphics object
+ * graviton/gfx -- The graphics object
  */
 define(function() {
     'use strict';
@@ -60,5 +60,5 @@ define(function() {
         }
 
         return self;
-    }; // end gtGraphics
+    }; // end graviton/gfx
 });

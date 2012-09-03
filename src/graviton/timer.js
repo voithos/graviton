@@ -1,7 +1,7 @@
 /**
- * gtTimer -- Sim timer and FPS limiter
+ * graviton/timer -- Sim timer and FPS limiter
  */
-define(['lambda'], function(L) {
+define(['util/lambda'], function(L) {
     'use strict';
 
     return function(args) {
@@ -89,5 +89,5 @@ define(['lambda'], function(L) {
         self.options.defaultFps = args.defaultFps || 30;
 
         return self;
-    }; // end gtTimer
+    }; // end graviton/timer
 });

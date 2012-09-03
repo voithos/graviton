@@ -10,17 +10,10 @@
  *  @REVISION
  */
 
-define(['gtApplication', 'gtSimulation', 'gtBody', 'gtGraphics', 'gtEvents', 'gtTimer'],
-    function(gtApplication, gtSimulation, gtBody, gtGraphics, gtEvents, gtTimer) {
-        'use strict';
+define(['graviton/app'], function(gtApp) {
+    'use strict';
 
-        return {
-            app: gtApplication,
-            sim: gtSimulation,
-            body: gtBody,
-            gfx: gtGraphics,
-            events: gtEvents,
-            timer: gtTimer
-        };
-    }
-);
+    return {
+        app: gtApp
+    };
+});

@@ -1,7 +1,7 @@
 /**
- * gtEvents -- Event queueing and processing
+ * graviton/events -- Event queueing and processing
  */
-define(['lambda', 'log'], function(L, log) {
+define(['util/lambda', 'util/log'], function(L, log) {
     'use strict';
 
     return function(args) {
@@ -265,5 +265,5 @@ define(['lambda', 'log'], function(L, log) {
         self.wireupEvents();
 
         return self;
-    }; // end gtEvents
+    }; // end graviton/events
 });

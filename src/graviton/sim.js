@@ -1,7 +1,7 @@
 /**
- * gtSimulation -- The gravitational simulator
+ * graviton/sim -- The gravitational simulator
  */
-define(['lambda', 'log', 'gtBody'], function(L, log, gtBody) {
+define(['util/lambda', 'util/log', 'graviton/body'], function(L, log, gtBody) {
     'use strict';
 
     return function(args) {
@@ -126,5 +126,5 @@ define(['lambda', 'log', 'gtBody'], function(L, log, gtBody) {
         self.options.scatterLimit = args.scatterLimit || 10000;
 
         return self;
-    }; // end gtSimulation
+    }; // end graviton/sim
 });
