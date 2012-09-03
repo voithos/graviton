@@ -2,57 +2,46 @@
 ## Source and output directories
 ##
 
-SRC_DIR = src
-BUILD_DIR = build
+NAME = graviton
 
-PREFIX = .
-DIST_DIR = ${PREFIX}/dist
+SRC_DIR = src
+DIST_DIR = dist
 
 ##
 ## Build information
 ##
 
-COMPILER = ${BUILD_DIR}/compiler.jar
+SOURCE = ${SRC_DIR}/${NAME}.js
 
-SOURCE_DIR = ${PREFIX}/src
-SOURCE = ${SOURCE_DIR}/graviton.js
+OUTPUT = ${DIST_DIR}/${NAME}.js
+OUTPUT_MIN = ${DIST_DIR}/${NAME}.min.js
 
-GRAVITON = ${DIST_DIR}/graviton.js
-GRAVITON_MIN = ${DIST_DIR}/graviton.min.js
+VERSION = $(shell cat VERSION)
+VERSION_STAMPER = sed -i "s/@VERSION/${VERSION}/"
 
-GRAVITON_VERSION = $(shell cat VERSION)
-VERSION_STAMP = sed "s/@VERSION/${GRAVITON_VERSION}/"
+REVISION = $(shell git rev-parse HEAD)
+REVISION_STAMPER = sed -i "s/@REVISION/$(REVISION)/"
 
-GRAVITON_REVISION = $(shell git rev-parse HEAD)
-REVISION_STAMP = sed "s/@REVISION/$(GRAVITON_REVISION)/"
+
+COMPILER = node lib/r.js -o
+OPTIONS = name=${NAME} out=${OUTPUT_MIN} baseUrl=${SRC_DIR}
 
 ##
 ## Targets
 ##
 
-all: core
+all: ${OUTPUT_MIN}
 
-core: graviton min
+${OUTPUT_MIN}: ${DIST_DIR}
+	@@echo 'Building' ${OUTPUT_MIN}
 
-graviton: ${GRAVITON}
+	@@${COMPILER} ${OPTIONS}
 
-${GRAVITON}: ${SOURCE} ${DIST_DIR}
-	@@echo 'Building' ${GRAVITON}
-
-	@@cat ${SOURCE} | \
-		${VERSION_STAMP} | \
-		${REVISION_STAMP} > ${GRAVITON};
+	@@${VERSION_STAMPER} ${OUTPUT_MIN}
+	@@${REVISION_STAMPER} ${OUTPUT_MIN}
 
 ${DIST_DIR}:
 	@@mkdir -p ${DIST_DIR}
-
-min: graviton ${GRAVITON_MIN}
-
-${GRAVITON_MIN}: ${GRAVITON}
-	@@echo 'Building' ${GRAVITON_MIN}
-
-	@@# Compiles using Closure Compiler
-	@@java -jar ${COMPILER} --js ${GRAVITON} --js_output_file ${GRAVITON_MIN}
 
 clean: 
 	@@echo 'Removing distribution directory:' ${DIST_DIR}
