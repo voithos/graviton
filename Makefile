@@ -24,28 +24,36 @@ REVISION_STAMPER = sed -i "s/@REVISION/$(REVISION)/"
 
 
 COMPILER = node lib/r.js -o
-OPTIONS = name=${NAME} out=${OUTPUT_MIN} baseUrl=${SRC_DIR}
+OPTIONS = name=${NAME} baseUrl=${SRC_DIR}
+OPT_OUTPUT = out=${OUTPUT}
+OPT_OUTPUT_MIN = out=${OUTPUT_MIN}
+NO_OPTIMIZE = optimize=none
 
 ##
 ## Targets
 ##
 
-all: ${OUTPUT_MIN}
+all: ${OUTPUT} ${OUTPUT_MIN}
 
-${OUTPUT_MIN}: ${DIST_DIR}
+${OUTPUT}:
+	@@echo 'Building' ${OUTPUT}
+
+	@@${COMPILER} ${OPTIONS} ${OPT_OUTPUT} ${NO_OPTIMIZE}
+
+	@@${VERSION_STAMPER} ${OUTPUT}
+	@@${REVISION_STAMPER} ${OUTPUT}
+
+${OUTPUT_MIN}:
 	@@echo 'Building' ${OUTPUT_MIN}
 
-	@@${COMPILER} ${OPTIONS}
+	@@${COMPILER} ${OPTIONS} ${OPT_OUTPUT_MIN}
 
 	@@${VERSION_STAMPER} ${OUTPUT_MIN}
 	@@${REVISION_STAMPER} ${OUTPUT_MIN}
 
-${DIST_DIR}:
-	@@mkdir -p ${DIST_DIR}
-
 clean: 
-	@@echo 'Removing distribution directory:' ${DIST_DIR}
-	@@rm -r ${DIST_DIR}
+	@@echo 'Cleaning distribution directory:' ${DIST_DIR}
+	@@rm -r ${DIST_DIR}/*
 
 .PHONY: all graviton min clean
 
