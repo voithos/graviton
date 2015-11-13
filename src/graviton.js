@@ -3,7 +3,7 @@
  *
  * JavaScript N-body Gravitational Simulator
  *
- * Copyright (c) 2012 Zaven Muradyan
+ * Copyright (c) 2015 Zaven Muradyan
  * Licensed under the MIT license
  *
  * Revision:

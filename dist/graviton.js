@@ -1093,11 +1093,11 @@ define('graviton/app',[
  *
  * JavaScript N-body Gravitational Simulator
  *
- * Copyright (c) 2012 Zaven Muradyan
+ * Copyright (c) 2015 Zaven Muradyan
  * Licensed under the MIT license
  *
  * Revision:
- *  734c12249fb3a8a9972d776748a3b15d7f394c44
+ *  3501f7397389d257aaefa64cac0301f3c8a156fe
  */
 
 define('graviton',['graviton/app'], function(gtApp) {
