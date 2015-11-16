@@ -1,7 +1,7 @@
 /**
  * random -- A collection of random generator functions
  */
-define({
+export default {
     /**
      * random.number -- Generate a random number between the given start
      * and end points
@@ -42,4 +42,4 @@ define({
     color: function() {
         return '#' + ('00000' + Math.floor(Math.random() * 0xffffff).toString(16)).substr(-6);
     }
-});
+};

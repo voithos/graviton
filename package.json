@@ -1,0 +1,25 @@
+{
+  "name": "graviton",
+  "version": "0.3.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "babel-preset-es2015": "~6.1.18",
+    "babelify": "~7.2.0",
+    "browserify": "~12.0.1",
+    "vinyl-source-stream": "~1.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/voithos/graviton.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/voithos/graviton/issues"
+  },
+  "homepage": "https://github.com/voithos/graviton"
+}

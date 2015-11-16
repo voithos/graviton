@@ -1,7 +1,7 @@
 /**
  * log -- Logging functions
  */
-define({
+export default {
     config: {
         logLevel: null
     },
@@ -35,4 +35,4 @@ define({
             throw new TypeError('Log level does not exist.');
         }
     }
-});
+};

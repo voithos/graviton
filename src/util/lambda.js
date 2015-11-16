@@ -1,7 +1,7 @@
 /**
  * Lambda library -- Collection of utility functions
  */
-define({
+export default {
     /**
      * isArray -- Test if an object is an array
      */
@@ -113,4 +113,4 @@ define({
             );
         }
     }
-});
+};

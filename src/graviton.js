@@ -9,11 +9,6 @@
  * Revision:
  *  @REVISION
  */
+import gtApp from './graviton/app';
 
-define(['graviton/app'], function(gtApp) {
-    'use strict';
-
-    return {
-        app: gtApp
-    };
-});
+export default { app: gtApp };
