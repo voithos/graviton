@@ -59,7 +59,7 @@ exports.default = function (args) {
             var eventcodes = this.events.eventcodes;
 
             this.events.qget().forEach(function (event) {
-                var retval;
+                var retval = undefined;
 
                 switch (event.type) {
                     case eventcodes.MOUSEDOWN:
@@ -356,7 +356,7 @@ exports.default = function (args) {
     self.x = args.x;
     self.y = args.y;
     if (typeof self.x !== 'number' || typeof self.y !== 'number') {
-        throw new TypeError('Correct positions were not given for the body.');
+        throw Error('Correct positions were not given for the body.');
     }
 
     self.velX = args.velX || 0;
@@ -633,7 +633,7 @@ exports.default = function (args) {
     args = args || {};
 
     if (typeof args.grid === 'undefined') {
-        throw new TypeError('No usable canvas element was given.');
+        throw Error('No usable canvas element was given.');
     }
     self.grid = args.grid;
 
@@ -712,7 +712,7 @@ exports.default = function (args) {
     self.ctx = self.grid.getContext('2d');
 
     if (typeof self.grid === 'undefined') {
-        throw new TypeError('No usable canvas element was given.');
+        throw Error('No usable canvas element was given.');
     }
 
     return self;
@@ -1004,18 +1004,17 @@ exports.default = {
             if (console[level]) {
                 console[level](message);
             } else {
-                throw new TypeError('Log level does not exist.');
+                throw Error('Log level does not exist.');
             }
         }
     },
-
     setLevel: function setLevel(level) {
         level = level.toLowerCase();
 
         if (console[level]) {
             config.logLevel = level;
         } else {
-            throw new TypeError('Log level does not exist.');
+            throw Error('Log level does not exist.');
         }
     }
 };
@@ -1034,8 +1033,11 @@ exports.default = {
      * random.number -- Generate a random number between the given start
      * and end points
      */
-    number: function number(from, to) {
-        if (arguments.length === 1) {
+
+    number: function number(from) {
+        var to = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+        if (to === null) {
             to = from;
             from = 0;
         }
@@ -1060,7 +1062,6 @@ exports.default = {
         if (Math.random() > 0.5) {
             rand = -rand;
         }
-
         return rand;
     },
 

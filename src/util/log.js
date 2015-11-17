@@ -6,7 +6,7 @@ export default {
         logLevel: null
     },
 
-    write: function(message, level) {
+    write(message, level) {
         if (typeof console !== 'undefined') {
             let now = new Date();
             let stamp = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate() + 'T' +
@@ -26,7 +26,7 @@ export default {
         }
     },
 
-    setLevel: function(level) {
+    setLevel(level) {
         level = level.toLowerCase();
 
         if (console[level]) {
