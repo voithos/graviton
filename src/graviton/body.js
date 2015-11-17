@@ -2,7 +2,7 @@
  * graviton/body -- The gravitational body
  */
 export default function(args) {
-    var self = {
+    let self = {
         // Attributes
         //-----------------
 
@@ -27,7 +27,7 @@ export default function(args) {
     self.x = args.x;
     self.y = args.y;
     if (typeof self.x !== 'number' || typeof self.y !== 'number') {
-        throw new TypeError('Correct positions were not given for the body.');
+        throw Error('Correct positions were not given for the body.');
     }
 
     self.velX = args.velX || 0;

@@ -4,7 +4,7 @@
 import log from '../util/log';
 
 export default function(args) {
-    var self = {
+    let self = {
         // Constants
         //-----------------
 
@@ -109,7 +109,7 @@ export default function(args) {
 
         qget: function() {
             // Replacing the reference is faster than `splice()`
-            var ref = this.queue;
+            let ref = this.queue;
             this.queue = [];
             return ref;
         },
@@ -195,7 +195,7 @@ export default function(args) {
 
         handleMouseWheel: function(event) {
             // Account for discrepancies between Firefox and Webkit
-            var delta = event.wheelDelta ?
+            let delta = event.wheelDelta ?
                 (event.wheelDelta / 120) :
                 (event.detail / -3);
 
@@ -216,7 +216,7 @@ export default function(args) {
 
         handleKeyDown: function(event) {
             // Account for browser discrepancies
-            var key = event.keyCode || event.which;
+            let key = event.keyCode || event.which;
 
             log.write('Key down: ' + key, 'debug');
 
@@ -231,7 +231,7 @@ export default function(args) {
 
         handleKeyUp: function(event) {
             // Account for browser discrepancies
-            var key = event.keyCode || event.which;
+            let key = event.keyCode || event.which;
 
             log.write('Key up: ' + key, 'debug');
 
@@ -257,7 +257,7 @@ export default function(args) {
     args = args || {};
 
     if (typeof args.grid === 'undefined') {
-        throw new TypeError('No usable canvas element was given.');
+        throw Error('No usable canvas element was given.');
     }
     self.grid = args.grid;
 

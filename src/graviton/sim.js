@@ -5,7 +5,7 @@ import log from '../util/log';
 import gtBody from './body';
 
 export default function(args) {
-    var self = {
+    let self = {
         // Attributes
         //-----------------
 
@@ -31,19 +31,19 @@ export default function(args) {
         },
 
         calculateNewPosition: function(body, index, deltaT) {
-            var netFx = 0;
-            var netFy = 0;
+            let netFx = 0;
+            let netFy = 0;
 
             // Iterate through all bodies and sum the forces exerted
             this.bodies.forEach(function(attractor, i) {
                 if (i !== index) {
                     // Get the distance and position deltas
-                    var D = this.calculateDistance(body, attractor);
+                    let D = this.calculateDistance(body, attractor);
 
                     // Calculate force using Newtonian gravity, separate out into x and y components
-                    var F = (this.options.G * body.mass * attractor.mass) / Math.pow(D.r, 2);
-                    var Fx = F * (D.dx / D.r);
-                    var Fy = F * (D.dy / D.r);
+                    let F = (this.options.G * body.mass * attractor.mass) / Math.pow(D.r, 2);
+                    let Fx = F * (D.dx / D.r);
+                    let Fy = F * (D.dy / D.r);
 
                     netFx += Fx;
                     netFy += Fy;
@@ -51,8 +51,8 @@ export default function(args) {
             }, this);
 
             // Calculate accelerations
-            var ax = netFx / body.mass;
-            var ay = netFy / body.mass;
+            let ax = netFx / body.mass;
+            let ay = netFy / body.mass;
 
             // Calculate new velocities, normalized by the 'time' interval
             body.velX += deltaT * ax;
@@ -64,7 +64,7 @@ export default function(args) {
         },
 
         calculateDistance: function(body, other) {
-            var D = {};
+            let D = {};
 
             // Calculate the change in position along the two dimensions
             D.dx = other.x - body.x;
@@ -79,8 +79,8 @@ export default function(args) {
         detectCollision: function(body, index) {
             this.bodies.forEach(function(collider, i) {
                 if (i !== index) {
-                    var r = this.calculateDistance(body, collider).r;
-                    var clearance = body.radius + collider.radius;
+                    let r = this.calculateDistance(body, collider).r;
+                    let clearance = body.radius + collider.radius;
 
                     if (r <= clearance) {
                         // Collision detected
@@ -101,7 +101,7 @@ export default function(args) {
         },
 
         addNewBody: function(args) {
-            var body = gtBody(args);
+            let body = gtBody(args);
             this.bodies.push(body);
 
             return body;

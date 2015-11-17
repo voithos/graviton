@@ -2,7 +2,7 @@
  * graviton/timer -- Sim timer and FPS limiter
  */
 export default function(args) {
-    var self = {
+    let self = {
         // Attributes
         //-----------------
 
@@ -18,9 +18,9 @@ export default function(args) {
             options = options || {};
 
             // Compute the delay in milliseconds
-            var timeout = parseInt(1000 / fps, 10);
+            let timeout = parseInt(1000 / fps, 10);
 
-            var callback = {
+            let callback = {
                 fn: func,
                 context: context,
                 delay: timeout,
@@ -40,8 +40,8 @@ export default function(args) {
         },
 
         removeCallback: function(func) {
-            for (var i = 0; i < this.callbacks.length; i++) {
-                var callback = this.callbacks[i];
+            for (let i = 0; i < this.callbacks.length; i++) {
+                let callback = this.callbacks[i];
                 if (callback.fn === func) {
                     clearInterval(callback.intervalId);
                     this.callbacks.splice(i, 1);

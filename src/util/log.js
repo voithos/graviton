@@ -8,8 +8,8 @@ export default {
 
     write: function(message, level) {
         if (typeof console !== 'undefined') {
-            var now = new Date();
-            var stamp = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate() + 'T' +
+            let now = new Date();
+            let stamp = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate() + 'T' +
                 now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ':' + now.getMilliseconds();
 
             message = stamp + ' ' + message;
@@ -21,7 +21,7 @@ export default {
             if (console[level]) {
                 console[level](message);
             } else {
-                throw new TypeError('Log level does not exist.');
+                throw Error('Log level does not exist.');
             }
         }
     },
@@ -32,7 +32,7 @@ export default {
         if (console[level]) {
             config.logLevel = level;
         } else {
-            throw new TypeError('Log level does not exist.');
+            throw Error('Log level does not exist.');
         }
     }
 };

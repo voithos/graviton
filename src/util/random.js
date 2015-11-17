@@ -28,7 +28,7 @@ export default {
      * between the given positions
      */
     directional: function() {
-        var rand = this.number.apply(this, arguments);
+        let rand = this.number.apply(this, arguments);
         if (Math.random() > 0.5) {
             rand = -rand;
         }

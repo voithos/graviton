@@ -9,7 +9,7 @@ import gtEvents from './events';
 import gtTimer from './timer';
 
 export default function(args) {
-    var self = {
+    let self = {
         // Attributes
         //-----------------
 
@@ -34,10 +34,10 @@ export default function(args) {
         main: function() {
             // Event processing
             //--------------------
-            var eventcodes = this.events.eventcodes;
+            let eventcodes = this.events.eventcodes;
 
             this.events.qget().forEach(function(event) {
-                var retval;
+                let retval;
 
                 switch (event.type) {
                     case eventcodes.MOUSEDOWN:
@@ -59,7 +59,7 @@ export default function(args) {
                         if (this.interaction.started) {
                             this.interaction.started = false;
 
-                            var body = this.interaction.body;
+                            let body = this.interaction.body;
 
                             body.velX = (event.position.x - body.x) * 0.0000001;
                             body.velY = (event.position.y - body.y) * 0.0000001;
@@ -85,7 +85,7 @@ export default function(args) {
                         break; // end MOUSEWHEEL
 
                     case eventcodes.KEYDOWN:
-                        var keycodes = this.events.keycodes;
+                        let keycodes = this.events.keycodes;
 
                         switch (event.keycode) {
                             case keycodes.K_ENTER:
@@ -182,25 +182,25 @@ export default function(args) {
         generateBodies: function(num, args) {
             args = args || {};
 
-            var minX = args.minX || 0;
-            var maxX = args.maxX || this.options.width;
-            var minY = args.minY || 0;
-            var maxY = args.maxY || this.options.height;
+            let minX = args.minX || 0;
+            let maxX = args.maxX || this.options.width;
+            let minY = args.minY || 0;
+            let maxY = args.maxY || this.options.height;
 
-            var minVelX = args.minVelX || 0;
-            var maxVelX = args.maxVelX || 0.00001;
-            var minVelY = args.minVelY || 0;
-            var maxVelY = args.maxVelY || 0.00001;
+            let minVelX = args.minVelX || 0;
+            let maxVelX = args.maxVelX || 0.00001;
+            let minVelY = args.minVelY || 0;
+            let maxVelY = args.maxVelY || 0.00001;
 
-            var minMass = args.minMass || 1;
-            var maxMass = args.maxMass || 150;
+            let minMass = args.minMass || 1;
+            let maxMass = args.maxMass || 150;
 
-            var minRadius = args.minRadius || 1;
-            var maxRadius = args.maxRadius || 15;
+            let minRadius = args.minRadius || 1;
+            let maxRadius = args.maxRadius || 15;
 
-            var color = args.color;
+            let color = args.color;
 
-            for (var i = 0; i < num; i++) {
+            for (let i = 0; i < num; i++) {
                 if (args.randomColors === true) {
                     color = random.color();
                 }

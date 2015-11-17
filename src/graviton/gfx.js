@@ -2,7 +2,7 @@
  * graviton/gfx -- The graphics object
  */
 export default function(args) {
-    var self = {
+    let self = {
         // Attributes
         //-----------------
 
@@ -20,7 +20,7 @@ export default function(args) {
         },
 
         drawBodies: function(bodies) {
-            for (var i = 0; i < bodies.length; i++) {
+            for (let i = 0; i < bodies.length; i++) {
                 this.drawBody(bodies[i]);
             }
         },
@@ -53,7 +53,7 @@ export default function(args) {
     self.ctx = self.grid.getContext('2d');
 
     if (typeof self.grid === 'undefined') {
-        throw new TypeError('No usable canvas element was given.');
+        throw Error('No usable canvas element was given.');
     }
 
     return self;
