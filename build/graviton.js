@@ -58,7 +58,7 @@ exports.default = function (args) {
             //--------------------
             var eventcodes = this.events.eventcodes;
 
-            _lambda2.default.foreach(this.events.qget(), function (event) {
+            this.events.qget().forEach(function (event) {
                 var retval;
 
                 switch (event.type) {
@@ -192,10 +192,6 @@ exports.default = function (args) {
             this.grid.style.display = 'block';
             this.grid.style.marginLeft = style.marginLeft || 'auto';
             this.grid.style.marginRight = style.marginRight || 'auto';
-            this.grid.style.borderStyle = style.borderStyle || 'solid';
-            this.grid.style.borderWidth = style.borderWidth || 'medium';
-            this.grid.style.borderColor = style.borderColor || '#CCCCCC';
-            this.grid.style.borderRadius = style.borderRadius || '15px';
             this.grid.style.backgroundColor = style.backgroundColor || '#000000';
 
             if (target) {
@@ -275,8 +271,8 @@ exports.default = function (args) {
 
     // Process arguments
     //------------------
-    self.options.width = args.width || _lambda2.default.width(document) * 0.95;
-    self.options.height = args.height || _lambda2.default.height(document) * 0.95;
+    self.options.width = args.width || window.innerWidth;
+    self.options.height = args.height || window.innerHeight;
     self.options.backgroundColor = args.backgroundColor || '#1F263B';
 
     // Retrieve canvas, or build one with arguments
@@ -295,10 +291,6 @@ exports.default = function (args) {
 
     return self;
 };
-
-var _lambda = require('../util/lambda');
-
-var _lambda2 = _interopRequireDefault(_lambda);
 
 var _random = require('../util/random');
 
@@ -326,12 +318,12 @@ var _timer2 = _interopRequireDefault(_timer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+; // end graviton/app
 /**
  * graviton/app -- The interactive graviton application
  */
-; // end graviton/app
 
-},{"../util/lambda":9,"../util/random":11,"./body":3,"./events":4,"./gfx":5,"./sim":6,"./timer":7}],3:[function(require,module,exports){
+},{"../util/random":10,"./body":3,"./events":4,"./gfx":5,"./sim":6,"./timer":7}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -506,19 +498,19 @@ exports.default = function (args) {
 
         wireupEvents: function wireupEvents() {
             // Grid mouse events
-            _lambda2.default.addEvent('click', this.grid, _lambda2.default.bind(this.handleClick, this));
-            _lambda2.default.addEvent('dblclick', this.grid, _lambda2.default.bind(this.handleDblClick, this));
+            this.grid.addEventListener('click', this.handleClick.bind(this));
+            this.grid.addEventListener('dblclick', this.handleDblClick.bind(this));
 
-            _lambda2.default.addEvent('mousedown', this.grid, _lambda2.default.bind(this.handleMouseDown, this));
-            _lambda2.default.addEvent('mouseup', this.grid, _lambda2.default.bind(this.handleMouseUp, this));
-            _lambda2.default.addEvent('mousemove', this.grid, _lambda2.default.bind(this.handleMouseMove, this));
-            _lambda2.default.addEvent('mousewheel', this.grid, _lambda2.default.bind(this.handleMouseWheel, this));
+            this.grid.addEventListener('mousedown', this.handleMouseDown.bind(this));
+            this.grid.addEventListener('mouseup', this.handleMouseUp.bind(this));
+            this.grid.addEventListener('mousemove', this.handleMouseMove.bind(this));
+            this.grid.addEventListener('mousewheel', this.handleMouseWheel.bind(this));
             // Firefox-specific DOM scroll
-            _lambda2.default.addEvent('DOMMouseScroll', this.grid, _lambda2.default.bind(this.handleMouseWheel, this));
+            this.grid.addEventListener('DOMMouseScroll', this.handleMouseWheel.bind(this));
 
             // Grid key events
-            _lambda2.default.addEvent('keydown', document, _lambda2.default.bind(this.handleKeyDown, this));
-            _lambda2.default.addEvent('keyup', document, _lambda2.default.bind(this.handleKeyUp, this));
+            document.addEventListener('keydown', this.handleKeyDown.bind(this));
+            document.addEventListener('keyup', this.handleKeyUp.bind(this));
         },
 
         handleClick: function handleClick(event) {
@@ -650,22 +642,18 @@ exports.default = function (args) {
     return self;
 };
 
-var _lambda = require('../util/lambda');
-
-var _lambda2 = _interopRequireDefault(_lambda);
-
 var _log = require('../util/log');
 
 var _log2 = _interopRequireDefault(_log);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-; // end graviton/events
 /**
  * graviton/events -- Event queueing and processing
  */
+; // end graviton/events
 
-},{"../util/lambda":9,"../util/log":10}],5:[function(require,module,exports){
+},{"../util/log":9}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -755,7 +743,7 @@ exports.default = function (args) {
         //-----------------
 
         step: function step() {
-            _lambda2.default.foreach(this.bodies, function (body, i) {
+            this.bodies.forEach(function (body, i) {
                 if (this.options.collisions === true) {
                     this.detectCollision(this.bodies[i], i);
                 }
@@ -773,7 +761,7 @@ exports.default = function (args) {
             var netFy = 0;
 
             // Iterate through all bodies and sum the forces exerted
-            _lambda2.default.foreach(this.bodies, function (attractor, i) {
+            this.bodies.forEach(function (attractor, i) {
                 if (i !== index) {
                     // Get the distance and position deltas
                     var D = this.calculateDistance(body, attractor);
@@ -815,7 +803,7 @@ exports.default = function (args) {
         },
 
         detectCollision: function detectCollision(body, index) {
-            _lambda2.default.foreach(this.bodies, function (collider, i) {
+            this.bodies.forEach(function (collider, i) {
                 if (i !== index) {
                     var r = this.calculateDistance(body, collider).r;
                     var clearance = body.radius + collider.radius;
@@ -831,7 +819,7 @@ exports.default = function (args) {
         removeScattered: function removeScattered(body, index) {
             if (body.x > this.options.scatterLimit || body.x < -this.options.scatterLimit || body.y > this.options.scatterLimit || body.y < -this.options.scatterLimit) {
                 // Remove from body collection
-                return _lambda2.default.remove(this.bodies, index);
+                return this.bodies.splice(index, 1);
             }
         },
 
@@ -843,7 +831,7 @@ exports.default = function (args) {
         },
 
         removeBody: function removeBody(index) {
-            _lambda2.default.remove(this.bodies, index);
+            this.bodies.splice(index, 1);
         },
 
         clear: function clear() {
@@ -863,10 +851,6 @@ exports.default = function (args) {
     return self;
 };
 
-var _lambda = require('../util/lambda');
-
-var _lambda2 = _interopRequireDefault(_lambda);
-
 var _log = require('../util/log');
 
 var _log2 = _interopRequireDefault(_log);
@@ -877,13 +861,13 @@ var _body2 = _interopRequireDefault(_body);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+; // end graviton/sim
 /**
  * graviton/sim -- The gravitational simulator
  */
-; // end graviton/sim
 
-},{"../util/lambda":9,"../util/log":10,"./body":3}],7:[function(require,module,exports){
-'use strict';
+},{"../util/log":9,"./body":3}],7:[function(require,module,exports){
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -920,42 +904,43 @@ exports.default = function (args) {
 
             // Start interval if running, or if `autostart` is given
             if (this.running || options.autostart) {
-                callback.intervalId = setInterval(_lambda2.default.bind(callback.fn, callback.context), callback.delay);
+                callback.intervalId = setInterval(callback.fn.bind(callback.context), callback.delay);
                 callback.started = true;
             }
         },
 
         removeCallback: function removeCallback(func) {
-            _lambda2.default.foreach(this.callbacks, function (callback, i) {
+            for (var i = 0; i < this.callbacks.length; i++) {
+                var callback = this.callbacks[i];
                 if (callback.fn === func) {
                     clearInterval(callback.intervalId);
-                    _lambda2.default.remove(this.callbacks, i);
-                    return false;
+                    this.callbacks.splice(i, 1);
+                    break;
                 }
-            }, this);
+            }
         },
 
         start: function start() {
             this.running = true;
 
-            _lambda2.default.foreach(this.callbacks, function (callback) {
+            this.callbacks.forEach(function (callback) {
                 if (!callback.started) {
-                    callback.intervalId = setInterval(_lambda2.default.bind(callback.fn, callback.context), callback.delay);
+                    callback.intervalId = setInterval(callback.fn.bind(callback.context), callback.delay);
                     callback.started = true;
                 }
-            }, this);
+            });
         },
 
         stop: function stop() {
             this.running = false;
 
-            _lambda2.default.foreach(this.callbacks, function (callback) {
+            this.callbacks.forEach(function (callback) {
                 if (!callback.nostop) {
                     clearInterval(callback.intervalId);
                     callback.intervalId = null;
                     callback.started = false;
                 }
-            }, this);
+            });
         },
 
         toggle: function toggle() {
@@ -972,18 +957,12 @@ exports.default = function (args) {
     return self;
 };
 
-var _lambda = require('../util/lambda');
-
-var _lambda2 = _interopRequireDefault(_lambda);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+; // end graviton/timer
 /**
  * graviton/timer -- Sim timer and FPS limiter
  */
-; // end graviton/timer
 
-},{"../util/lambda":9}],8:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 var _graviton = require('./graviton');
@@ -998,121 +977,6 @@ window.onload = function () {
 };
 
 },{"./graviton":1}],9:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-/**
- * Lambda library -- Collection of utility functions
- */
-exports.default = {
-    /**
-     * isArray -- Test if an object is an array
-     */
-    isArray: function isArray(obj) {
-        return Object.prototype.toString.call(obj) === '[object Array]';
-    },
-
-    /**
-     * bind -- Allow a specific object to be carried
-     * with a function reference as the execution context
-     */
-    bind: function bind(fn, context) {
-        return function () {
-            return fn.apply(context, arguments);
-        };
-    },
-
-    /**
-     * foreach -- Iterate through a collection (array or object) using an
-     * iterator function
-     */
-    foreach: function foreach(obj, fn, context) {
-        var returned;
-
-        // Use native `forEach` if available
-        if (Array.prototype.forEach && obj.forEach === Array.prototype.forEach) {
-            obj.forEach(fn, context);
-        } else if (L.isArray(obj)) {
-            // Loop through arrays
-            for (var i = 0; i < obj.length; i++) {
-                returned = fn.call(context, obj[i], i, obj);
-
-                // Break if signaled
-                if (returned === false) {
-                    return;
-                }
-            }
-        } else {
-            // Assume object
-            for (var key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    returned = fn.call(context, obj[key], key, obj);
-
-                    // Break if signaled
-                    if (returned === false) {
-                        return;
-                    }
-                }
-            }
-        }
-    },
-
-    /**
-     * remove -- Remove a given element from an array
-     */
-    remove: function remove(arr, start, count) {
-        return arr.splice(start, count ? count : 1);
-    },
-
-    /**
-     * addEvent -- Attach an event handler to an element
-     */
-    addEvent: function addEvent(event, el, fn) {
-        if (el.addEventListener) {
-            el.addEventListener(event, fn, false);
-        } else if (el.attachEvent) {
-            el.attachEvent('on' + event, fn);
-        }
-    },
-
-    /**
-     * width -- Get the width of an element
-     */
-    width: function width(el) {
-        // Get window width
-        if (el === el.window) {
-            return el.document.documentElement.clientWidth;
-        }
-
-        // Get document width
-        if (el.nodeType === 9) {
-            var doc = el.documentElement;
-
-            return Math.max(el.body.scrollWidth, doc.scrollWidth, el.body.offsetWidth, doc.offsetWidth, doc.clientWidth);
-        }
-    },
-
-    /**
-     * height -- Get the height of an element
-     */
-    height: function height(el) {
-        // Get window height
-        if (el === el.window) {
-            return el.document.documentElement.clientHeight;
-        }
-
-        // Get document height
-        if (el.nodeType === 9) {
-            var doc = el.documentElement;
-
-            return Math.max(el.body.scrollHeight, doc.scrollHeight, el.body.offsetHeight, doc.offsetHeight, doc.clientHeight);
-        }
-    }
-};
-
-},{}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1156,7 +1020,7 @@ exports.default = {
     }
 };
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

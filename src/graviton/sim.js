@@ -1,7 +1,6 @@
 /**
  * graviton/sim -- The gravitational simulator
  */
-import L from '../util/lambda';
 import log from '../util/log';
 import gtBody from './body';
 
@@ -18,7 +17,7 @@ export default function(args) {
         //-----------------
 
         step: function() {
-            L.foreach(this.bodies, function(body, i) {
+            this.bodies.forEach(function(body, i) {
                 if (this.options.collisions === true) {
                     this.detectCollision(this.bodies[i], i);
                 }
@@ -36,7 +35,7 @@ export default function(args) {
             var netFy = 0;
 
             // Iterate through all bodies and sum the forces exerted
-            L.foreach(this.bodies, function(attractor, i) {
+            this.bodies.forEach(function(attractor, i) {
                 if (i !== index) {
                     // Get the distance and position deltas
                     var D = this.calculateDistance(body, attractor);
@@ -78,7 +77,7 @@ export default function(args) {
         },
 
         detectCollision: function(body, index) {
-            L.foreach(this.bodies, function(collider, i) {
+            this.bodies.forEach(function(collider, i) {
                 if (i !== index) {
                     var r = this.calculateDistance(body, collider).r;
                     var clearance = body.radius + collider.radius;
@@ -97,7 +96,7 @@ export default function(args) {
                 body.y > this.options.scatterLimit ||
                 body.y < -this.options.scatterLimit) {
                 // Remove from body collection
-                return L.remove(this.bodies, index);
+                return this.bodies.splice(index, 1);
             }
         },
 
@@ -109,7 +108,7 @@ export default function(args) {
         },
 
         removeBody: function(index) {
-            L.remove(this.bodies, index);
+            this.bodies.splice(index, 1);
         },
 
         clear: function() {

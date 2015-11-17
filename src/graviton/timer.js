@@ -1,8 +1,6 @@
 /**
  * graviton/timer -- Sim timer and FPS limiter
  */
-import L from '../util/lambda';
-
 export default function(args) {
     var self = {
         // Attributes
@@ -35,45 +33,46 @@ export default function(args) {
             // Start interval if running, or if `autostart` is given
             if (this.running || options.autostart) {
                 callback.intervalId = setInterval(
-                    L.bind(callback.fn, callback.context),
+                    callback.fn.bind(callback.context),
                     callback.delay);
                 callback.started = true;
             }
         },
 
         removeCallback: function(func) {
-            L.foreach(this.callbacks, function(callback, i) {
+            for (var i = 0; i < this.callbacks.length; i++) {
+                var callback = this.callbacks[i];
                 if (callback.fn === func) {
                     clearInterval(callback.intervalId);
-                    L.remove(this.callbacks, i);
-                    return false;
+                    this.callbacks.splice(i, 1);
+                    break;
                 }
-            }, this);
+            }
         },
 
         start: function() {
             this.running = true;
 
-            L.foreach(this.callbacks, function(callback) {
+            this.callbacks.forEach(function(callback) {
                 if (!callback.started) {
                     callback.intervalId = setInterval(
-                        L.bind(callback.fn, callback.context),
+                        callback.fn.bind(callback.context),
                         callback.delay);
                     callback.started = true;
                 }
-            }, this);
+            });
         },
 
         stop: function() {
             this.running = false;
 
-            L.foreach(this.callbacks, function(callback) {
+            this.callbacks.forEach(function(callback) {
                 if (!callback.nostop) {
                     clearInterval(callback.intervalId);
                     callback.intervalId = null;
                     callback.started = false;
                 }
-            }, this);
+            });
         },
 
         toggle: function() {

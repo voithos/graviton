@@ -1,7 +1,6 @@
 /**
  * graviton/app -- The interactive graviton application
  */
-import L from '../util/lambda';
 import random from '../util/random';
 import gtSim from './sim';
 import gtGfx from './gfx';
@@ -37,7 +36,7 @@ export default function(args) {
             //--------------------
             var eventcodes = this.events.eventcodes;
 
-            L.foreach(this.events.qget(), function(event) {
+            this.events.qget().forEach(function(event) {
                 var retval;
 
                 switch (event.type) {
@@ -171,10 +170,6 @@ export default function(args) {
             this.grid.style.display = 'block';
             this.grid.style.marginLeft = style.marginLeft || 'auto';
             this.grid.style.marginRight = style.marginRight || 'auto';
-            this.grid.style.borderStyle = style.borderStyle || 'solid';
-            this.grid.style.borderWidth = style.borderWidth || 'medium';
-            this.grid.style.borderColor = style.borderColor || '#CCCCCC';
-            this.grid.style.borderRadius = style.borderRadius || '15px';
             this.grid.style.backgroundColor = style.backgroundColor || '#000000';
 
             if (target) {
@@ -254,8 +249,8 @@ export default function(args) {
 
     // Process arguments
     //------------------
-    self.options.width = args.width || L.width(document) * 0.95;
-    self.options.height = args.height || L.height(document) * 0.95;
+    self.options.width = args.width || window.innerWidth;
+    self.options.height = args.height || window.innerHeight;
     self.options.backgroundColor = args.backgroundColor || '#1F263B';
 
     // Retrieve canvas, or build one with arguments

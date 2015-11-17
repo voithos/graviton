@@ -1,7 +1,6 @@
 /**
  * graviton/events -- Event queueing and processing
  */
-import L from '../util/lambda';
 import log from '../util/log';
 
 export default function(args) {
@@ -121,19 +120,19 @@ export default function(args) {
 
         wireupEvents: function() {
             // Grid mouse events
-            L.addEvent('click', this.grid, L.bind(this.handleClick, this));
-            L.addEvent('dblclick', this.grid, L.bind(this.handleDblClick, this));
+            this.grid.addEventListener('click', this.handleClick.bind(this));
+            this.grid.addEventListener('dblclick', this.handleDblClick.bind(this));
 
-            L.addEvent('mousedown', this.grid, L.bind(this.handleMouseDown, this));
-            L.addEvent('mouseup', this.grid, L.bind(this.handleMouseUp, this));
-            L.addEvent('mousemove', this.grid, L.bind(this.handleMouseMove, this));
-            L.addEvent('mousewheel', this.grid, L.bind(this.handleMouseWheel, this));
+            this.grid.addEventListener('mousedown', this.handleMouseDown.bind(this));
+            this.grid.addEventListener('mouseup', this.handleMouseUp.bind(this));
+            this.grid.addEventListener('mousemove', this.handleMouseMove.bind(this));
+            this.grid.addEventListener('mousewheel', this.handleMouseWheel.bind(this));
             // Firefox-specific DOM scroll
-            L.addEvent('DOMMouseScroll', this.grid, L.bind(this.handleMouseWheel, this));
+            this.grid.addEventListener('DOMMouseScroll', this.handleMouseWheel.bind(this));
 
             // Grid key events
-            L.addEvent('keydown', document, L.bind(this.handleKeyDown, this));
-            L.addEvent('keyup', document, L.bind(this.handleKeyUp, this));
+            document.addEventListener('keydown', this.handleKeyDown.bind(this));
+            document.addEventListener('keyup', this.handleKeyUp.bind(this));
         },
 
         handleClick: function(event) {
