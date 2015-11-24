@@ -3,8 +3,7 @@
  */
 export default {
     /**
-     * random.number -- Generate a random number between the given start
-     * and end points
+     * Generate a random number between the given start and end points
      */
     number(from, to=null) {
         if (to === null) {
@@ -16,16 +15,15 @@ export default {
     },
 
     /**
-     * random.integer -- Generate a random integer between the given
-     * positions
+     * Generate a random integer between the given positions
      */
     integer(...args) {
         return Math.round(this.number(...args));
     },
 
     /**
-     * random.directional -- Generate a random number, with a random sign,
-     * between the given positions
+     * Generate a random number, with a random sign, between the given
+     * positions
      */
     directional(...args) {
         let rand = this.number(...args);
@@ -36,7 +34,7 @@ export default {
     },
 
     /**
-     * random.color -- Generate a random hexadecimal color
+     * Generate a random hexadecimal color
      */
     color() {
         return '#' + ('00000' + Math.floor(Math.random() * 0xffffff).toString(16)).substr(-6);
