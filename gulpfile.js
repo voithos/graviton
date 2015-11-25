@@ -45,7 +45,6 @@ var bundler;
  * @param {boolean=} opt_isWatcher Whether watchify should be used
  */
 var getBundler = function(entries, opt_isWatcher) {
-    console.log(!!bundler);
     if (!bundler) {
         bundler = browserify(opt_isWatcher ?
                 extend({}, WATCHIFY_CONFIG, { entries: entries }) :
