@@ -130,7 +130,7 @@ export default function(args) {
             this.timer = args.timer = gtTimer(args);
             this.events = args.events = gtEvents(args);
             this.sim = gtSim(args);
-            this.gfx = gtGfx(args);
+            this.gfx = new gtGfx(args);
         },
 
         initTimers: function() {
@@ -152,7 +152,6 @@ export default function(args) {
         },
 
         redraw: function() {
-            this.gfx.clear();
             this.gfx.drawBodies(this.sim.bodies);
         },
 

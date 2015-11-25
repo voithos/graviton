@@ -1,60 +1,52 @@
 /**
  * graviton/gfx -- The graphics object
  */
-export default function(args) {
-    let self = {
-        // Attributes
-        //-----------------
+export default class {
+    constructor(args) {
+        args = args || {};
 
-        options: {},
-        grid: null,
-        ctx: null,
+        this.noclear = args.noclear || false;
 
-        // Functions
-        //-----------------
+        this.grid = typeof args.grid === 'string' ?
+            document.getElementById(args.grid) :
+            args.grid;
 
-        clear: function() {
-            // Setting the width has the side effect
-            // of clearing the canvas
-            this.grid.width = this.grid.width;
-        },
-
-        drawBodies: function(bodies) {
-            for (let i = 0; i < bodies.length; i++) {
-                this.drawBody(bodies[i]);
-            }
-        },
-
-        drawBody: function(body) {
-            this.ctx.fillStyle = body.color;
-
-            this.ctx.beginPath();
-            this.ctx.arc(body.x, body.y, body.radius, 0, Math.PI * 2, true);
-
-            this.ctx.fill();
-        },
-
-        drawLine: function(args) {
-            this.ctx.strokeStyle = args.strokeStyle || '#DD2222';
-            this.ctx.beginPath();
-            this.ctx.moveTo(args.from.x, args.from.y);
-            this.ctx.lineTo(args.to.x, args.to.y);
-            this.ctx.stroke();
+        if (typeof this.grid === 'undefined') {
+            throw Error('No usable canvas element was given.');
         }
-    };
 
-    args = args || {};
-
-    // Process arguments
-    //------------------
-    self.options.noclear = args.noclear || false;
-
-    self.grid = typeof args.grid === 'string' ? document.getElementById(args.grid) : args.grid;
-    self.ctx = self.grid.getContext('2d');
-
-    if (typeof self.grid === 'undefined') {
-        throw Error('No usable canvas element was given.');
+        this.ctx = this.grid.getContext('2d');
     }
 
-    return self;
+    clear() {
+        // Setting the width has the side effect
+        // of clearing the canvas
+        this.grid.width = this.grid.width;
+    }
+
+    drawBodies(bodies) {
+        if (!this.noclear) {
+            this.clear();
+        }
+        for (let body of bodies) {
+            this.drawBody(body);
+        }
+    }
+
+    drawBody(body) {
+        this.ctx.fillStyle = body.color;
+
+        this.ctx.beginPath();
+        this.ctx.arc(body.x, body.y, body.radius, 0, Math.PI * 2, true);
+
+        this.ctx.fill();
+    }
+
+    drawLine(args) {
+        this.ctx.strokeStyle = args.strokeStyle || '#DD2222';
+        this.ctx.beginPath();
+        this.ctx.moveTo(args.from.x, args.from.y);
+        this.ctx.lineTo(args.to.x, args.to.y);
+        this.ctx.stroke();
+    }
 }; // end graviton/gfx
