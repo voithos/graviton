@@ -1,14 +1,15 @@
 TODO
 ====
 
-- Add help dialog (explaining keyboard shortcuts).
-- Add icon indication / button for "play / pause"
-- Add ability to change mass / density.
-- Add targeting reticle for initial velocity.
-- Add ability to delete body.
-- Add ability to change body color.
-- Add ability to toggle body trails.
-- Use higher-performance gravity simulation algorithm.
-- Add lighting and light sources (WebGL necessary?).
-- Add sample scenarios (earth, solar system, etc).
 - Add unit tests.
+- Add icon indication / button for "play / pause"
+- Add targeting reticle for initial velocity.
+- Add ability to toggle body trails.
+- Add ability to delete body.
+- Add toggleable orbit lines
+- Add ability to change mass / density.
+- Add ability to change body color.
+- Add help dialog (explaining keyboard shortcuts).
+- Use higher-performance gravity simulation algorithm.
+- Add sample scenarios (earth, solar system, etc).
+- Add lighting and light sources (WebGL necessary?).

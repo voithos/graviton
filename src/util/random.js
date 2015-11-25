@@ -18,7 +18,7 @@ export default {
      * Generate a random integer between the given positions
      */
     integer(...args) {
-        return Math.round(this.number(...args));
+        return Math.floor(this.number(...args));
     },
 
     /**
@@ -37,6 +37,6 @@ export default {
      * Generate a random hexadecimal color
      */
     color() {
-        return '#' + ('00000' + Math.floor(Math.random() * 0xffffff).toString(16)).substr(-6);
+        return '#' + ('00000' + Math.floor(Math.random() * 0x1000000).toString(16)).substr(-6);
     }
 };
