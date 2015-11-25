@@ -18,19 +18,21 @@ export default {
 
             // Write to console -- currently, `log`, `debug`, `info`, `warn`, and `error`
             // are available
+            /* eslint-disable no-console */
             if (console[level]) {
                 console[level](message);
             } else {
                 throw Error('Log level does not exist.');
             }
+            /* eslint-enable no-console */
         }
     },
 
     setLevel(level) {
         level = level.toLowerCase();
 
-        if (console[level]) {
-            config.logLevel = level;
+        if (console[level]) { // eslint-disable-line no-console
+            this.config.logLevel = level;
         } else {
             throw Error('Log level does not exist.');
         }

@@ -4,7 +4,6 @@
 import random from '../util/random';
 import gtSim from './sim';
 import gtGfx from './gfx';
-import gtBody from './body';
 import gtEvents from './events';
 import gtTimer from './timer';
 

@@ -1,19 +1,23 @@
 var gulp = require('gulp');
+var jasmine = require('gulp-jasmine');
+var eslint = require('gulp-eslint');
+var source = require('vinyl-source-stream');
 var browserify = require('browserify');
 var watchify = require('watchify');
 var babelify = require('babelify');
 var browserSync = require('browser-sync').create();
-var source = require('vinyl-source-stream');
 var del = require('del');
 var glob = require('glob');
 var path = require('path');
-var jasmine = require('gulp-jasmine');
 var extend = require('extend');
 
+// Constants and config.
+// --------------------
 var VIRT_FILE = 'graviton.js';
 var VIRT_TEST_FILE = 'graviton_spec.js';
 var ENTRY_FILE = './src/main.js';
 var BUILD_PATH = './build';
+var SRC_PATTERN = './src/**/*.js';
 var TEST_PATTERN = './test/**/*_spec.js';
 
 var WATCHIFY_CONFIG = {
@@ -27,14 +31,25 @@ var BABELIFY_CONFIG = {
     presets: ['es2015']
 };
 
-
-/**
- * Clean the build directory.
- */
-var clean = function() {
-    return del(BUILD_PATH);
+var ESLINT_CONFIG = {
+    extends: 'eslint:recommended',
+    env: {
+        browser: true,
+        es6: true
+    },
+    ecmaFeatures: {
+        modules: true
+    },
+    rules: {
+        // eslint seems to have trouble with semicolons on the end of export
+        // statements
+        'no-extra-semi': 0
+    },
 };
 
+
+// Tasks
+// -----
 
 var bundler;
 
@@ -122,7 +137,36 @@ var watchTestSetup = function() {
 };
 
 
-gulp.task('clean', clean);
+/**
+ * Clean the build directory.
+ */
+var clean = function() {
+    return del(BUILD_PATH);
+};
+
+
+/**
+ * Lint the source files.
+ */
+var lint = function() {
+    return gulp.src(SRC_PATTERN)
+        .pipe(eslint(ESLINT_CONFIG))
+        .pipe(eslint.format());
+};
+
+
+/**
+ * Lint the test files.
+ */
+var lintTests = function() {
+    var eslintConfig = extend({}, ESLINT_CONFIG);
+    eslintConfig.env['jasmine'] = true;
+    return gulp.src(TEST_PATTERN)
+        .pipe(eslint(eslintConfig))
+        .pipe(eslint.format());
+
+};
+
 
 // Build
 gulp.task('build', build);
@@ -136,6 +180,11 @@ gulp.task('build-tests', buildTests);
 gulp.task('test', ['build-tests'], test);
 gulp.task('watch-test-setup', watchTestSetup);
 gulp.task('watch-test', ['watch-test-setup', 'test']);
+
+// Misc
+gulp.task('clean', clean);
+gulp.task('lint', lint);
+gulp.task('lint-tests', lintTests);
 
 
 gulp.task('default', ['watch']);
