@@ -1,41 +1,21 @@
 /**
  * graviton/body -- The gravitational body
  */
-export default function(args) {
-    let self = {
-        // Attributes
-        //-----------------
+export default class {
+    constructor(args) {
+        args = args || {};
 
-        x: 0,
-        y: 0,
+        this.x = args.x;
+        this.y = args.y;
+        if (typeof this.x !== 'number' || typeof this.y !== 'number') {
+            throw Error('Correct positions were not given for the body.');
+        }
 
-        velX: 0,
-        velY: 0,
+        this.velX = args.velX || 0;
+        this.velY = args.velY || 0;
 
-        mass: 0,
-        radius: 0,
-        color: ''
-
-        // Functions
-        //-----------------
-    };
-
-    args = args || {};
-
-    // Process arguments
-    //------------------
-    self.x = args.x;
-    self.y = args.y;
-    if (typeof self.x !== 'number' || typeof self.y !== 'number') {
-        throw Error('Correct positions were not given for the body.');
+        this.mass = args.mass || 10;
+        this.radius = args.radius || 4;
+        this.color = args.color || '#FFFFFF';
     }
-
-    self.velX = args.velX || 0;
-    self.velY = args.velY || 0;
-    self.mass = args.mass || 10;
-    self.radius = args.radius || 4;
-
-    self.color = args.color || '#FFFFFF';
-
-    return self;
 }; // end graviton/body

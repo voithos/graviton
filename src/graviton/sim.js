@@ -101,7 +101,7 @@ export default function(args) {
         },
 
         addNewBody: function(args) {
-            let body = gtBody(args);
+            let body = new gtBody(args);
             this.bodies.push(body);
 
             return body;
