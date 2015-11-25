@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var gutil = require('gulp-util');
 var jasmine = require('gulp-jasmine');
 var eslint = require('gulp-eslint');
 var source = require('vinyl-source-stream');
@@ -51,6 +52,23 @@ var ESLINT_CONFIG = {
 // Tasks
 // -----
 
+/**
+ * Prints the error message.
+ */
+var onError = function(e) {
+    if (e && e.codeFrame) {
+        // Babel error.
+        gutil.log(
+                gutil.colors.red(e.filename) + ':' +
+                gutil.colors.cyan(e.loc.line + ',' + e.loc.column) + '\n' +
+                e.message + '\n' +
+                e.codeFrame);
+    } else {
+        gutil.log(gutil.colors.red(e));
+    }
+};
+
+
 var bundler;
 
 /**
@@ -77,6 +95,7 @@ var getBundler = function(entries, opt_isWatcher) {
 var build = function() {
     return getBundler([ENTRY_FILE])
         .bundle()
+        .on('error', onError)
         // We're using native browserify, which doesn't know about gulp,
         // so we pipe it to vinyl-source-stream to convert browserify's
         // text stream to an efficient vinyl stream usable by gulp.
@@ -111,6 +130,7 @@ var buildTests = function() {
     var specs = glob.sync(TEST_PATTERN);
     return getBundler(specs)
         .bundle()
+        .on('error', onError)
         .pipe(source(VIRT_TEST_FILE))
         .pipe(gulp.dest(BUILD_PATH));
 };
