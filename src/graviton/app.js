@@ -127,9 +127,9 @@ export default function(args) {
 
         initComponents: function() {
             // Create components -- order is important
-            this.timer = args.timer = gtTimer(args);
+            this.timer = args.timer = new gtTimer(args);
             this.events = args.events = gtEvents(args);
-            this.sim = gtSim(args);
+            this.sim = new gtSim(args);
             this.gfx = new gtGfx(args);
         },
 
