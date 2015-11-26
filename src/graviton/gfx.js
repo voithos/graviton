@@ -49,4 +49,4 @@ export default class {
         this.ctx.lineTo(args.to.x, args.to.y);
         this.ctx.stroke();
     }
-}; // end graviton/gfx
+} // end graviton/gfx

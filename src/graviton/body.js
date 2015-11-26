@@ -18,4 +18,4 @@ export default class {
         this.radius = args.radius || 4;
         this.color = args.color || '#FFFFFF';
     }
-}; // end graviton/body
+} // end graviton/body

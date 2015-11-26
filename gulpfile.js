@@ -40,12 +40,7 @@ var ESLINT_CONFIG = {
     },
     ecmaFeatures: {
         modules: true
-    },
-    rules: {
-        // eslint seems to have trouble with semicolons on the end of export
-        // statements
-        'no-extra-semi': 0
-    },
+    }
 };
 
 

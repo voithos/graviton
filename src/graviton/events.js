@@ -264,4 +264,4 @@ export default function(args) {
     self.wireupEvents();
 
     return self;
-}; // end graviton/events
+} // end graviton/events

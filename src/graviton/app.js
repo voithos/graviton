@@ -266,4 +266,4 @@ export default function(args) {
     self.initTimers();
 
     return self;
-}; // end graviton/app
+} // end graviton/app

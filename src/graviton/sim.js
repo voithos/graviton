@@ -126,4 +126,4 @@ export default function(args) {
     self.options.scatterLimit = args.scatterLimit || 10000;
 
     return self;
-}; // end graviton/sim
+} // end graviton/sim

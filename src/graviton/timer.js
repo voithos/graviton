@@ -87,4 +87,4 @@ export default function(args) {
     self.options.defaultFps = args.defaultFps || 30;
 
     return self;
-}; // end graviton/timer
+} // end graviton/timer
