@@ -1,8 +1,6 @@
 /**
  * graviton/events -- Event queueing and processing
  */
-import log from '../util/log';
-
 export const KEYCODES = {
     K_LEFT: 37,
     K_UP: 38,
