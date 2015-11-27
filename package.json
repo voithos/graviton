@@ -2,7 +2,7 @@
   "name": "graviton",
   "version": "0.3.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/main",
   "devDependencies": {
     "babel-preset-es2015": "~6.1.18",
     "babelify": "~7.2.0",
@@ -10,13 +10,14 @@
     "browserify": "~12.0.1",
     "del": "~2.1.0",
     "extend": "~3.0.0",
+    "gulp": "~3.9.0",
     "gulp-eslint": "~1.1.1",
     "gulp-jasmine": "~2.2.1",
     "vinyl-source-stream": "~1.1.0",
     "watchify": "~3.6.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
