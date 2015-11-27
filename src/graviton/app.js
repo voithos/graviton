@@ -4,7 +4,7 @@
 import random from '../util/random';
 import gtSim from './sim';
 import gtGfx from './gfx';
-import gtEvents from './events';
+import gtEvents, { KEYCODES, EVENTCODES } from './events';
 import gtTimer from './timer';
 
 export default function(args) {
@@ -33,13 +33,11 @@ export default function(args) {
         main: function() {
             // Event processing
             //--------------------
-            let eventcodes = this.events.eventcodes;
-
             this.events.qget().forEach(function(event) {
                 let retval;
 
                 switch (event.type) {
-                    case eventcodes.MOUSEDOWN:
+                    case EVENTCODES.MOUSEDOWN:
                         // Add flag to signal other events
                         this.interaction.started = true;
 
@@ -54,7 +52,7 @@ export default function(args) {
                         };
                         break; // end MOUSEDOWN
 
-                    case eventcodes.MOUSEUP:
+                    case EVENTCODES.MOUSEUP:
                         if (this.interaction.started) {
                             this.interaction.started = false;
 
@@ -65,7 +63,7 @@ export default function(args) {
                         }
                         break;
 
-                    case eventcodes.MOUSEMOVE:
+                    case EVENTCODES.MOUSEMOVE:
                         if (this.interaction.started) {
                             this.redrawVector({
                                 from: {
@@ -80,19 +78,17 @@ export default function(args) {
                         }
                         break; // end MOUSEMOVE
 
-                    case eventcodes.MOUSEWHEEL:
+                    case EVENTCODES.MOUSEWHEEL:
                         break; // end MOUSEWHEEL
 
-                    case eventcodes.KEYDOWN:
-                        let keycodes = this.events.keycodes;
-
+                    case EVENTCODES.KEYDOWN:
                         switch (event.keycode) {
-                            case keycodes.K_ENTER:
+                            case KEYCODES.K_ENTER:
                                 // Start or stop simulation
                                 this.toggle();
                                 break;
 
-                            case keycodes.K_C:
+                            case KEYCODES.K_C:
                                 // Clear simulation
                                 this.sim.clear();
                                 this.gfx.clear();
@@ -100,17 +96,17 @@ export default function(args) {
                                 retval = false;
                                 break;
 
-                            case keycodes.K_P:
+                            case KEYCODES.K_P:
                                 // Toggle trails
                                 this.gfx.noclear = !this.gfx.noclear;
                                 break;
 
-                            case keycodes.K_R:
+                            case KEYCODES.K_R:
                                 // Generate random objects
                                 this.generateBodies(10, {randomColors: true});
                                 break;
 
-                            case keycodes.K_T:
+                            case KEYCODES.K_T:
                                 this.sim.addNewBody({x: this.options.width / 2, y: this.options.height / 2, velX: 0, velY: 0, mass: 2000, radius: 50, color: '#5A5A5A'});
                                 this.sim.addNewBody({x: this.options.width - 400, y: this.options.height / 2, velX: 0, velY: 0.000025, mass: 1, radius: 5, color: '#787878'});
                                 break;
@@ -128,7 +124,7 @@ export default function(args) {
         initComponents: function() {
             // Create components -- order is important
             this.timer = args.timer = new gtTimer(args);
-            this.events = args.events = gtEvents(args);
+            this.events = args.events = new gtEvents(args);
             this.sim = new gtSim(args);
             this.gfx = new gtGfx(args);
         },
