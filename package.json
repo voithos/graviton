@@ -13,12 +13,16 @@
     "gulp": "~3.9.0",
     "gulp-eslint": "~1.1.1",
     "gulp-jasmine": "~2.2.1",
+    "pre-commit": "~1.1.2",
     "vinyl-source-stream": "~1.1.0",
     "watchify": "~3.6.1"
   },
   "scripts": {
-    "test": "gulp test"
+    "validate": "gulp validate"
   },
+  "pre-commit": [
+    "validate"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/voithos/graviton.git"

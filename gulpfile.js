@@ -169,7 +169,8 @@ var clean = function() {
 var lint = function() {
     return gulp.src(SRC_PATTERN)
         .pipe(eslint(ESLINT_CONFIG))
-        .pipe(eslint.format());
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError());
 };
 
 
@@ -181,8 +182,8 @@ var lintTests = function() {
     eslintConfig.env['jasmine'] = true;
     return gulp.src(TEST_PATTERN)
         .pipe(eslint(eslintConfig))
-        .pipe(eslint.format());
-
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError());
 };
 
 
@@ -204,5 +205,7 @@ gulp.task('clean', clean);
 gulp.task('lint', lint);
 gulp.task('lint-tests', lintTests);
 
+
+gulp.task('validate', ['test', 'lint', 'lint-tests']);
 
 gulp.task('default', ['watch']);
