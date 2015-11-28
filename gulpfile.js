@@ -40,6 +40,9 @@ var ESLINT_CONFIG = {
     },
     ecmaFeatures: {
         modules: true
+    },
+    rules: {
+        'no-var': 1
     }
 };
 

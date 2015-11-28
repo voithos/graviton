@@ -30,13 +30,13 @@ describe('random', () => {
     });
 
     describe('directional()', () => {
-        var randVal, nextVal;
+        let randVal, nextVal;
 
         beforeEach(() => {
             randVal = 0.6;
             nextVal = 0.4
             Math.random.and.callFake(() => {
-                var oldVal = randVal;
+                let oldVal = randVal;
                 randVal = nextVal;
                 return oldVal;
             });
