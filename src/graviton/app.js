@@ -11,15 +11,18 @@ export default class {
     constructor(args) {
         this.args = args || {};
 
-        this.version = '@VERSION';
         this.options = {};
         this.grid = null;
 
-        this.events = null;
-        this.timer = null;
+        this.animTimer = null;
+        this.simTimer = null;
 
+        this.events = null;
         this.sim = null;
         this.gfx = null;
+
+        this.animId = null;
+        this.simId = null;
 
         this.interaction = {};
 
@@ -107,7 +110,7 @@ export default class {
                             // Clear simulation
                             this.sim.clear();
                             this.gfx.clear();
-                            this.timer.stop();
+                            this.simTimer.stop();
                             retval = false;
                             break;
 
@@ -138,7 +141,6 @@ export default class {
 
     initComponents() {
         // Create components -- order is important
-        this.timer = this.args.timer = new gtTimer(this.args);
         this.events = this.args.events = new gtEvents(this.args);
         this.sim = new gtSim(this.args);
         this.gfx = new gtGfx(this.args);
@@ -146,20 +148,13 @@ export default class {
 
     initTimers() {
         // Add `main` loop, and start immediately
-        this.timer.addCallback(this.main, this, 30, {autostart: true, nostop: true});
-        this.timer.addCallback(this.sim.step, this.sim, 30);
-    }
-
-    start() {
-        this.timer.start();
-    }
-
-    stop() {
-        this.timer.stop();
+        this.animTimer = new gtTimer(this.main.bind(this));
+        this.animTimer.start();
+        this.simTimer = new gtTimer(this.sim.step.bind(this.sim), 60);
     }
 
     toggle() {
-        this.timer.toggle();
+        this.simTimer.toggle();
     }
 
     redraw() {

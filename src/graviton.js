@@ -1,5 +1,5 @@
 /**
- * graviton v@VERSION
+ * graviton
  *
  * JavaScript N-body Gravitational Simulator
  *

@@ -13,23 +13,23 @@ export default class {
         this.time = 0;
 
         this.options.G = args.G || 6.67384 * Math.pow(10, -11); // Gravitational constant
-        this.options.deltaT = args.deltaT || 25000; // Timestep
+        this.options.multiplier = args.multiplier || 1500; // Timestep
         this.options.collisions = args.collision || true;
         this.options.scatterLimit = args.scatterLimit || 10000;
     }
 
-    step() {
+    step(elapsed) {
         this.bodies.forEach(function(body, i) {
             if (this.options.collisions === true) {
                 this.detectCollision(this.bodies[i], i);
             }
 
-            this.calculateNewPosition(body, i, this.options.deltaT);
+            this.calculateNewPosition(body, i, elapsed * this.options.multiplier);
 
             this.removeScattered(body, i);
         }, this);
 
-        this.time += this.options.deltaT; // Increment runtime
+        this.time += elapsed; // Increment runtime
     }
 
     calculateNewPosition(body, index, deltaT) {

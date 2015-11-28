@@ -1,83 +1,87 @@
 /**
  * graviton/timer -- Sim timer and FPS limiter
  */
+const requestAnimationFrame = window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    function(callback) {
+        return window.setTimeout(callback, 1000 / 60);
+    };
+
+const cancelAnimationFrame = window.cancelAnimationFrame ||
+    window.mozCancelAnimationFrame ||
+    function(timeoutId) {
+        window.clearTimeout(timeoutId);
+    };
+
+const performance = window.performance || {};
+performance.now = performance.now ||
+    performance.webkitNow ||
+    performance.mozNow ||
+    Date.now;
+
+
 export default class {
-    constructor(args) {
-        args = args || {};
-
-        this.options = {};
-        this.callbacks = [];
-        this.running = false;
-        this.options.defaultFps = args.defaultFps || 30;
-    }
-
-    addCallback(func, context, fps, options) {
-        fps = fps || this.options.defaultFps;
-        options = options || {};
-
-        // Compute the delay in milliseconds
-        let timeout = parseInt(1000 / fps, 10);
-
-        let callback = {
-            fn: func,
-            context: context,
-            delay: timeout,
-            intervalId: null,
-            started: false,
-            nostop: options.nostop || false
-        };
-        this.callbacks.push(callback);
-
-        // Start interval if running, or if `autostart` is given
-        if (this.running || options.autostart) {
-            callback.intervalId = setInterval(
-                callback.fn.bind(callback.context),
-                callback.delay);
-            callback.started = true;
-        }
-    }
-
-    removeCallback(func) {
-        for (let i = 0; i < this.callbacks.length; i++) {
-            let callback = this.callbacks[i];
-            if (callback.fn === func) {
-                clearInterval(callback.intervalId);
-                this.callbacks.splice(i, 1);
-                break;
-            }
-        }
+    constructor(fn, fps=null) {
+        this._fn = fn;
+        this._fps = fps;
+        this._isActive = false;
+        this._isAnimation = fps === null;
+        this._cancellationId = null;
     }
 
     start() {
-        this.running = true;
-
-        this.callbacks.forEach(function(callback) {
-            if (!callback.started) {
-                callback.intervalId = setInterval(
-                    callback.fn.bind(callback.context),
-                    callback.delay);
-                callback.started = true;
+        if (!this._isActive) {
+            if (this._isAnimation) {
+                this._beginAnimation();
+            } else {
+                this._beginInterval();
             }
-        });
+            this._isActive = true;
+        }
     }
 
     stop() {
-        this.running = false;
-
-        this.callbacks.forEach(function(callback) {
-            if (!callback.nostop) {
-                clearInterval(callback.intervalId);
-                callback.intervalId = null;
-                callback.started = false;
+        if (this._isActive) {
+            if (this._isAnimation) {
+                cancelAnimationFrame(this._cancellationId);
+            } else {
+                clearInterval(this._cancellationId);
             }
-        });
+            this._isActive = false;
+        }
     }
 
     toggle() {
-        if (this.running) {
+        if (this._isActive) {
             this.stop();
         } else {
             this.start();
         }
+    }
+
+    _beginAnimation() {
+        let lastTimestamp = null;
+        let animator = (timestamp) => {
+            lastTimestamp = lastTimestamp || timestamp;
+            this._cancellationId = requestAnimationFrame(animator);
+            this._fn(timestamp - lastTimestamp);
+            lastTimestamp = timestamp;
+        };
+
+        // Delay initial execution until the next tick.
+        this._cancellationId = requestAnimationFrame(animator);
+    }
+
+    _beginInterval() {
+        // Compute the delay per tick, in milliseconds.
+        let timeout = 1000 / this._fps | 0;
+
+        let lastTimestamp = performance.now();
+        this._cancellationId = setInterval(() => {
+            let timestamp = performance.now();
+            this._fn(timestamp - lastTimestamp);
+            lastTimestamp = timestamp;
+         }, timeout);
     }
 } // end graviton/timer
