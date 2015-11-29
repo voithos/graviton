@@ -1,3 +1,4 @@
+import './polyfills';
 import gt from './graviton';
 
 window.onload = function() {
