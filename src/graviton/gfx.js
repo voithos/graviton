@@ -5,8 +5,6 @@ export default class {
     constructor(args) {
         args = args || {};
 
-        this.noclear = args.noclear || false;
-
         this.grid = typeof args.grid === 'string' ?
             document.getElementById(args.grid) :
             args.grid;
@@ -25,9 +23,6 @@ export default class {
     }
 
     drawBodies(bodies) {
-        if (!this.noclear) {
-            this.clear();
-        }
         for (let body of bodies) {
             this.drawBody(body);
         }

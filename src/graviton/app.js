@@ -8,8 +8,8 @@ import gtEvents, { KEYCODES, EVENTCODES } from './events';
 import gtTimer from './timer';
 
 export default class {
-    constructor(args) {
-        this.args = args || {};
+    constructor(args = {}) {
+        this.args = args;
 
         this.options = {};
         this.grid = null;
@@ -21,23 +21,21 @@ export default class {
         this.sim = null;
         this.gfx = null;
 
-        this.animId = null;
-        this.simId = null;
-
+        this.noclear = false;
         this.interaction = {};
 
-        this.options.width = this.args.width || window.innerWidth;
-        this.options.height = this.args.height || window.innerHeight;
-        this.options.backgroundColor = this.args.backgroundColor || '#1F263B';
+        this.options.width = args.width || window.innerWidth;
+        this.options.height = args.height || window.innerHeight;
+        this.options.backgroundColor = args.backgroundColor || '#1F263B';
 
         // Retrieve canvas, or build one with arguments
-        this.grid = typeof this.args.grid === 'string' ?
-            document.getElementById(this.args.grid) :
-            this.args.grid;
+        this.grid = typeof args.grid === 'string' ?
+            document.getElementById(args.grid) :
+            args.grid;
 
         if (typeof this.grid === 'undefined') {
             this.generateGrid(this.options.width, this.options.height, {backgroundColor: this.options.backgroundColor});
-            this.args.grid = this.grid;
+            args.grid = this.grid;
         }
 
         // Initialize
@@ -83,16 +81,10 @@ export default class {
 
                 case EVENTCODES.MOUSEMOVE:
                     if (this.interaction.started) {
-                        this.redrawVector({
-                            from: {
-                                x: this.interaction.body.x,
-                                y: this.interaction.body.y
-                            },
-                            to: {
-                                x: event.position.x,
-                                y: event.position.y
-                            }
-                        });
+                        this.interaction.previous = {
+                            x: event.position.x,
+                            y: event.position.y
+                        };
                     }
                     break; // end MOUSEMOVE
 
@@ -116,7 +108,7 @@ export default class {
 
                         case KEYCODES.K_P:
                             // Toggle trails
-                            this.gfx.noclear = !this.gfx.noclear;
+                            this.noclear = !this.noclear;
                             break;
 
                         case KEYCODES.K_R:
@@ -158,6 +150,10 @@ export default class {
     }
 
     redraw() {
+        if (!this.noclear) {
+            this.gfx.clear();
+        }
+        this.drawInteraction();
         this.gfx.drawBodies(this.sim.bodies);
     }
 
@@ -221,30 +217,15 @@ export default class {
         }
     }
 
-    redrawVector(args) {
-        // Erase old vector, and draw new one
-        this.eraseVector(args);
-        this.drawVector(args);
-
-        // Redraw body
-        this.gfx.drawBody(this.interaction.body);
-
-        // Save previous location
-        this.interaction.previous = args.to;
-    }
-
-    eraseVector(args) {
-        this.gfx.drawLine({
-            strokeStyle: this.options.backgroundColor,
-            from: args.from,
-            to: this.interaction.previous
-        });
-    }
-
-    drawVector(args) {
-        this.gfx.drawLine({
-            from: args.from,
-            to: args.to
-        });
+    drawInteraction() {
+        if (this.interaction.started) {
+            this.gfx.drawLine({
+                from: {
+                    x: this.interaction.body.x,
+                    y: this.interaction.body.y
+                },
+                to: this.interaction.previous
+            });
+        }
     }
 } // end graviton/app
