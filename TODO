@@ -1,15 +1,17 @@
 TODO
 ====
 
-- Add unit tests.
+- Setup source maps.
 - Add icon indication / button for "play / pause"
 - Add targeting reticle for initial velocity.
 - Add ability to toggle body trails.
 - Add ability to delete body.
 - Add toggleable orbit lines
-- Add ability to change mass / density.
 - Add ability to change body color.
-- Add help dialog (explaining keyboard shortcuts).
+- Add ability to change mass / density.
 - Use higher-performance gravity simulation algorithm.
+- Add toggleable meta info display (e.g. mass, velocity, direction, etc)
+- Add help dialog (explaining keyboard shortcuts).
 - Add sample scenarios (earth, solar system, etc).
 - Add lighting and light sources (WebGL necessary?).
+- Add unit tests.

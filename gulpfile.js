@@ -2,11 +2,17 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var jasmine = require('gulp-jasmine');
 var eslint = require('gulp-eslint');
+var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
+
 var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+
 var browserify = require('browserify');
 var watchify = require('watchify');
 var babelify = require('babelify');
 var browserSync = require('browser-sync').create();
+
 var del = require('del');
 var glob = require('glob');
 var path = require('path');
@@ -15,6 +21,7 @@ var extend = require('extend');
 // Constants and config.
 // --------------------
 var VIRT_FILE = 'graviton.js';
+var VIRT_MIN_FILE = 'graviton.min.js';
 var VIRT_TEST_FILE = 'graviton_spec.js';
 var ENTRY_FILE = './src/main.js';
 var BUILD_PATH = './build';
@@ -98,6 +105,10 @@ var build = function() {
         // so we pipe it to vinyl-source-stream to convert browserify's
         // text stream to an efficient vinyl stream usable by gulp.
         .pipe(source(VIRT_FILE))
+        .pipe(buffer())
+        .pipe(gulp.dest(BUILD_PATH))
+        .pipe(rename(VIRT_MIN_FILE))
+        .pipe(uglify())
         .pipe(gulp.dest(BUILD_PATH));
 };
 
