@@ -4,6 +4,7 @@ var jasmine = require('gulp-jasmine');
 var eslint = require('gulp-eslint');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
+var sourcemaps = require('gulp-sourcemaps');
 
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
@@ -30,6 +31,9 @@ var TEST_PATTERN = './test/**/*_spec.js';
 
 var WATCHIFY_CONFIG = {
     entries: [],
+    // For source maps.
+    debug: true,
+    // `cache` and `packageCache` required by watchify.
     cache: {},
     packageCache: {},
     plugin: [watchify]
@@ -108,7 +112,11 @@ var build = function() {
         .pipe(buffer())
         .pipe(gulp.dest(BUILD_PATH))
         .pipe(rename(VIRT_MIN_FILE))
-        .pipe(uglify())
+        .pipe(sourcemaps.init({ loadMaps: true }))
+            .pipe(uglify())
+        // Passing a relative path here forces the source maps to be
+        // written externally.
+        .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(BUILD_PATH));
 };
 
