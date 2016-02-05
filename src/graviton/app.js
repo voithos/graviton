@@ -34,7 +34,8 @@ export default class {
             args.grid;
 
         if (typeof this.grid === 'undefined') {
-            this.generateGrid(this.options.width, this.options.height, {backgroundColor: this.options.backgroundColor});
+            this.generateGrid(this.options.width, this.options.height,
+                    {backgroundColor: this.options.backgroundColor});
             args.grid = this.grid;
         }
 
@@ -117,8 +118,16 @@ export default class {
                             break;
 
                         case KEYCODES.K_T:
-                            this.sim.addNewBody({x: this.options.width / 2, y: this.options.height / 2, velX: 0, velY: 0, mass: 2000, radius: 50, color: '#5A5A5A'});
-                            this.sim.addNewBody({x: this.options.width - 400, y: this.options.height / 2, velX: 0, velY: 0.000025, mass: 1, radius: 5, color: '#787878'});
+                            this.sim.addNewBody({
+                                x: this.options.width / 2, y: this.options.height / 2,
+                                velX: 0, velY: 0,
+                                mass: 2000, radius: 50, color: '#5A5A5A'
+                            });
+                            this.sim.addNewBody({
+                                x: this.options.width - 400, y: this.options.height / 2,
+                                velX: 0, velY: 0.000025,
+                                mass: 1, radius: 5, color: '#787878'
+                            });
                             break;
                     }
                     break; // end KEYDOWN
@@ -219,7 +228,7 @@ export default class {
 
     drawInteraction() {
         if (this.interaction.started) {
-            this.gfx.drawLine({
+            this.gfx.drawReticleLine({
                 from: {
                     x: this.interaction.body.x,
                     y: this.interaction.body.y

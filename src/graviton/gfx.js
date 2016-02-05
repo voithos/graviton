@@ -37,8 +37,23 @@ export default class {
         this.ctx.fill();
     }
 
-    drawLine(args) {
-        this.ctx.strokeStyle = args.strokeStyle || '#DD2222';
+    drawReticleLine(args) {
+        let grad = this.ctx.createLinearGradient(args.from.x, args.from.y, args.to.x, args.to.y);
+        grad.addColorStop(0, 'rgba(31, 75, 130, 1)');
+        grad.addColorStop(1, 'rgba(31, 75, 130, 0.1)');
+        this.ctx.strokeStyle = grad;
+        this.ctx.lineWidth = 6;
+        this.ctx.lineCap = 'round';
+
+        // Draw initial background line.
+        this.ctx.beginPath();
+        this.ctx.moveTo(args.from.x, args.from.y);
+        this.ctx.lineTo(args.to.x, args.to.y);
+        this.ctx.stroke();
+
+        // Draw overlay line.
+        this.ctx.strokeStyle = '#3477CA';
+        this.ctx.lineWidth = 2;
         this.ctx.beginPath();
         this.ctx.moveTo(args.from.x, args.from.y);
         this.ctx.lineTo(args.to.x, args.to.y);
