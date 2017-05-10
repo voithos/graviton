@@ -4,7 +4,7 @@
 import random from '../util/random';
 import gtSim from './sim';
 import gtGfx from './gfx';
-import gtEvents, { KEYCODES, EVENTCODES } from './events';
+import gtEvents, { KEYCODES, EVENTCODES, CONTROLCODES } from './events';
 import gtTimer from './timer';
 
 export default class {
@@ -38,6 +38,10 @@ export default class {
                     {backgroundColor: this.options.backgroundColor});
             args.grid = this.grid;
         }
+
+        this.controls = args.controls = document.getElementById('controls');
+        this.playBtn = args.playBtn = this.controls.querySelector('#playbtn');
+        this.pauseBtn = args.pauseBtn = this.controls.querySelector('#pausebtn');
 
         // Initialize
         this.initComponents();
@@ -131,6 +135,16 @@ export default class {
                             break;
                     }
                     break; // end KEYDOWN
+                case CONTROLCODES.PLAYBTN:
+                    this.playBtn.style.display = 'none';
+                    this.pauseBtn.style.display = '';
+                    this.toggle();
+                    break;
+                case CONTROLCODES.PAUSEBTN:
+                    this.playBtn.style.display = '';
+                    this.pauseBtn.style.display = 'none';
+                    this.toggle();
+                    break;
             }
 
             return retval;

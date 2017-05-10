@@ -83,6 +83,11 @@ export const EVENTCODES = {
     KEYUP: 1011
 };
 
+export const CONTROLCODES = {
+    PLAYBTN: 2000,
+    PAUSEBTN: 2001
+};
+
 
 export default class {
     constructor(args) {
@@ -94,6 +99,9 @@ export default class {
             throw Error('No usable canvas element was given.');
         }
         this.grid = args.grid;
+        this.controls = args.controls;
+        this.playBtn = args.playBtn;
+        this.pauseBtn = args.pauseBtn;
 
         this.wireupEvents();
     }
@@ -132,6 +140,9 @@ export default class {
         // Grid key events
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
         document.addEventListener('keyup', this.handleKeyUp.bind(this));
+
+        this.playBtn.addEventListener('click', this.handlePlayClick.bind(this));
+        this.pauseBtn.addEventListener('click', this.handlePauseClick.bind(this));
     }
 
     handleClick(event) {
@@ -227,6 +238,20 @@ export default class {
             keycode: key,
             shift: event.shiftKey,
             ctrl: event.ctrlKey,
+            timestamp: event.timeStamp
+        });
+    }
+
+    handlePlayClick(event) {
+        this.qadd({
+            type: CONTROLCODES.PLAYBTN,
+            timestamp: event.timeStamp
+        });
+    }
+
+    handlePauseClick(event) {
+        this.qadd({
+            type: CONTROLCODES.PAUSEBTN,
             timestamp: event.timeStamp
         });
     }

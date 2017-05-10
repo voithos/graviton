@@ -4,8 +4,26 @@
         <script src="build/graviton.js"></script>
         <style>
             * { margin: 0; padding: 0; }
+            #controls {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                opacity: 0.4;
+                transition: opacity 0.5s linear;
+            }
+            #controls:hover {
+                opacity: 1;
+            }
         </style>
     </head>
     <body>
+        <menu type="toolbar" id="controls">
+            <menuitem id="playbtn">
+                <img src="assets/play.svg">
+            </menuitem>
+            <menuitem id="pausebtn" style="display: none;">
+                <img src="assets/pause.svg">
+            </menuitem>
+        </menu>
     </body>
 </html>
