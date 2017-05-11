@@ -39,7 +39,15 @@ export default class {
             args.grid = this.grid;
         }
 
-        this.controls = args.controls = document.getElementById('controls');
+        this.controls = typeof args.controls === 'string' ?
+            document.getElementById(args.controls) :
+            args.controls;
+
+        if (typeof this.controls === 'undefined') {
+            this.generateControls();
+            args.controls = this.controls;
+        }
+
         this.playBtn = args.playBtn = this.controls.querySelector('#playbtn');
         this.pauseBtn = args.pauseBtn = this.controls.querySelector('#pausebtn');
 
@@ -180,7 +188,7 @@ export default class {
         this.gfx.drawBodies(this.sim.bodies);
     }
 
-    generateGrid(width, height, style, target) {
+    generateGrid(width, height, style) {
         // Attach a canvas to the page, to house the simulations
         if (!style) {
             style = {};
@@ -195,11 +203,23 @@ export default class {
         this.grid.style.marginRight = style.marginRight || 'auto';
         this.grid.style.backgroundColor = style.backgroundColor || '#000000';
 
-        if (target) {
-            target.appendChild(this.grid);
-        } else {
-            document.body.appendChild(this.grid);
-        }
+        document.body.appendChild(this.grid);
+    }
+
+    generateControls() {
+        this.controls = document.createElement('menu');
+        this.controls.type = 'toolbar';
+        this.controls.id = 'controls';
+        this.controls.innerHTML = `
+            <menuitem id="playbtn">
+                <img src="assets/play.svg">
+            </menuitem>
+            <menuitem id="pausebtn" style="display: none;">
+                <img src="assets/pause.svg">
+            </menuitem>
+            `;
+
+        document.body.appendChild(this.controls);
     }
 
     generateBodies(num, args) {
