@@ -12,6 +12,9 @@ export default class {
         this.bodies = [];
         this.time = 0;
 
+        // Temporary workspace
+        this.D = {};
+
         this.options.G = args.G || 6.67384 * Math.pow(10, -11); // Gravitational constant
         this.options.multiplier = args.multiplier || 1500; // Timestep
         this.options.collisions = args.collision || true;
@@ -19,15 +22,17 @@ export default class {
     }
 
     step(elapsed) {
-        this.bodies.forEach(function(body, i) {
+        for (let i = 0, l = this.bodies.length; i < l; i++) {
+            const body = this.bodies[i];
             if (this.options.collisions === true) {
-                this.detectCollision(this.bodies[i], i);
+                // TODO: Is this useful?
+                this.detectCollision(body, i);
             }
 
             this.calculateNewPosition(body, i, elapsed * this.options.multiplier);
 
             this.removeScattered(body, i);
-        }, this);
+        }
 
         this.time += elapsed; // Increment runtime
     }
@@ -37,20 +42,21 @@ export default class {
         let netFy = 0;
 
         // Iterate through all bodies and sum the forces exerted
-        this.bodies.forEach(function(attractor, i) {
+        for (let i = 0, l = this.bodies.length; i < l; i++) {
+            const attractor = this.bodies[i];
             if (i !== index) {
                 // Get the distance and position deltas
-                let D = this.calculateDistance(body, attractor);
+                this.calculateDistance(body, attractor);
 
                 // Calculate force using Newtonian gravity, separate out into x and y components
-                let F = (this.options.G * body.mass * attractor.mass) / Math.pow(D.r, 2);
-                let Fx = F * (D.dx / D.r);
-                let Fy = F * (D.dy / D.r);
+                let F = (this.options.G * body.mass * attractor.mass) / Math.pow(this.D.r, 2);
+                let Fx = F * (this.D.dx / this.D.r);
+                let Fy = F * (this.D.dy / this.D.r);
 
                 netFx += Fx;
                 netFy += Fy;
             }
-        }, this);
+        }
 
         // Calculate accelerations
         let ax = netFx / body.mass;
@@ -66,30 +72,27 @@ export default class {
     }
 
     calculateDistance(body, other) {
-        let D = {};
-
         // Calculate the change in position along the two dimensions
-        D.dx = other.x - body.x;
-        D.dy = other.y - body.y;
+        this.D.dx = other.x - body.x;
+        this.D.dy = other.y - body.y;
 
         // Obtain the distance between the objects (hypotenuse)
-        D.r = Math.sqrt(Math.pow(D.dx, 2) + Math.pow(D.dy, 2));
-
-        return D;
+        this.D.r = Math.sqrt(Math.pow(this.D.dx, 2) + Math.pow(this.D.dy, 2));
     }
 
     detectCollision(body, index) {
-        this.bodies.forEach(function(collider, i) {
+        for (let i = 0, l = this.bodies.length; i < l; i++) {
+            const collider = this.bodies[i];
             if (i !== index) {
-                let r = this.calculateDistance(body, collider).r;
+                this.calculateDistance(body, collider);
                 let clearance = body.radius + collider.radius;
 
-                if (r <= clearance) {
+                if (this.D.r <= clearance) {
                     // Collision detected
                     log.write('Collision detected!!', 'debug');
                 }
             }
-        }, this);
+        }
     }
 
     removeScattered(body, index) {
@@ -98,7 +101,7 @@ export default class {
             body.y > this.options.scatterLimit ||
             body.y < -this.options.scatterLimit) {
             // Remove from body collection
-            return this.bodies.splice(index, 1);
+            this.bodies.splice(index, 1);
         }
     }
 
