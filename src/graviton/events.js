@@ -85,7 +85,9 @@ export const EVENTCODES = {
 
 export const CONTROLCODES = {
     PLAYBTN: 2000,
-    PAUSEBTN: 2001
+    PAUSEBTN: 2001,
+    TRAILOFFBTN: 2002,
+    TRAILONBTN: 2003
 };
 
 
@@ -102,6 +104,8 @@ export default class {
         this.controls = args.controls;
         this.playBtn = args.playBtn;
         this.pauseBtn = args.pauseBtn;
+        this.trailOffBtn = args.trailOffBtn;
+        this.trailOnBtn = args.trailOnBtn;
 
         this.wireupEvents();
     }
@@ -141,8 +145,15 @@ export default class {
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
         document.addEventListener('keyup', this.handleKeyUp.bind(this));
 
-        this.playBtn.addEventListener('click', this.handlePlayClick.bind(this));
-        this.pauseBtn.addEventListener('click', this.handlePauseClick.bind(this));
+        // Control events
+        this.playBtn.addEventListener('click', this.handleControlClick.bind(this,
+                    CONTROLCODES.PLAYBTN));
+        this.pauseBtn.addEventListener('click', this.handleControlClick.bind(this,
+                    CONTROLCODES.PAUSEBTN));
+        this.trailOffBtn.addEventListener('click', this.handleControlClick.bind(this,
+                    CONTROLCODES.TRAILOFFBTN));
+        this.trailOnBtn.addEventListener('click', this.handleControlClick.bind(this,
+                    CONTROLCODES.TRAILONBTN));
     }
 
     handleClick(event) {
@@ -242,16 +253,9 @@ export default class {
         });
     }
 
-    handlePlayClick(event) {
+    handleControlClick(type, event) {
         this.qadd({
-            type: CONTROLCODES.PLAYBTN,
-            timestamp: event.timeStamp
-        });
-    }
-
-    handlePauseClick(event) {
-        this.qadd({
-            type: CONTROLCODES.PAUSEBTN,
+            type: type,
             timestamp: event.timeStamp
         });
     }

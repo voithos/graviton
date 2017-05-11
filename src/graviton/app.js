@@ -50,6 +50,8 @@ export default class {
 
         this.playBtn = args.playBtn = this.controls.querySelector('#playbtn');
         this.pauseBtn = args.pauseBtn = this.controls.querySelector('#pausebtn');
+        this.trailOffBtn = args.trailOffBtn = this.controls.querySelector('#trailoffbtn');
+        this.trailOnBtn = args.trailOnBtn = this.controls.querySelector('#trailonbtn');
 
         // Initialize
         this.initComponents();
@@ -143,15 +145,29 @@ export default class {
                             break;
                     }
                     break; // end KEYDOWN
+
                 case CONTROLCODES.PLAYBTN:
                     this.playBtn.style.display = 'none';
                     this.pauseBtn.style.display = '';
                     this.toggle();
                     break;
+
                 case CONTROLCODES.PAUSEBTN:
                     this.playBtn.style.display = '';
                     this.pauseBtn.style.display = 'none';
                     this.toggle();
+                    break;
+
+                case CONTROLCODES.TRAILOFFBTN:
+                    this.trailOffBtn.style.display = 'none';
+                    this.trailOnBtn.style.display = '';
+                    this.noclear = !this.noclear;
+                    break;
+
+                case CONTROLCODES.TRAILONBTN:
+                    this.trailOffBtn.style.display = '';
+                    this.trailOnBtn.style.display = 'none';
+                    this.noclear = !this.noclear;
                     break;
             }
 
@@ -216,6 +232,12 @@ export default class {
             </menuitem>
             <menuitem id="pausebtn" style="display: none;">
                 <img src="assets/pause.svg">
+            </menuitem>
+            <menuitem id="trailoffbtn">
+                <img src="assets/trail_off.svg">
+            </menuitem>
+            <menuitem id="trailonbtn" style="display: none;">
+                <img src="assets/trail_on.svg">
             </menuitem>
             `;
 
