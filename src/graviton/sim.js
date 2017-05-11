@@ -22,7 +22,7 @@ export default class {
     }
 
     step(elapsed) {
-        for (let i = 0, l = this.bodies.length; i < l; i++) {
+        for (let i = 0; i < this.bodies.length; i++) {
             const body = this.bodies[i];
             if (this.options.collisions === true) {
                 // TODO: Is this useful?
@@ -31,7 +31,7 @@ export default class {
 
             this.calculateNewPosition(body, i, elapsed * this.options.multiplier);
 
-            this.removeScattered(body, i);
+            i = this.removeScattered(body, i);
         }
 
         this.time += elapsed; // Increment runtime
@@ -42,7 +42,7 @@ export default class {
         let netFy = 0;
 
         // Iterate through all bodies and sum the forces exerted
-        for (let i = 0, l = this.bodies.length; i < l; i++) {
+        for (let i = 0; i < this.bodies.length; i++) {
             const attractor = this.bodies[i];
             if (i !== index) {
                 // Get the distance and position deltas
@@ -81,7 +81,7 @@ export default class {
     }
 
     detectCollision(body, index) {
-        for (let i = 0, l = this.bodies.length; i < l; i++) {
+        for (let i = 0; i < this.bodies.length; i++) {
             const collider = this.bodies[i];
             if (i !== index) {
                 this.calculateDistance(body, collider);
@@ -102,7 +102,9 @@ export default class {
             body.y < -this.options.scatterLimit) {
             // Remove from body collection
             this.bodies.splice(index, 1);
+            return index - 1;
         }
+        return index;
     }
 
     addNewBody(args) {
