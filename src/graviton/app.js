@@ -109,8 +109,7 @@ export default class {
                 case EVENTCODES.KEYDOWN:
                     switch (event.keycode) {
                         case KEYCODES.K_ENTER:
-                            // Start or stop simulation
-                            this.toggle();
+                            this.toggleSim();
                             break;
 
                         case KEYCODES.K_C:
@@ -122,8 +121,7 @@ export default class {
                             break;
 
                         case KEYCODES.K_P:
-                            // Toggle trails
-                            this.noclear = !this.noclear;
+                            this.toggleTrails();
                             break;
 
                         case KEYCODES.K_R:
@@ -147,27 +145,19 @@ export default class {
                     break; // end KEYDOWN
 
                 case CONTROLCODES.PLAYBTN:
-                    this.playBtn.style.display = 'none';
-                    this.pauseBtn.style.display = '';
-                    this.toggle();
+                    this.toggleSim();
                     break;
 
                 case CONTROLCODES.PAUSEBTN:
-                    this.playBtn.style.display = '';
-                    this.pauseBtn.style.display = 'none';
-                    this.toggle();
+                    this.toggleSim();
                     break;
 
                 case CONTROLCODES.TRAILOFFBTN:
-                    this.trailOffBtn.style.display = 'none';
-                    this.trailOnBtn.style.display = '';
-                    this.noclear = !this.noclear;
+                    this.toggleTrails();
                     break;
 
                 case CONTROLCODES.TRAILONBTN:
-                    this.trailOffBtn.style.display = '';
-                    this.trailOnBtn.style.display = 'none';
-                    this.noclear = !this.noclear;
+                    this.toggleTrails();
                     break;
             }
 
@@ -192,8 +182,26 @@ export default class {
         this.simTimer = new gtTimer(this.sim.step.bind(this.sim), 60);
     }
 
-    toggle() {
+    toggleSim() {
+        if (this.simTimer.active) {
+            this.playBtn.style.display = '';
+            this.pauseBtn.style.display = 'none';
+        } else {
+            this.playBtn.style.display = 'none';
+            this.pauseBtn.style.display = '';
+        }
         this.simTimer.toggle();
+    }
+
+    toggleTrails() {
+        if (this.noclear) {
+            this.trailOffBtn.style.display = '';
+            this.trailOnBtn.style.display = 'none';
+        } else {
+            this.trailOffBtn.style.display = 'none';
+            this.trailOnBtn.style.display = '';
+        }
+        this.noclear = !this.noclear;
     }
 
     redraw() {

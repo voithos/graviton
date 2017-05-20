@@ -14,6 +14,10 @@ export default class {
         this._window = env.getWindow();
     }
 
+    get active() {
+        return this._isActive;
+    }
+
     start() {
         if (!this._isActive) {
             if (this._isAnimation) {
