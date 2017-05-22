@@ -1,7 +1,7 @@
 /**
  * graviton/gfx -- The graphics object
  */
-export default class {
+export default class GtGfx {
     constructor(args) {
         args = args || {};
 

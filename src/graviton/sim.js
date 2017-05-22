@@ -2,14 +2,16 @@
  * graviton/sim -- The gravitational simulator
  */
 import log from '../util/log';
-import gtBody from './body';
+import GtBody from './body';
+import GtTree from './tree';
 
-export default class {
+export default class GtSim {
     constructor(args) {
         args = args || {};
 
         this.options = {};
         this.bodies = [];
+        this.tree = new GtTree(args.width, args.height);
         this.time = 0;
 
         // Temporary workspace
@@ -108,8 +110,9 @@ export default class {
     }
 
     addNewBody(args) {
-        let body = new gtBody(args);
+        let body = new GtBody(args);
         this.bodies.push(body);
+        this.tree.addBody(body);
 
         return body;
     }

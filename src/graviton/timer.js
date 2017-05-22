@@ -3,7 +3,7 @@
  */
 import env from '../util/env';
 
-export default class {
+export default class GtTimer {
     constructor(fn, fps=null) {
         this._fn = fn;
         this._fps = fps;

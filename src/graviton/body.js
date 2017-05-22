@@ -1,7 +1,7 @@
 /**
  * graviton/body -- The gravitational body
  */
-export default class {
+export default class GtBody {
     constructor(args) {
         args = args || {};
 

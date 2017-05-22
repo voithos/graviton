@@ -91,7 +91,7 @@ export const CONTROLCODES = {
 };
 
 
-export default class {
+export default class GtEvents {
     constructor(args) {
         args = args || {};
 

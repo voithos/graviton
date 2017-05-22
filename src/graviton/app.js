@@ -2,12 +2,12 @@
  * graviton/app -- The interactive graviton application
  */
 import random from '../util/random';
-import gtSim from './sim';
-import gtGfx from './gfx';
-import gtEvents, { KEYCODES, EVENTCODES, CONTROLCODES } from './events';
-import gtTimer from './timer';
+import GtSim from './sim';
+import GtGfx from './gfx';
+import GtEvents, { KEYCODES, EVENTCODES, CONTROLCODES } from './events';
+import GtTimer from './timer';
 
-export default class {
+export default class GtApp {
     constructor(args = {}) {
         this.args = args;
 
@@ -24,8 +24,8 @@ export default class {
         this.noclear = false;
         this.interaction = {};
 
-        this.options.width = args.width || window.innerWidth;
-        this.options.height = args.height || window.innerHeight;
+        this.options.width = args.width = args.width || window.innerWidth;
+        this.options.height = args.height = args.height || window.innerHeight;
         this.options.backgroundColor = args.backgroundColor || '#1F263B';
 
         // Retrieve canvas, or build one with arguments
@@ -170,16 +170,16 @@ export default class {
 
     initComponents() {
         // Create components -- order is important
-        this.events = this.args.events = new gtEvents(this.args);
-        this.sim = new gtSim(this.args);
-        this.gfx = new gtGfx(this.args);
+        this.events = this.args.events = new GtEvents(this.args);
+        this.sim = new GtSim(this.args);
+        this.gfx = new GtGfx(this.args);
     }
 
     initTimers() {
         // Add `main` loop, and start immediately
-        this.animTimer = new gtTimer(this.main.bind(this));
+        this.animTimer = new GtTimer(this.main.bind(this));
         this.animTimer.start();
-        this.simTimer = new gtTimer(this.sim.step.bind(this.sim), 60);
+        this.simTimer = new GtTimer(this.sim.step.bind(this.sim), 60);
     }
 
     toggleSim() {

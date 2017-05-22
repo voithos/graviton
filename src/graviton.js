@@ -9,6 +9,6 @@
  * Revision:
  *  @REVISION
  */
-import gtApp from './graviton/app';
+import GtApp from './graviton/app';
 
-export default { app: gtApp };
+export default { app: GtApp };
