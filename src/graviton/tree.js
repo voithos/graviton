@@ -2,20 +2,20 @@
  * graviton/tree -- The gravitational body tree structure
  */
 class GtTreeNode {
-    constructor(x, y, width, height) {
-        this.x = x;
-        this.y = y;
+    constructor(startX, startY, width, height) {
+        this.startX = startX;
+        this.startY = startY;
         this.width = width;
         this.height = height;
         this.halfWidth = width / 2;
         this.halfHeight = height / 2;
 
-        this.midX = this.x + this.halfWidth;
-        this.midY = this.y + this.halfHeight;
+        this.midX = this.startX + this.halfWidth;
+        this.midY = this.startY + this.halfHeight;
 
         this.mass = 0;
-        this.massX = 0;
-        this.massY = 0;
+        this.x = 0;
+        this.y = 0;
 
         // [NW, NE, SW, SE]
         this.children = new Array(4);
@@ -29,8 +29,8 @@ class GtTreeNode {
             this.children[quadrant] = body;
         } else {
             const existing = this.children[quadrant];
-            const quadX = existing.x > this.midX ? this.midX : this.x;
-            const quadY = existing.y > this.midY ? this.midY : this.y;
+            const quadX = existing.x > this.midX ? this.midX : this.startX;
+            const quadY = existing.y > this.midY ? this.midY : this.startY;
             const node = new GtTreeNode(quadX, quadY, this.halfWidth, this.halfHeight);
 
             node.addBody(existing);
@@ -42,11 +42,11 @@ class GtTreeNode {
 
     updateMass(body) {
         const newMass = this.mass + body.mass;
-        const newMassX = (this.massX * this.mass + body.x * body.mass) / newMass;
-        const newMassY = (this.massY * this.mass + body.y * body.mass) / newMass;
+        const newX = (this.x * this.mass + body.x * body.mass) / newMass;
+        const newY = (this.y * this.mass + body.y * body.mass) / newMass;
         this.mass = newMass;
-        this.massX = newMassX;
-        this.massY = newMassY;
+        this.x = newX;
+        this.y = newY;
     }
 
     getQuadrant(body) {
