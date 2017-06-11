@@ -138,9 +138,7 @@ export default class GtEvents {
         this.grid.addEventListener('mousedown', this.handleMouseDown.bind(this));
         this.grid.addEventListener('mouseup', this.handleMouseUp.bind(this));
         this.grid.addEventListener('mousemove', this.handleMouseMove.bind(this));
-        this.grid.addEventListener('mousewheel', this.handleMouseWheel.bind(this));
-        // Firefox-specific DOM scroll
-        this.grid.addEventListener('DOMMouseScroll', this.handleMouseWheel.bind(this));
+        this.grid.addEventListener('wheel', this.handleMouseWheel.bind(this));
 
         // Grid key events
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
@@ -215,15 +213,13 @@ export default class GtEvents {
     }
 
     handleMouseWheel(event) {
-        // Account for discrepancies between Firefox and Webkit
-        let delta = event.wheelDelta ?
-            (event.wheelDelta / 120) :
-            (event.detail / -3);
+        // Reverse the up/down.
+        let delta = -event.deltaY / 50;
 
         this.qadd({
             type: EVENTCODES.MOUSEWHEEL,
             position: this.getPosition(event),
-            wheeldelta: delta,
+            delta: delta,
             shift: event.shiftKey,
             ctrl: event.ctrlKey,
             timestamp: event.timeStamp

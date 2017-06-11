@@ -115,6 +115,9 @@ export default class GtApp {
                     break; // end MOUSEMOVE
 
                 case EVENTCODES.MOUSEWHEEL:
+                    if (this.targetBody) {
+                        this.targetBody.adjustSize(event.delta);
+                    }
                     break; // end MOUSEWHEEL
 
                 case EVENTCODES.KEYDOWN:

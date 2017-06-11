@@ -2,7 +2,6 @@ TODO
 ====
 
 - Add ability to change body color.
-- Add ability to change mass / density.
 - Use higher-performance gravity simulation algorithm.
 - Add toggleable meta info display (e.g. mass, velocity, direction, etc)
 - Add help dialog (explaining keyboard shortcuts).
