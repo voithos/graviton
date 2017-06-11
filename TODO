@@ -1,7 +1,6 @@
 TODO
 ====
 
-- Add ability to delete body.
 - Add ability to change body color.
 - Add ability to change mass / density.
 - Use higher-performance gravity simulation algorithm.

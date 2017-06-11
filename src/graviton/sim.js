@@ -118,9 +118,15 @@ export default class GtSim {
         return body;
     }
 
-    removeBody(index) {
-        this.bodies.splice(index, 1);
-        // TODO: Implement for tree.
+    removeBody(targetBody) {
+        for (let i = 0; i < this.bodies.length; i++) {
+            const body = this.bodies[i];
+            if (body === targetBody) {
+                this.bodies.splice(i, 1);
+                break;
+            }
+        }
+        this.resetTree();
     }
 
     getBodyAt(x, y) {
@@ -137,6 +143,13 @@ export default class GtSim {
 
     clear() {
         this.bodies.length = 0; // Remove all bodies from collection
+        this.resetTree();
+    }
+
+    resetTree() {
         this.tree.clear();
+        for (const body of this.bodies) {
+            this.tree.addBody(body);
+        }
     }
 } // end graviton/sim

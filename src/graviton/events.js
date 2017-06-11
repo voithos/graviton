@@ -134,6 +134,7 @@ export default class GtEvents {
         this.grid.addEventListener('click', this.handleClick.bind(this));
         this.grid.addEventListener('dblclick', this.handleDblClick.bind(this));
 
+        this.grid.addEventListener('contextmenu', this.handleContextMenu.bind(this));
         this.grid.addEventListener('mousedown', this.handleMouseDown.bind(this));
         this.grid.addEventListener('mouseup', this.handleMouseUp.bind(this));
         this.grid.addEventListener('mousemove', this.handleMouseMove.bind(this));
@@ -176,6 +177,11 @@ export default class GtEvents {
             ctrl: event.ctrlKey,
             timestamp: event.timeStamp
         });
+    }
+
+    handleContextMenu(event) {
+        // Prevent right-click menu
+        event.preventDefault();
     }
 
     handleMouseDown(event) {

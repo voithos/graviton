@@ -70,20 +70,28 @@ export default class GtApp {
 
             switch (event.type) {
                 case EVENTCODES.MOUSEDOWN:
-                    // Add flag to signal other events
-                    this.interaction.started = true;
-
-                    if (this.targetBody) {
-                        this.interaction.body = this.targetBody;
+                    if (event.button === /* right click */ 2) {
+                        // Remove body.
+                        if (this.targetBody) {
+                            this.sim.removeBody(this.targetBody);
+                            this.targetBody = undefined;
+                        }
                     } else {
-                        this.interaction.body = this.sim.addNewBody({
-                            x: event.position.x,
-                            y: event.position.y
-                        });
-                    }
+                        // Add flag to signal other events
+                        this.interaction.started = true;
 
-                    this.interaction.previous.x = event.position.x;
-                    this.interaction.previous.y = event.position.y;
+                        if (this.targetBody) {
+                            this.interaction.body = this.targetBody;
+                        } else {
+                            this.interaction.body = this.sim.addNewBody({
+                                x: event.position.x,
+                                y: event.position.y
+                            });
+                        }
+
+                        this.interaction.previous.x = event.position.x;
+                        this.interaction.previous.y = event.position.y;
+                    }
                     break; // end MOUSEDOWN
 
                 case EVENTCODES.MOUSEUP:

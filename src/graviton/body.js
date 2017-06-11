@@ -17,8 +17,8 @@ export default class GtBody {
         this.velY = args.velY || 0;
 
         this.mass = args.mass || 10;
-        this.radius = args.radius || 15;
-        this.color = args.color || '#bababa';
+        this.radius = args.radius || 10;
+        this.color = args.color || '#AAAAAA';
         this.highlight = args.highlight ||
                 colors.toHex(colors.brighten(colors.fromHex(this.color), .25));
     }
