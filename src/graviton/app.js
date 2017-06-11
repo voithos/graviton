@@ -22,7 +22,8 @@ export default class GtApp {
         this.gfx = null;
 
         this.noclear = false;
-        this.interaction = {};
+        this.interaction = {previous: {}};
+        this.targetBody = undefined;
 
         this.options.width = args.width = args.width || window.innerWidth;
         this.options.height = args.height = args.height || window.innerHeight;
@@ -77,10 +78,8 @@ export default class GtApp {
                         y: event.position.y
                     });
 
-                    this.interaction.previous = {
-                        x: event.position.x,
-                        y: event.position.y
-                    };
+                    this.interaction.previous.x = event.position.x;
+                    this.interaction.previous.y = event.position.y;
                     break; // end MOUSEDOWN
 
                 case EVENTCODES.MOUSEUP:
@@ -92,14 +91,14 @@ export default class GtApp {
                         body.velX = (event.position.x - body.x) * 0.0000001;
                         body.velY = (event.position.y - body.y) * 0.0000001;
                     }
+                    this.updateTarget(event.position.x, event.position.y);
                     break;
 
                 case EVENTCODES.MOUSEMOVE:
-                    if (this.interaction.started) {
-                        this.interaction.previous = {
-                            x: event.position.x,
-                            y: event.position.y
-                        };
+                    this.interaction.previous.x = event.position.x;
+                    this.interaction.previous.y = event.position.y;
+                    if (!this.interaction.started) {
+                        this.updateTarget(event.position.x, event.position.y);
                     }
                     break; // end MOUSEMOVE
 
@@ -209,7 +208,7 @@ export default class GtApp {
             this.gfx.clear();
         }
         this.drawInteraction();
-        this.gfx.drawBodies(this.sim.bodies);
+        this.gfx.drawBodies(this.sim.bodies, this.targetBody);
     }
 
     generateGrid(width, height, style) {
@@ -292,13 +291,11 @@ export default class GtApp {
 
     drawInteraction() {
         if (this.interaction.started) {
-            this.gfx.drawReticleLine({
-                from: {
-                    x: this.interaction.body.x,
-                    y: this.interaction.body.y
-                },
-                to: this.interaction.previous
-            });
+            this.gfx.drawReticleLine(this.interaction.body, this.interaction.previous);
         }
+    }
+
+    updateTarget(x, y) {
+        this.targetBody = this.sim.getBodyAt(x, y);
     }
 } // end graviton/app

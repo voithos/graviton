@@ -22,23 +22,28 @@ export default class GtGfx {
         this.grid.width = this.grid.width;
     }
 
-    drawBodies(bodies) {
+    drawBodies(bodies, targetBody) {
         for (let body of bodies) {
-            this.drawBody(body);
+            this.drawBody(body, /* isTargeted */ body === targetBody);
         }
     }
 
-    drawBody(body) {
+    drawBody(body, isTargeted) {
         this.ctx.fillStyle = body.color;
 
         this.ctx.beginPath();
         this.ctx.arc(body.x, body.y, body.radius, 0, Math.PI * 2, true);
 
         this.ctx.fill();
+        if (isTargeted) {
+            this.ctx.strokeStyle = body.highlight;
+            this.ctx.lineWidth = Math.round(body.radius / 8);
+            this.ctx.stroke();
+        }
     }
 
-    drawReticleLine(args) {
-        let grad = this.ctx.createLinearGradient(args.from.x, args.from.y, args.to.x, args.to.y);
+    drawReticleLine(from, to) {
+        let grad = this.ctx.createLinearGradient(from.x, from.y, to.x, to.y);
         grad.addColorStop(0, 'rgba(31, 75, 130, 1)');
         grad.addColorStop(1, 'rgba(31, 75, 130, 0.1)');
         this.ctx.strokeStyle = grad;
@@ -47,16 +52,16 @@ export default class GtGfx {
 
         // Draw initial background line.
         this.ctx.beginPath();
-        this.ctx.moveTo(args.from.x, args.from.y);
-        this.ctx.lineTo(args.to.x, args.to.y);
+        this.ctx.moveTo(from.x, from.y);
+        this.ctx.lineTo(to.x, to.y);
         this.ctx.stroke();
 
         // Draw overlay line.
         this.ctx.strokeStyle = '#3477CA';
         this.ctx.lineWidth = 2;
         this.ctx.beginPath();
-        this.ctx.moveTo(args.from.x, args.from.y);
-        this.ctx.lineTo(args.to.x, args.to.y);
+        this.ctx.moveTo(from.x, from.y);
+        this.ctx.lineTo(to.x, to.y);
         this.ctx.stroke();
     }
 } // end graviton/gfx

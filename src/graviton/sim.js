@@ -103,6 +103,7 @@ export default class GtSim {
             body.y > this.options.scatterLimit ||
             body.y < -this.options.scatterLimit) {
             // Remove from body collection
+            // TODO: Implement for tree.
             this.bodies.splice(index, 1);
             return index - 1;
         }
@@ -119,9 +120,23 @@ export default class GtSim {
 
     removeBody(index) {
         this.bodies.splice(index, 1);
+        // TODO: Implement for tree.
+    }
+
+    getBodyAt(x, y) {
+        for (let i = this.bodies.length - 1; i >= 0; i--) {
+            const body = this.bodies[i];
+            const isMatch = Math.abs(x - body.x) <= body.radius &&
+                Math.abs(y - body.y) <= body.radius;
+            if (isMatch) {
+                return body;
+            }
+        }
+        return undefined;
     }
 
     clear() {
         this.bodies.length = 0; // Remove all bodies from collection
+        this.tree.clear();
     }
 } // end graviton/sim

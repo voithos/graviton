@@ -1,3 +1,5 @@
+import colors from '../util/colors';
+
 /**
  * graviton/body -- The gravitational body
  */
@@ -15,7 +17,9 @@ export default class GtBody {
         this.velY = args.velY || 0;
 
         this.mass = args.mass || 10;
-        this.radius = args.radius || 4;
-        this.color = args.color || '#FFFFFF';
+        this.radius = args.radius || 15;
+        this.color = args.color || '#bababa';
+        this.highlight = args.highlight ||
+                colors.toHex(colors.brighten(colors.fromHex(this.color), .25));
     }
 } // end graviton/body

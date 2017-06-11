@@ -23,7 +23,7 @@ class GtTreeNode {
 
     addBody(body) {
         this.updateMass(body);
-        const quadrant = this.getQuadrant(body);
+        const quadrant = this.getQuadrant(body.x, body.y);
 
         if (!this.children[quadrant]) {
             this.children[quadrant] = body;
@@ -49,9 +49,9 @@ class GtTreeNode {
         this.y = newY;
     }
 
-    getQuadrant(body) {
-        const xIndex = Number(body.x > this.midX);
-        const yIndex = Number(body.y > this.midY) * 2;
+    getQuadrant(x, y) {
+        const xIndex = Number(x > this.midX);
+        const yIndex = Number(y > this.midY) * 2;
         return xIndex + yIndex;
     }
 }
@@ -74,5 +74,9 @@ export default class GtTree {
             this.root.addBody(existing);
             this.root.addBody(body);
         }
+    }
+
+    clear() {
+        this.root = undefined;
     }
 } // end graviton/tree
