@@ -73,10 +73,14 @@ export default class GtApp {
                     // Add flag to signal other events
                     this.interaction.started = true;
 
-                    this.interaction.body = this.sim.addNewBody({
-                        x: event.position.x,
-                        y: event.position.y
-                    });
+                    if (this.targetBody) {
+                        this.interaction.body = this.targetBody;
+                    } else {
+                        this.interaction.body = this.sim.addNewBody({
+                            x: event.position.x,
+                            y: event.position.y
+                        });
+                    }
 
                     this.interaction.previous.x = event.position.x;
                     this.interaction.previous.y = event.position.y;
