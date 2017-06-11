@@ -27,6 +27,7 @@ var VIRT_TEST_FILE = 'graviton_spec.js';
 var ENTRY_FILE = './src/main.js';
 var BUILD_PATH = './build';
 var SRC_PATTERN = './src/**/*.js';
+var VENDOR_PATTERN = './src/vendor/**/*.js';
 var TEST_PATTERN = './test/**/*_spec.js';
 
 var WATCHIFY_CONFIG = {
@@ -186,7 +187,7 @@ var clean = function() {
  * Lint the source files.
  */
 var lint = function() {
-    return gulp.src(SRC_PATTERN)
+    return gulp.src([SRC_PATTERN, '!' + VENDOR_PATTERN])
         .pipe(eslint(ESLINT_CONFIG))
         .pipe(eslint.format())
         .pipe(eslint.failAfterError());

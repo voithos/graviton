@@ -1,6 +1,8 @@
 /**
  * graviton/app -- The interactive graviton application
  */
+/* global jscolor */
+
 import random from '../util/random';
 import GtSim from './sim';
 import GtGfx from './gfx';
@@ -54,6 +56,26 @@ export default class GtApp {
         this.trailOffBtn = args.trailOffBtn = this.controls.querySelector('#trailoffbtn');
         this.trailOnBtn = args.trailOnBtn = this.controls.querySelector('#trailonbtn');
 
+        this.colorPicker = typeof args.colorPicker === 'string' ?
+            document.getElementById(args.colorPicker) :
+            args.colorPicker;
+
+        if (typeof this.colorPicker === 'undefined') {
+            this.colorPicker = document.createElement('input');
+            this.colorPicker.className = 'bodycolorpicker';
+            document.body.appendChild(this.colorPicker);
+            args.colorPicker = this.colorPicker;
+        }
+        this.jscolor = new jscolor(this.colorPicker, {
+            width: 101,
+            padding: 0,
+            shadow: false,
+            borderWidth: 0,
+            backgroundColor: 'transparent',
+            insetColor: '#000',
+            onFineChange: this.updateColor.bind(this)
+        });
+
         // Initialize
         this.initComponents();
         this.initTimers();
@@ -75,6 +97,14 @@ export default class GtApp {
                         if (this.targetBody) {
                             this.sim.removeBody(this.targetBody);
                             this.targetBody = undefined;
+                        }
+                    } else if (event.button === /* middle click */ 1) {
+                        // Color picking
+                        if (this.targetBody) {
+                            this.colorPicker.style.left = event.position.x + 'px';
+                            this.colorPicker.style.top = event.position.y + 'px';
+                            this.jscolor.fromString(this.targetBody.color);
+                            this.jscolor.show();
                         }
                     } else {
                         // Add flag to signal other events
@@ -312,5 +342,11 @@ export default class GtApp {
 
     updateTarget(x, y) {
         this.targetBody = this.sim.getBodyAt(x, y);
+    }
+
+    updateColor() {
+        if (this.targetBody) {
+            this.targetBody.updateColor(this.jscolor.toHEXString());
+        }
     }
 } // end graviton/app

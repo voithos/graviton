@@ -1,3 +1,4 @@
+import './vendor/jscolor';
 import './polyfills';
 import gt from './graviton';
 
