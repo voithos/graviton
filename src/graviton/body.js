@@ -22,7 +22,7 @@ export default class GtBody {
         this.color = undefined;
         this.highlight = undefined;
 
-        this.updateColor('#BABABA');
+        this.updateColor(args.color || '#BABABA');
         this.adjustSize(0);
     }
 
