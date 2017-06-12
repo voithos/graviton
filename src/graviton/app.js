@@ -26,6 +26,7 @@ export default class GtApp {
         this.noclear = false;
         this.interaction = {previous: {}};
         this.targetBody = undefined;
+        this.wasColorPickerActive = false;
 
         this.options.width = args.width = args.width || window.innerWidth;
         this.options.height = args.height = args.height || window.innerHeight;
@@ -106,21 +107,28 @@ export default class GtApp {
                             this.jscolor.fromString(this.targetBody.color);
                             this.jscolor.show();
                         }
-                    } else {
-                        // Add flag to signal other events
-                        this.interaction.started = true;
+                    } else { /* left click */
+                        // Base the check on the previous value, in case the color picker was just
+                        // closed.
+                        if (!this.wasColorPickerActive) {
+                            // Add flag to signal other events
+                            this.interaction.started = true;
 
-                        if (this.targetBody) {
-                            this.interaction.body = this.targetBody;
+                            if (this.targetBody) {
+                                this.interaction.body = this.targetBody;
+                            } else {
+                                this.interaction.body = this.sim.addNewBody({
+                                    x: event.position.x,
+                                    y: event.position.y
+                                });
+                            }
+
+                            this.interaction.previous.x = event.position.x;
+                            this.interaction.previous.y = event.position.y;
                         } else {
-                            this.interaction.body = this.sim.addNewBody({
-                                x: event.position.x,
-                                y: event.position.y
-                            });
+                            // Update the picker.
+                            this.isColorPickerActive();
                         }
-
-                        this.interaction.previous.x = event.position.x;
-                        this.interaction.previous.y = event.position.y;
                     }
                     break; // end MOUSEDOWN
 
@@ -139,7 +147,7 @@ export default class GtApp {
                 case EVENTCODES.MOUSEMOVE:
                     this.interaction.previous.x = event.position.x;
                     this.interaction.previous.y = event.position.y;
-                    if (!this.interaction.started) {
+                    if (!this.interaction.started && !this.isColorPickerActive()) {
                         this.updateTarget(event.position.x, event.position.y);
                     }
                     break; // end MOUSEMOVE
@@ -348,5 +356,10 @@ export default class GtApp {
         if (this.targetBody) {
             this.targetBody.updateColor(this.jscolor.toHEXString());
         }
+    }
+
+    isColorPickerActive() {
+        this.wasColorPickerActive = this.colorPicker.className.indexOf('jscolor-active') > -1;
+        return this.wasColorPickerActive;
     }
 } // end graviton/app
