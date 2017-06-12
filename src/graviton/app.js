@@ -95,13 +95,13 @@ export default class GtApp {
                 case EVENTCODES.MOUSEDOWN:
                     if (event.button === /* right click */ 2) {
                         // Remove body.
-                        if (this.targetBody) {
+                        if (this.targetBody && !this.interaction.started) {
                             this.sim.removeBody(this.targetBody);
                             this.targetBody = undefined;
                         }
                     } else if (event.button === /* middle click */ 1) {
                         // Color picking
-                        if (this.targetBody) {
+                        if (this.targetBody && !this.interaction.started) {
                             this.colorPicker.style.left = event.position.x + 'px';
                             this.colorPicker.style.top = event.position.y + 'px';
                             this.jscolor.fromString(this.targetBody.color);
