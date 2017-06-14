@@ -79,6 +79,17 @@ export default class GtApp {
             onFineChange: this.updateColor.bind(this)
         });
 
+        this.metaInfo = typeof args.metaInfo === 'string' ?
+            document.getElementById(args.metaInfo) :
+            args.metaInfo;
+
+        if (typeof this.metaInfo === 'undefined') {
+            this.metaInfo = document.createElement('span');
+            this.metaInfo.className = 'metainfo';
+            document.body.appendChild(this.metaInfo);
+            args.metaInfo = this.metaInfo;
+        }
+
         // Initialize
         this.initComponents();
         this.initTimers();
@@ -99,7 +110,7 @@ export default class GtApp {
                         // Remove body.
                         if (this.targetBody && !this.interaction.started) {
                             this.sim.removeBody(this.targetBody);
-                            this.targetBody = undefined;
+                            this.setTargetBody(undefined);
                         }
                     } else if (event.button === /* middle click */ 1) {
                         // Color picking
@@ -157,6 +168,7 @@ export default class GtApp {
                 case EVENTCODES.MOUSEWHEEL:
                     if (this.targetBody) {
                         this.targetBody.adjustSize(event.delta);
+                        this.updateMetaInfo();
                     }
                     break; // end MOUSEWHEEL
 
@@ -335,19 +347,19 @@ export default class GtApp {
         this.controls.id = 'controls';
         this.controls.innerHTML = `
             <menuitem id="playbtn">
-                <img src="assets/play.svg">
+                <img src="assets/play.svg" alt="Start simulation">
             </menuitem>
             <menuitem id="pausebtn" style="display: none;">
-                <img src="assets/pause.svg">
+                <img src="assets/pause.svg" alt="Stop simulation">
             </menuitem>
             <menuitem id="trailoffbtn">
-                <img src="assets/trail_off.svg">
+                <img src="assets/trail_off.svg" alt="Toggle trails">
             </menuitem>
             <menuitem id="trailonbtn" style="display: none;">
-                <img src="assets/trail_on.svg">
+                <img src="assets/trail_on.svg" alt="Toggle trails">
             </menuitem>
             <menuitem id="helpbtn">
-                <img src="assets/help.svg">
+                <img src="assets/help.svg" alt="Help">
             </menuitem>
             `;
 
@@ -399,7 +411,23 @@ export default class GtApp {
     }
 
     updateTarget(x, y) {
-        this.targetBody = this.sim.getBodyAt(x, y);
+        this.setTargetBody(this.sim.getBodyAt(x, y));
+    }
+
+    setTargetBody(body) {
+        this.targetBody = body;
+        this.updateMetaInfo();
+    }
+
+    updateMetaInfo() {
+        if (this.targetBody) {
+            this.metaInfo.innerHTML =
+                `⊕ ${this.targetBody.mass.toFixed(2)} &nbsp;` +
+                `⦿ ${this.targetBody.radius.toFixed(2)} &nbsp;` +
+                `⇗ ${this.targetBody.speed.toFixed(2)}`;
+        } else {
+            this.metaInfo.textContent = '';
+        }
     }
 
     updateColor() {

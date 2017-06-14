@@ -1,6 +1,9 @@
 * { margin: 0; padding: 0; }
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 #controls {
-    position: absolute;
+    position: fixed;
     top: 5px;
     right: 5px;
     -moz-user-select: none;
@@ -22,6 +25,18 @@
     width: 0;
     height: 0;
     visibility: hidden;
+}
+.metainfo {
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+    font-size: 1.1em;
+    color: #ffffff;
+    text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
 }
 .shortcuts {
     border-spacing: 15px 0;

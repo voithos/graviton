@@ -36,4 +36,9 @@ export default class GtBody {
         this.color = color;
         this.highlight = colors.toHex(colors.brighten(colors.fromHex(this.color), .25));
     }
+
+    get speed() {
+        // Velocities are tiny, so upscale it (arbitrarily) to make it readable.
+        return Math.sqrt(this.velX * this.velX + this.velY * this.velY) * 1e6;
+    }
 } // end graviton/body
