@@ -68,12 +68,11 @@ export default class GtApp {
             args.colorPicker = this.colorPicker;
         }
         this.jscolor = new jscolor(this.colorPicker, {
-            width: 101,
             padding: 0,
             shadow: false,
             borderWidth: 0,
             backgroundColor: 'transparent',
-            insetColor: '#000',
+            insetColor: '#3d559e',
             onFineChange: this.updateColor.bind(this)
         });
 
