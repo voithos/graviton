@@ -3,6 +3,7 @@
  */
 /* global jscolor */
 
+import vex from '../vendor/vex';
 import random from '../util/random';
 import GtSim from './sim';
 import GtGfx from './gfx';
@@ -27,6 +28,7 @@ export default class GtApp {
         this.interaction = {previous: {}};
         this.targetBody = undefined;
         this.wasColorPickerActive = false;
+        this.isHelpOpen = false;
 
         this.options.width = args.width = args.width || window.innerWidth;
         this.options.height = args.height = args.height || window.innerHeight;
@@ -56,6 +58,7 @@ export default class GtApp {
         this.pauseBtn = args.pauseBtn = this.controls.querySelector('#pausebtn');
         this.trailOffBtn = args.trailOffBtn = this.controls.querySelector('#trailoffbtn');
         this.trailOnBtn = args.trailOnBtn = this.controls.querySelector('#trailonbtn');
+        this.helpBtn = args.helpBtn = this.controls.querySelector('#helpbtn');
 
         this.colorPicker = typeof args.colorPicker === 'string' ?
             document.getElementById(args.colorPicker) :
@@ -192,6 +195,10 @@ export default class GtApp {
                                 mass: 1, radius: 5, color: '#787878'
                             });
                             break;
+
+                        case KEYCODES.K_QUESTIONMARK:
+                            this.showHelp();
+                            break;
                     }
                     break; // end KEYDOWN
 
@@ -209,6 +216,10 @@ export default class GtApp {
 
                 case CONTROLCODES.TRAILONBTN:
                     this.toggleTrails();
+                    break;
+
+                case CONTROLCODES.HELPBTN:
+                    this.showHelp();
                     break;
             }
 
@@ -255,6 +266,43 @@ export default class GtApp {
         this.noclear = !this.noclear;
     }
 
+    showHelp() {
+        if (this.isHelpOpen) {
+            return;
+        }
+        this.isHelpOpen = true;
+        vex.open({
+            unsafeContent: `
+                <h3>Shortcuts</h3>
+                <table class="shortcuts">
+                    <tbody>
+                    <tr>
+                        <td>Left click</td> <td> create body</td></tr>
+                    <tr>
+                        <td>Right click</td> <td> delete body</td></tr>
+                    <tr>
+                        <td>Middle click</td> <td> change body color</td></tr>
+                    <tr>
+                        <td><code>Enter key</code> key</td> <td> start simulation</td></tr>
+                    <tr>
+                        <td><code>C</code> key</td> <td> clear canvas</td></tr>
+                    <tr>
+                        <td><code>P</code> key</td> <td> toggle repainting</td></tr>
+                    <tr>
+                        <td><code>R</code> key</td> <td> create random bodies</td></tr>
+                    <tr>
+                        <td><code>T</code> key</td> <td> create Titan</td></tr>
+                    <tr>
+                        <td><code>?</code> key</td> <td> show help</td></tr>
+                    </tbody>
+                </table>
+                `,
+            callback: () => {
+                this.isHelpOpen = false;
+            }
+        });
+    }
+
     redraw() {
         if (!this.noclear) {
             this.gfx.clear();
@@ -297,6 +345,9 @@ export default class GtApp {
             </menuitem>
             <menuitem id="trailonbtn" style="display: none;">
                 <img src="assets/trail_on.svg">
+            </menuitem>
+            <menuitem id="helpbtn">
+                <img src="assets/help.svg">
             </menuitem>
             `;
 

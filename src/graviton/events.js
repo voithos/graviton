@@ -55,6 +55,8 @@ export const KEYCODES = {
     K_KP8: 104,
     K_KP9: 105,
 
+    K_QUESTIONMARK: 191,
+
     K_BACKSPACE: 8,
     K_TAB: 9,
     K_ENTER: 13,
@@ -87,7 +89,8 @@ export const CONTROLCODES = {
     PLAYBTN: 2000,
     PAUSEBTN: 2001,
     TRAILOFFBTN: 2002,
-    TRAILONBTN: 2003
+    TRAILONBTN: 2003,
+    HELPBTN: 2004
 };
 
 
@@ -106,6 +109,7 @@ export default class GtEvents {
         this.pauseBtn = args.pauseBtn;
         this.trailOffBtn = args.trailOffBtn;
         this.trailOnBtn = args.trailOnBtn;
+        this.helpBtn = args.helpBtn;
 
         this.wireupEvents();
     }
@@ -153,6 +157,8 @@ export default class GtEvents {
                     CONTROLCODES.TRAILOFFBTN));
         this.trailOnBtn.addEventListener('click', this.handleControlClick.bind(this,
                     CONTROLCODES.TRAILONBTN));
+        this.helpBtn.addEventListener('click', this.handleControlClick.bind(this,
+                    CONTROLCODES.HELPBTN));
     }
 
     handleClick(event) {

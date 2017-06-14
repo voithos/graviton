@@ -3,7 +3,6 @@ TODO
 
 - Use higher-performance gravity simulation algorithm.
 - Add toggleable meta info display (e.g. mass, velocity, direction, etc)
-- Add help dialog (explaining keyboard shortcuts).
 - Add sample scenarios (earth, solar system, etc).
 - Add lighting and light sources (WebGL necessary?).
 - Add unit tests.
