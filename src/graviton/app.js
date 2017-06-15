@@ -331,6 +331,7 @@ export default class GtApp {
 
         this.grid = document.createElement('canvas');
 
+        this.grid.className = 'gravitoncanvas';
         this.grid.width = width;
         this.grid.height = height;
         this.grid.style.display = 'block';

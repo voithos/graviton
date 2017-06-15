@@ -2,6 +2,9 @@
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+.gravitoncanvas:active {
+    cursor: crosshair;
+}
 #controls {
     position: fixed;
     top: 5px;
