@@ -4,4 +4,5 @@ TODO
 - Use higher-performance gravity simulation algorithm.
 - Add sample scenarios (earth, solar system, etc).
 - Add lighting and light sources (WebGL necessary?).
-- Add unit tests.
+- Apply a force instead of adding velocities.
+- Add more unit tests.
