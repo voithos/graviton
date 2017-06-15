@@ -151,8 +151,13 @@ export default class GtApp {
 
                         let body = this.interaction.body;
 
-                        body.velX = (event.position.x - body.x) * 0.0000001;
-                        body.velY = (event.position.y - body.y) * 0.0000001;
+                        let velX = (event.position.x - body.x) * 0.0000001;
+                        let velY = (event.position.y - body.y) * 0.0000001;
+                        // When the simulation is active, add the velocity to the current velocity
+                        // instead of completely resetting it (to allow for more interesting
+                        // interactions).
+                        body.velX = this.simTimer.active ? body.velX + velX : velX;
+                        body.velY = this.simTimer.active ? body.velY + velY : velY;
                     }
                     this.updateTarget(event.position.x, event.position.y);
                     break;
