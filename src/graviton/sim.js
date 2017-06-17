@@ -44,8 +44,10 @@ class GtBruteForceSim {
         body.velY += deltaT * ay;
 
         // Calculate new positions after timestep deltaT
-        body.x += deltaT * body.velX;
-        body.y += deltaT * body.velY;
+        // Note that this doesn't update the current position itself in order to not affect other
+        // force calculations
+        body.nextX += deltaT * body.velX;
+        body.nextY += deltaT * body.velY;
     }
 }
 
@@ -75,9 +77,17 @@ export default class GtSim {
             this.bruteForceSim.calculateNewPosition(
                     body, this.bodies, elapsed * this.multiplier);
         }
-
+        this.updatePositions();
         this.time += elapsed; // Increment runtime
         this.removeScattered();
+    }
+
+    /** Update positions of all bodies to be the next calculated position. */
+    updatePositions() {
+        for (const body of this.bodies) {
+            body.x = body.nextX;
+            body.y = body.nextY;
+        }
     }
 
     removeScattered() {

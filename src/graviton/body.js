@@ -13,6 +13,9 @@ export default class GtBody {
             throw Error('Correct positions were not given for the body.');
         }
 
+        this.nextX = this.x;
+        this.nextY = this.y;
+
         this.velX = args.velX || 0;
         this.velY = args.velY || 0;
 
