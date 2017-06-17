@@ -314,7 +314,7 @@ export default class GtApp {
                     </tbody>
                 </table>
                 `,
-            callback: () => {
+            afterClose: () => {
                 this.isHelpOpen = false;
             }
         });
