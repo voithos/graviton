@@ -12,10 +12,10 @@ class GtTreeNode {
         // Convenience center points.
         this.halfWidth = width / 2;
         this.halfHeight = height / 2;
-
         this.midX = this.startX + this.halfWidth;
         this.midY = this.startY + this.halfHeight;
 
+        // Matches GtBody's properties.
         this.mass = 0;
         this.x = 0;
         this.y = 0;
