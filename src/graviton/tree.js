@@ -3,11 +3,11 @@
  */
 
 class GtTreeNode {
-    constructor(startX, startY, width, height) {
-        this.startX = startX;
-        this.startY = startY;
+    constructor(width, height, startX, startY) {
         this.width = width;
         this.height = height;
+        this.startX = startX;
+        this.startY = startY;
 
         // Convenience center points.
         this.halfWidth = width / 2;
@@ -35,7 +35,7 @@ class GtTreeNode {
             const existing = this.children[quadrant];
             const quadX = existing.x > this.midX ? this.midX : this.startX;
             const quadY = existing.y > this.midY ? this.midY : this.startY;
-            const node = new GtTreeNode(quadX, quadY, this.halfWidth, this.halfHeight);
+            const node = new GtTreeNode(this.halfWidth, this.halfHeight, quadX, quadY);
 
             node.addBody(existing);
             node.addBody(body);
@@ -63,9 +63,11 @@ class GtTreeNode {
 }
 
 export default class GtTree {
-    constructor(width, height) {
+    constructor(width, height, startX = 0, startY = 0) {
         this.width = width;
         this.height = height;
+        this.startX = startX;
+        this.startY = startY;
         this.root = undefined;
     }
 
@@ -76,7 +78,7 @@ export default class GtTree {
             this.root = body;
         } else {
             const existing = this.root;
-            this.root = new GtTreeNode(0, 0, this.width, this.height);
+            this.root = new GtTreeNode(this.width, this.height, this.startX, this.startY);
             this.root.addBody(existing);
             this.root.addBody(body);
         }
