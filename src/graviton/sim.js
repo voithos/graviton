@@ -1,7 +1,6 @@
 /**
  * graviton/sim -- The gravitational simulator
  */
-import log from '../util/log';
 import GtBody from './body';
 import GtTree from './tree';
 
@@ -19,20 +18,13 @@ export default class GtSim {
 
         this.options.G = args.G || 6.67384 * Math.pow(10, -11); // Gravitational constant
         this.options.multiplier = args.multiplier || 1500; // Timestep
-        this.options.collisions = args.collision || true;
         this.options.scatterLimit = args.scatterLimit || 10000;
     }
 
     step(elapsed) {
         for (let i = 0; i < this.bodies.length; i++) {
             const body = this.bodies[i];
-            if (this.options.collisions === true) {
-                // TODO: Is this useful?
-                this.detectCollision(body, i);
-            }
-
             this.calculateNewPosition(body, i, elapsed * this.options.multiplier);
-
             i = this.removeScattered(body, i);
         }
 
@@ -80,21 +72,6 @@ export default class GtSim {
 
         // Obtain the distance between the objects (hypotenuse)
         this.D.r = Math.sqrt(Math.pow(this.D.dx, 2) + Math.pow(this.D.dy, 2));
-    }
-
-    detectCollision(body, index) {
-        for (let i = 0; i < this.bodies.length; i++) {
-            const collider = this.bodies[i];
-            if (i !== index) {
-                this.calculateDistance(body, collider);
-                let clearance = body.radius + collider.radius;
-
-                if (this.D.r <= clearance) {
-                    // Collision detected
-                    log.write('Collision detected!!', 'debug');
-                }
-            }
-        }
     }
 
     removeScattered(body, index) {

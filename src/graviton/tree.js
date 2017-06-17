@@ -1,12 +1,15 @@
 /**
  * graviton/tree -- The gravitational body tree structure
  */
+
 class GtTreeNode {
     constructor(startX, startY, width, height) {
         this.startX = startX;
         this.startY = startY;
         this.width = width;
         this.height = height;
+
+        // Convenience center points.
         this.halfWidth = width / 2;
         this.halfHeight = height / 2;
 
@@ -21,6 +24,7 @@ class GtTreeNode {
         this.children = new Array(4);
     }
 
+    /** Add a body to the tree, updating mass and centerpoint. */
     addBody(body) {
         this.updateMass(body);
         const quadrant = this.getQuadrant(body.x, body.y);
@@ -40,6 +44,7 @@ class GtTreeNode {
         }
     }
 
+    /** Update the center of mass based on the addition of a new body. */
     updateMass(body) {
         const newMass = this.mass + body.mass;
         const newX = (this.x * this.mass + body.x * body.mass) / newMass;
@@ -49,6 +54,7 @@ class GtTreeNode {
         this.y = newY;
     }
 
+    /** Return the quadrant index for a given (x, y) pair. Assumes that it lies within bounds. */
     getQuadrant(x, y) {
         const xIndex = Number(x > this.midX);
         const yIndex = Number(y > this.midY) * 2;
