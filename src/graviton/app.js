@@ -389,7 +389,7 @@ export default class GtApp {
         if (!this.noclear) {
             this.gfx.clear();
         }
-        if (this.quadTreeLines) {
+        if (this.quadTreeLines && !this.sim.useBruteForce) {
             this.gfx.drawQuadTreeLines(this.sim.tree.root);
         }
         if (this.interaction.started) {
