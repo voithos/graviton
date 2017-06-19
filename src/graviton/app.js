@@ -200,6 +200,10 @@ export default class GtApp {
                             this.toggleSimStrategy();
                             break;
 
+                        case KEYCODES.K_Q:
+                            this.toggleQuadTreeLines();
+                            break;
+
                         case KEYCODES.K_P:
                             this.toggleTrails();
                             break;
@@ -351,7 +355,9 @@ export default class GtApp {
                     <tr>
                         <td><code>C</code> key</td> <td> clear canvas</td></tr>
                     <tr>
-                        <td><code>B</code> key</td> <td> toggle brute-force vs Barnes-Hut</td></tr>
+                        <td><code>B</code> key</td> <td> toggle brute-force/Barnes-Hut</td></tr>
+                    <tr>
+                        <td><code>Q</code> key</td> <td> toggle quadtree lines</td></tr>
                     <tr>
                         <td><code>P</code> key</td> <td> toggle repainting</td></tr>
                     <tr>
