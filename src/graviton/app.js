@@ -57,6 +57,8 @@ export default class GtApp {
 
         this.playBtn = args.playBtn = this.controls.querySelector('#playbtn');
         this.pauseBtn = args.pauseBtn = this.controls.querySelector('#pausebtn');
+        this.barnesHutOnBtn = args.barnesHutOnBtn = this.controls.querySelector('#barneshutonbtn');
+        this.barnesHutOffBtn = args.barnesHutOffBtn = this.controls.querySelector('#barneshutoffbtn');
         this.quadTreeOffBtn = args.quadTreeOffBtn = this.controls.querySelector('#quadtreeoffbtn');
         this.quadTreeOnBtn = args.quadTreeOnBtn = this.controls.querySelector('#quadtreeonbtn');
         this.trailOffBtn = args.trailOffBtn = this.controls.querySelector('#trailoffbtn');
@@ -194,6 +196,10 @@ export default class GtApp {
                             retval = false;
                             break;
 
+                        case KEYCODES.K_B:
+                            this.toggleSimStrategy();
+                            break;
+
                         case KEYCODES.K_P:
                             this.toggleTrails();
                             break;
@@ -228,6 +234,14 @@ export default class GtApp {
 
                 case CONTROLCODES.PAUSEBTN:
                     this.toggleSim();
+                    break;
+
+                case CONTROLCODES.BARNESHUTONBTN:
+                    this.toggleSimStrategy();
+                    break;
+
+                case CONTROLCODES.BARNESHUTOFFBTN:
+                    this.toggleSimStrategy();
                     break;
 
                 case CONTROLCODES.QUADTREEOFFBTN:
@@ -283,6 +297,17 @@ export default class GtApp {
         this.simTimer.toggle();
     }
 
+    toggleSimStrategy() {
+        if (this.sim.useBruteForce) {
+            this.barnesHutOnBtn.style.display = '';
+            this.barnesHutOffBtn.style.display = 'none';
+        } else {
+            this.barnesHutOnBtn.style.display = 'none';
+            this.barnesHutOffBtn.style.display = '';
+        }
+        this.sim.toggleStrategy();
+    }
+
     toggleTrails() {
         if (this.noclear) {
             this.trailOffBtn.style.display = '';
@@ -322,9 +347,11 @@ export default class GtApp {
                     <tr>
                         <td>Middle click</td> <td> change body color</td></tr>
                     <tr>
-                        <td><code>Enter key</code> key</td> <td> start simulation</td></tr>
+                        <td><code>Enter</code> key</td> <td> start simulation</td></tr>
                     <tr>
                         <td><code>C</code> key</td> <td> clear canvas</td></tr>
+                    <tr>
+                        <td><code>B</code> key</td> <td> toggle brute-force vs Barnes-Hut</td></tr>
                     <tr>
                         <td><code>P</code> key</td> <td> toggle repainting</td></tr>
                     <tr>
@@ -384,6 +411,12 @@ export default class GtApp {
             </menuitem>
             <menuitem id="pausebtn" style="display: none;">
                 <img src="assets/pause.svg" alt="Stop simulation">
+            </menuitem>
+            <menuitem id="barneshutonbtn">
+                <img src="assets/barnes_hut_on.svg" alt="Toggle Barnes-Hut algorithm">
+            </menuitem>
+            <menuitem id="barneshutoffbtn" style="display: none;">
+                <img src="assets/barnes_hut_off.svg" alt="Toggle Barnes-Hut algorithm">
             </menuitem>
             <menuitem id="quadtreeoffbtn">
                 <img src="assets/quadtree_off.svg" alt="Toggle quadtree lines">
