@@ -29,7 +29,9 @@ class GtTreeNode {
         this.updateMass(body);
         const quadrant = this.getQuadrant(body.x, body.y);
 
-        if (!this.children[quadrant]) {
+        if (this.children[quadrant] instanceof GtTreeNode) {
+            this.children[quadrant].addBody(body);
+        } else if (!this.children[quadrant]) {
             this.children[quadrant] = body;
         } else {
             const existing = this.children[quadrant];
