@@ -127,15 +127,16 @@ export default class GtSim {
 
         this.G = args.G || 6.67384 * Math.pow(10, -11); // Gravitational constant
         this.multiplier = args.multiplier || 1500; // Timestep
-        this.scatterLimit = args.scatterLimit || 5000;
+        this.scatterLimitX = args.scatterLimitX || args.width * 2;
+        this.scatterLimitY = args.scatterLimitY || args.height * 2;
 
         this.bodies = [];
         // Incorporate the scatter limit
         this.tree = new GtTree(
-                /* width */ 2 * this.scatterLimit,
-                /* height */ 2 * this.scatterLimit,
-                /* startX */ (args.width - 2 * this.scatterLimit) / 2,
-                /* startY */ (args.height - 2 * this.scatterLimit) / 2);
+                /* width */ this.scatterLimitX,
+                /* height */ this.scatterLimitY,
+                /* startX */ (args.width - this.scatterLimitX) / 2,
+                /* startY */ (args.height - this.scatterLimitY) / 2);
         this.time = 0;
 
         this.bruteForceSim = new GtBruteForceSim(this.G);
