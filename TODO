@@ -2,7 +2,6 @@ TODO
 ====
 
 - Add a toggle for brute-force vs barnes-hut
-- Add a toggle to view the barnes hut quadtree
 - Add sample scenarios (earth, solar system, etc).
 - Add lighting and light sources (WebGL necessary?).
 - Apply a force instead of adding velocities.

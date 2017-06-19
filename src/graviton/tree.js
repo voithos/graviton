@@ -26,8 +26,8 @@ class GtTreeNode {
 
     /** Add a body to the tree, updating mass and centerpoint. */
     addBody(body) {
-        this.updateMass(body);
-        const quadrant = this.getQuadrant(body.x, body.y);
+        this._updateMass(body);
+        const quadrant = this._getQuadrant(body.x, body.y);
 
         if (this.children[quadrant] instanceof GtTreeNode) {
             this.children[quadrant].addBody(body);
@@ -47,7 +47,7 @@ class GtTreeNode {
     }
 
     /** Update the center of mass based on the addition of a new body. */
-    updateMass(body) {
+    _updateMass(body) {
         const newMass = this.mass + body.mass;
         const newX = (this.x * this.mass + body.x * body.mass) / newMass;
         const newY = (this.y * this.mass + body.y * body.mass) / newMass;
@@ -57,7 +57,7 @@ class GtTreeNode {
     }
 
     /** Return the quadrant index for a given (x, y) pair. Assumes that it lies within bounds. */
-    getQuadrant(x, y) {
+    _getQuadrant(x, y) {
         const xIndex = Number(x > this.midX);
         const yIndex = Number(y > this.midY) * 2;
         return xIndex + yIndex;

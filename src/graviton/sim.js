@@ -66,18 +66,18 @@ class GtBarnesHutSim {
     constructor(G, theta) {
         this.G = G;
         this.theta = theta;
-        this.netFx = 0;
-        this.netFy = 0;
+        this._netFx = 0;
+        this._netFy = 0;
     }
 
     /** Calculate the new position of a body based on brute force mechanics. */
     calculateNewPosition(body, attractors, treeRoot, deltaT) {
-        this.netFx = 0;
-        this.netFy = 0;
+        this._netFx = 0;
+        this._netFy = 0;
 
         // Iterate through all bodies in the tree and sum the forces exerted
         this.calculateForceFromTree(body, treeRoot);
-        exertForce(body, this.netFx, this.netFy, deltaT);
+        exertForce(body, this._netFx, this._netFy, deltaT);
     }
 
     calculateForceFromTree(body, treeNode) {
@@ -90,8 +90,8 @@ class GtBarnesHutSim {
             // The node is external (it's an actual body)
             if (body !== treeNode) {
                 const [Fx, Fy] = calculateForce(body, treeNode, this.G);
-                this.netFx += Fx;
-                this.netFy += Fy;
+                this._netFx += Fx;
+                this._netFy += Fy;
             }
             return;
         }
@@ -108,8 +108,8 @@ class GtBarnesHutSim {
         if (s / d < this.theta) {
             // Node is sufficiently far away
             const [Fx, Fy] = calculateForce(body, treeNode, this.G);
-            this.netFx += Fx;
-            this.netFy += Fy;
+            this._netFx += Fx;
+            this._netFy += Fy;
         } else {
             // Node is close; recurse
             for (const childNode of treeNode.children) {
@@ -152,7 +152,7 @@ export default class GtSim {
     /** Calculate a step of the simulation. */
     step(elapsed) {
         if (!this.useBruteForce) {
-            this.resetTree();
+            this._resetTree();
         }
 
         for (const body of this.bodies) {
@@ -160,13 +160,13 @@ export default class GtSim {
                     body, this.bodies, this.tree.root, elapsed * this.multiplier);
         }
 
-        this.commitPositionUpdates();
+        this._commitPositionUpdates();
         this.time += elapsed; // Increment runtime
-        this.removeScattered();
+        this._removeScattered();
     }
 
     /** Update positions of all bodies to be the next calculated position. */
-    commitPositionUpdates() {
+    _commitPositionUpdates() {
         for (const body of this.bodies) {
             body.x = body.nextX;
             body.y = body.nextY;
@@ -174,7 +174,7 @@ export default class GtSim {
     }
 
     /** Scan through the list of bodies and remove any that have fallen out of the scatter limit. */
-    removeScattered() {
+    _removeScattered() {
         let i = 0;
         while (i < this.bodies.length) {
             const body = this.bodies[i];
@@ -197,7 +197,7 @@ export default class GtSim {
     addNewBody(args) {
         let body = new GtBody(args);
         this.bodies.push(body);
-        this.resetTree();
+        this._resetTree();
         return body;
     }
 
@@ -207,7 +207,7 @@ export default class GtSim {
             const body = this.bodies[i];
             if (body === targetBody) {
                 this.bodies.splice(i, 1);
-                this.resetTree();
+                this._resetTree();
                 break;
             }
         }
@@ -229,11 +229,11 @@ export default class GtSim {
     /** Clear the simulation. */
     clear() {
         this.bodies.length = 0; // Remove all bodies from collection
-        this.resetTree();
+        this._resetTree();
     }
 
     /** Clear and reset the quadtree, adding all existing bodies back. */
-    resetTree() {
+    _resetTree() {
         this.tree.clear();
         for (const body of this.bodies) {
             this.tree.addBody(body);

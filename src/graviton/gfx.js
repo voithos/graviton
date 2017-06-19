@@ -24,11 +24,11 @@ export default class GtGfx {
 
     drawBodies(bodies, targetBody) {
         for (let body of bodies) {
-            this.drawBody(body, /* isTargeted */ body === targetBody);
+            this._drawBody(body, /* isTargeted */ body === targetBody);
         }
     }
 
-    drawBody(body, isTargeted) {
+    _drawBody(body, isTargeted) {
         this.ctx.fillStyle = body.color;
 
         this.ctx.beginPath();
@@ -70,10 +70,10 @@ export default class GtGfx {
         this.ctx.strokeStyle = '#000';
         this.ctx.lineWidth = 1;
         this.ctx.lineCap = 'butt';
-        this.drawQuadTreeLine(treeNode);
+        this._drawQuadTreeLine(treeNode);
     }
 
-    drawQuadTreeLine(treeNode) {
+    _drawQuadTreeLine(treeNode) {
         if (!treeNode || !treeNode.children) {
             return;
         }
@@ -90,7 +90,7 @@ export default class GtGfx {
         this.ctx.stroke();
 
         for (const childNode of treeNode.children) {
-            this.drawQuadTreeLine(childNode);
+            this._drawQuadTreeLine(childNode);
         }
     }
 } // end graviton/gfx
