@@ -291,47 +291,57 @@ export default class GtApp {
     }
 
     toggleSim() {
+        this.simTimer.toggle();
         if (this.simTimer.active) {
-            this.playBtn.style.display = '';
-            this.pauseBtn.style.display = 'none';
-        } else {
             this.playBtn.style.display = 'none';
             this.pauseBtn.style.display = '';
+        } else {
+            this.playBtn.style.display = '';
+            this.pauseBtn.style.display = 'none';
         }
-        this.simTimer.toggle();
     }
 
     toggleSimStrategy() {
+        this.sim.toggleStrategy();
         if (this.sim.useBruteForce) {
-            this.barnesHutOnBtn.style.display = '';
-            this.barnesHutOffBtn.style.display = 'none';
-        } else {
             this.barnesHutOnBtn.style.display = 'none';
             this.barnesHutOffBtn.style.display = '';
+        } else {
+            this.barnesHutOnBtn.style.display = '';
+            this.barnesHutOffBtn.style.display = 'none';
         }
-        this.sim.toggleStrategy();
+        this.updateQuadTreeLinesIcons();
     }
 
     toggleTrails() {
+        this.noclear = !this.noclear;
         if (this.noclear) {
-            this.trailOffBtn.style.display = '';
-            this.trailOnBtn.style.display = 'none';
-        } else {
             this.trailOffBtn.style.display = 'none';
             this.trailOnBtn.style.display = '';
+        } else {
+            this.trailOffBtn.style.display = '';
+            this.trailOnBtn.style.display = 'none';
         }
-        this.noclear = !this.noclear;
     }
 
     toggleQuadTreeLines() {
-        if (this.quadTreeLines) {
-            this.quadTreeOffBtn.style.display = '';
+        this.quadTreeLines = !this.quadTreeLines;
+        this.updateQuadTreeLinesIcons();
+    }
+
+    updateQuadTreeLinesIcons() {
+        if (this.sim.useBruteForce) {
+            this.quadTreeOffBtn.style.display = 'none';
             this.quadTreeOnBtn.style.display = 'none';
-        } else {
+            return;
+        }
+        if (this.quadTreeLines) {
             this.quadTreeOffBtn.style.display = 'none';
             this.quadTreeOnBtn.style.display = '';
+        } else {
+            this.quadTreeOffBtn.style.display = '';
+            this.quadTreeOnBtn.style.display = 'none';
         }
-        this.quadTreeLines = !this.quadTreeLines;
     }
 
     showHelp() {

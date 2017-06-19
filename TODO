@@ -1,6 +1,7 @@
 TODO
 ====
 
+- Add tooltips.
 - Add sample scenarios (earth, solar system, etc).
 - Add lighting and light sources (WebGL necessary?).
 - Apply a force instead of adding velocities.
