@@ -1,54 +1,3 @@
-* { margin: 0; padding: 0; }
-body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-.gravitoncanvas:active {
-    cursor: crosshair;
-}
-#controls {
-    position: fixed;
-    top: 5px;
-    right: 5px;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
-}
-#controls menuitem {
-    opacity: 0.4;
-    cursor: pointer;
-    transition: opacity 0.25s linear;
-}
-#controls menuitem:hover {
-    opacity: 1;
-}
-.bodycolorpicker {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    visibility: hidden;
-}
-.metainfo {
-    position: fixed;
-    bottom: 5px;
-    right: 5px;
-    font-size: 1.1em;
-    color: #ffffff;
-    text-shadow:
-        -1px -1px 0 #000,
-        1px -1px 0 #000,
-        -1px 1px 0 #000,
-        1px 1px 0 #000;
-}
-.shortcuts {
-    border-spacing: 15px 0;
-    font-size: 0.9em;
-}
-code {
-    background: #eee;
-}
-
 /** vex.css inlined */
 @keyframes vex-fadein {
   0% {
@@ -457,3 +406,66 @@ body.vex-open {
 .vex-loading-spinner.vex-theme-wireframe {
   height: 2.5em;
   width: 2.5em; }
+
+
+/** Primary stylesheet */
+/***********************/
+
+* { margin: 0; padding: 0; }
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.gravitoncanvas:active {
+    cursor: crosshair;
+}
+#controls {
+    position: fixed;
+    top: 5px;
+    right: 5px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+#controls menuitem {
+    opacity: 0.4;
+    cursor: pointer;
+    transition: opacity 0.25s linear;
+}
+#controls menuitem:hover {
+    opacity: 1;
+}
+.bodycolorpicker {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    visibility: hidden;
+}
+.metainfo {
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+    font-size: 1.1em;
+    color: #ffffff;
+    text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+}
+.shortcuts {
+    border-spacing: 15px 0;
+    font-size: 0.9em;
+}
+code {
+    background: #eee;
+}
+/* Overrides for vex wireframe theme. */
+.vex.vex-theme-wireframe {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+.vex.vex-theme-wireframe .vex-content {
+    width: 500px;
+}
