@@ -64,4 +64,33 @@ export default class GtGfx {
         this.ctx.lineTo(to.x, to.y);
         this.ctx.stroke();
     }
+
+    drawQuadTreeLines(treeNode) {
+        // Setup line style and call the drawing routines
+        this.ctx.strokeStyle = '#000';
+        this.ctx.lineWidth = 1;
+        this.ctx.lineCap = 'butt';
+        this.drawQuadTreeLine(treeNode);
+    }
+
+    drawQuadTreeLine(treeNode) {
+        if (!treeNode || !treeNode.children) {
+            return;
+        }
+
+        // Draw x and y lines
+        this.ctx.beginPath();
+        this.ctx.moveTo(treeNode.midX, treeNode.startY);
+        this.ctx.lineTo(treeNode.midX, treeNode.startY + treeNode.height);
+        this.ctx.stroke();
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(treeNode.startX, treeNode.midY);
+        this.ctx.lineTo(treeNode.startX + treeNode.width, treeNode.midY);
+        this.ctx.stroke();
+
+        for (const childNode of treeNode.children) {
+            this.drawQuadTreeLine(childNode);
+        }
+    }
 } // end graviton/gfx

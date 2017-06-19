@@ -25,6 +25,7 @@ export default class GtApp {
         this.gfx = null;
 
         this.noclear = false;
+        this.quadTreeLines = false;
         this.interaction = {previous: {}};
         this.targetBody = undefined;
         this.wasColorPickerActive = false;
@@ -56,6 +57,8 @@ export default class GtApp {
 
         this.playBtn = args.playBtn = this.controls.querySelector('#playbtn');
         this.pauseBtn = args.pauseBtn = this.controls.querySelector('#pausebtn');
+        this.quadTreeOffBtn = args.quadTreeOffBtn = this.controls.querySelector('#quadtreeoffbtn');
+        this.quadTreeOnBtn = args.quadTreeOnBtn = this.controls.querySelector('#quadtreeonbtn');
         this.trailOffBtn = args.trailOffBtn = this.controls.querySelector('#trailoffbtn');
         this.trailOnBtn = args.trailOnBtn = this.controls.querySelector('#trailonbtn');
         this.helpBtn = args.helpBtn = this.controls.querySelector('#helpbtn');
@@ -227,6 +230,14 @@ export default class GtApp {
                     this.toggleSim();
                     break;
 
+                case CONTROLCODES.QUADTREEOFFBTN:
+                    this.toggleQuadTreeLines();
+                    break;
+
+                case CONTROLCODES.QUADTREEONBTN:
+                    this.toggleQuadTreeLines();
+                    break;
+
                 case CONTROLCODES.TRAILOFFBTN:
                     this.toggleTrails();
                     break;
@@ -283,6 +294,17 @@ export default class GtApp {
         this.noclear = !this.noclear;
     }
 
+    toggleQuadTreeLines() {
+        if (this.quadTreeLines) {
+            this.quadTreeOffBtn.style.display = '';
+            this.quadTreeOnBtn.style.display = 'none';
+        } else {
+            this.quadTreeOffBtn.style.display = 'none';
+            this.quadTreeOnBtn.style.display = '';
+        }
+        this.quadTreeLines = !this.quadTreeLines;
+    }
+
     showHelp() {
         if (this.isHelpOpen) {
             return;
@@ -324,7 +346,12 @@ export default class GtApp {
         if (!this.noclear) {
             this.gfx.clear();
         }
-        this.drawInteraction();
+        if (this.quadTreeLines) {
+            this.gfx.drawQuadTreeLines(this.sim.tree.root);
+        }
+        if (this.interaction.started) {
+            this.gfx.drawReticleLine(this.interaction.body, this.interaction.previous);
+        }
         this.gfx.drawBodies(this.sim.bodies, this.targetBody);
     }
 
@@ -357,6 +384,12 @@ export default class GtApp {
             </menuitem>
             <menuitem id="pausebtn" style="display: none;">
                 <img src="assets/pause.svg" alt="Stop simulation">
+            </menuitem>
+            <menuitem id="quadtreeoffbtn">
+                <img src="assets/quadtree_off.svg" alt="Toggle quadtree lines">
+            </menuitem>
+            <menuitem id="quadtreeonbtn" style="display: none;">
+                <img src="assets/quadtree_on.svg" alt="Toggle quadtree lines">
             </menuitem>
             <menuitem id="trailoffbtn">
                 <img src="assets/trail_off.svg" alt="Toggle trails">
@@ -407,12 +440,6 @@ export default class GtApp {
                 radius: random.number(minRadius, maxRadius),
                 color: color
             });
-        }
-    }
-
-    drawInteraction() {
-        if (this.interaction.started) {
-            this.gfx.drawReticleLine(this.interaction.body, this.interaction.previous);
         }
     }
 

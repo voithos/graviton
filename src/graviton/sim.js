@@ -159,13 +159,13 @@ export default class GtSim {
                     body, this.bodies, this.tree.root, elapsed * this.multiplier);
         }
 
-        this.updatePositions();
+        this.commitPositionUpdates();
         this.time += elapsed; // Increment runtime
         this.removeScattered();
     }
 
     /** Update positions of all bodies to be the next calculated position. */
-    updatePositions() {
+    commitPositionUpdates() {
         for (const body of this.bodies) {
             body.x = body.nextX;
             body.y = body.nextY;
@@ -183,6 +183,8 @@ export default class GtSim {
                 body.y > this.scatterLimit ||
                 body.y < -this.scatterLimit) {
                 // Remove from body collection
+                // We don't need to reset the tree here because this is a runtime (not user-based)
+                // operation, and the tree is reset automatically on every step of the simulation.
                 this.bodies.splice(i, 1);
             } else {
                 i++;
@@ -194,6 +196,7 @@ export default class GtSim {
     addNewBody(args) {
         let body = new GtBody(args);
         this.bodies.push(body);
+        this.resetTree();
         return body;
     }
 
@@ -203,6 +206,7 @@ export default class GtSim {
             const body = this.bodies[i];
             if (body === targetBody) {
                 this.bodies.splice(i, 1);
+                this.resetTree();
                 break;
             }
         }
@@ -224,6 +228,7 @@ export default class GtSim {
     /** Clear the simulation. */
     clear() {
         this.bodies.length = 0; // Remove all bodies from collection
+        this.resetTree();
     }
 
     /** Clear and reset the quadtree, adding all existing bodies back. */
