@@ -422,32 +422,32 @@ export default class GtApp {
         this.controls.type = 'toolbar';
         this.controls.id = 'controls';
         this.controls.innerHTML = `
-            <menuitem id="playbtn">
+            <menuitem id="playbtn" data-tooltip="Start simulation">
                 <img src="assets/play.svg" alt="Start simulation">
             </menuitem>
-            <menuitem id="pausebtn" style="display: none;">
+            <menuitem id="pausebtn" style="display: none;" data-tooltip="Stop simulation">
                 <img src="assets/pause.svg" alt="Stop simulation">
             </menuitem>
-            <menuitem id="barneshutonbtn">
-                <img src="assets/barnes_hut_on.svg" alt="Toggle Barnes-Hut algorithm">
+            <menuitem id="barneshutonbtn" data-tooltip="Toggle Barnes-Hut">
+                <img src="assets/barnes_hut_on.svg" alt="Toggle Barnes-Hut">
             </menuitem>
-            <menuitem id="barneshutoffbtn" style="display: none;">
-                <img src="assets/barnes_hut_off.svg" alt="Toggle Barnes-Hut algorithm">
+            <menuitem id="barneshutoffbtn" style="display: none;" data-tooltip="Toggle Barnes-Hut">
+                <img src="assets/barnes_hut_off.svg" alt="Toggle Barnes-Hut">
             </menuitem>
-            <menuitem id="quadtreeoffbtn">
+            <menuitem id="quadtreeoffbtn" data-tooltip="Toggle quadtree lines">
                 <img src="assets/quadtree_off.svg" alt="Toggle quadtree lines">
             </menuitem>
-            <menuitem id="quadtreeonbtn" style="display: none;">
+            <menuitem id="quadtreeonbtn" style="display: none;" data-tooltip="Toggle quadtree lines">
                 <img src="assets/quadtree_on.svg" alt="Toggle quadtree lines">
             </menuitem>
-            <menuitem id="trailoffbtn">
+            <menuitem id="trailoffbtn" data-tooltip="Toggle trails">
                 <img src="assets/trail_off.svg" alt="Toggle trails">
             </menuitem>
-            <menuitem id="trailonbtn" style="display: none;">
+            <menuitem id="trailonbtn" style="display: none;" data-tooltip="Toggle trails">
                 <img src="assets/trail_on.svg" alt="Toggle trails">
             </menuitem>
-            <menuitem id="helpbtn">
-                <img src="assets/help.svg" alt="Help">
+            <menuitem id="helpbtn" data-tooltip="Shortcuts">
+                <img src="assets/help.svg" alt="Shortcuts">
             </menuitem>
             `;
 
