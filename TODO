@@ -2,6 +2,8 @@ TODO
 ====
 
 - Add tooltips.
+- Add check to avoid infinite recursion.
+- Add ability to toggle collisions.
 - Add sample scenarios (earth, solar system, etc).
 - Add lighting and light sources (WebGL necessary?).
 - Apply a force instead of adding velocities.

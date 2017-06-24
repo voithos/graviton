@@ -3,6 +3,7 @@
  */
 import GtBody from './body';
 import GtTree from './tree';
+import colors from '../util/colors';
 
 /** Exert force on a body and update its next position. */
 function exertForce(body, netFx, netFy, deltaT) {
@@ -35,6 +36,14 @@ function calculateForce(body, attractor, G) {
     const Fx = F * (dx / r);
     const Fy = F * (dy / r);
     return [Fx, Fy];
+}
+
+/** Checks whether or not two bodies are colliding. */
+function areColliding(body, collider, theta = 0.3) {
+    const dist = body.radius + collider.radius;
+    const dx = body.x - collider.x;
+    const dy = body.y - collider.y;
+    return (dist * dist) * theta > (dx * dx) + (dy * dy);
 }
 
 class GtBruteForceSim {
@@ -163,6 +172,7 @@ export default class GtSim {
         this._commitPositionUpdates();
         this.time += elapsed; // Increment runtime
         this._removeScattered();
+        this._mergeCollided();
     }
 
     /** Update positions of all bodies to be the next calculated position. */
@@ -191,6 +201,50 @@ export default class GtSim {
                 i++;
             }
         }
+    }
+
+    _mergeCollided() {
+        let i = 0;
+        while (i < this.bodies.length) {
+            const collidingIndices = [];
+            // Collect colliding elements; only need to check each pair once
+            for (let j = i + 1; j < this.bodies.length; j++) {
+                if (areColliding(this.bodies[i], this.bodies[j])) {
+                    // Add, in order of highest index first
+                    collidingIndices.unshift(j);
+                }
+            }
+
+            if (collidingIndices.length) {
+                // Include the "source" element in the collision set
+                collidingIndices.push(i);
+
+                // Extract elements and merge
+                const colliding = collidingIndices.map(idx => this.bodies.splice(idx, 1)[0]);
+                this._mergeBodies(colliding);
+            } else {
+                i++;
+            }
+        }
+    }
+
+    /** Merge and return the args for a new body based on a set of old bodies. */
+    _mergeBodies(bodies) {
+        const newBodyArgs = { x: 0, y: 0, velX: 0, velY: 0, mass: 0, color: bodies[0].color };
+        let largestMass = 0;
+        for (const body of bodies) {
+            if (body.mass > largestMass) {
+                newBodyArgs.x = body.x;
+                newBodyArgs.y = body.y;
+                largestMass = body.mass;
+            }
+            newBodyArgs.velX += body.velX;
+            newBodyArgs.velY += body.velY;
+            newBodyArgs.mass += body.mass;
+            newBodyArgs.color = colors.blend(newBodyArgs.color, body.color);
+        }
+
+        return this.addNewBody(newBodyArgs);
     }
 
     /** Create and return a new body to the simulation. */

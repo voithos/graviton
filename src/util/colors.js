@@ -25,5 +25,23 @@ export default {
         return '#' + ('0' + r.toString(16)).substr(r < 16 ? 0 : 1) +
                      ('0' + g.toString(16)).substr(g < 16 ? 0 : 1) +
                      ('0' + b.toString(16)).substr(b < 16 ? 0 : 1);
+    },
+
+    blend(color1, color2, percentage = 0.5) {
+        let parsedColor1 = this.fromHex(color1);
+        let parsedColor2 = this.fromHex(color2);
+
+        let blendedColor = [
+            Math.round(Math.min(Math.max(0,
+                            (1 - percentage) * parsedColor1[0] + percentage * parsedColor2[0]),
+                        255)),
+            Math.round(Math.min(Math.max(0,
+                            (1 - percentage) * parsedColor1[1] + percentage * parsedColor2[1]),
+                        255)),
+            Math.round(Math.min(Math.max(0,
+                            (1 - percentage) * parsedColor1[2] + percentage * parsedColor2[2]),
+                        255))
+        ];
+        return this.toHex(blendedColor);
     }
 };

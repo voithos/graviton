@@ -467,9 +467,6 @@ export default class GtApp {
         let minVelY = args.minVelY || 0;
         let maxVelY = args.maxVelY || 0.00001;
 
-        let minMass = args.minMass || 1;
-        let maxMass = args.maxMass || 150;
-
         let minRadius = args.minRadius || 1;
         let maxRadius = args.maxRadius || 15;
 
@@ -485,7 +482,6 @@ export default class GtApp {
                 y: random.number(minY, maxY),
                 velX: random.directional(minVelX, maxVelX),
                 velY: random.directional(minVelY, maxVelY),
-                mass: random.number(minMass, maxMass),
                 radius: random.number(minRadius, maxRadius),
                 color: color
             });

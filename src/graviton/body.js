@@ -19,20 +19,38 @@ export default class GtBody {
         this.velX = args.velX || 0;
         this.velY = args.velY || 0;
 
-        this.radius = args.radius || 10;
-        // Initialized below.
-        this.mass = undefined;
+        this.radius = args.radius;
+        this.mass = args.mass;
+
+        if ('radius' in args && !('mass' in args)) {
+            this.forceRadius(args.radius);
+        } else if ('mass' in args && !('radius' in args)) {
+            this.forceMass(args.mass);
+        } else if (!('mass' in args) && !('radius' in args)) {
+            // Default to a radius of 10
+            this.forceRadius(10);
+        }
+
         this.color = undefined;
         this.highlight = undefined;
 
         this.updateColor(args.color || '#dbd3c8');
-        this.adjustSize(0);
     }
 
     adjustSize(delta) {
-        this.radius = Math.max(this.radius + delta, 2);
+        this.forceRadius(Math.max(this.radius + delta, 2));
+    }
+
+    forceRadius(radius) {
+        this.radius = radius;
         // Dorky formula to make mass scale "properly" with radius.
         this.mass = Math.pow(this.radius / 4, 3);
+    }
+
+    forceMass(mass) {
+        // Normally the mass is calculated based on the radius, but we can do the reverse
+        this.mass = mass;
+        this.radius = Math.pow(this.mass, 1/3) * 4;
     }
 
     updateColor(color) {
