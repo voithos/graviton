@@ -160,6 +160,9 @@ export default class GtSim {
 
     /** Calculate a step of the simulation. */
     step(elapsed) {
+        this._mergeCollided();
+        this._removeScattered();
+
         if (!this.useBruteForce) {
             this._resetTree();
         }
@@ -171,8 +174,6 @@ export default class GtSim {
 
         this._commitPositionUpdates();
         this.time += elapsed; // Increment runtime
-        this._removeScattered();
-        this._mergeCollided();
     }
 
     /** Update positions of all bodies to be the next calculated position. */
@@ -189,10 +190,10 @@ export default class GtSim {
         while (i < this.bodies.length) {
             const body = this.bodies[i];
 
-            if (body.x > this.scatterLimit ||
-                body.x < -this.scatterLimit ||
-                body.y > this.scatterLimit ||
-                body.y < -this.scatterLimit) {
+            if (body.x > this.scatterLimitX ||
+                body.x < -this.scatterLimitX ||
+                body.y > this.scatterLimitY ||
+                body.y < -this.scatterLimitY) {
                 // Remove from body collection
                 // We don't need to reset the tree here because this is a runtime (not user-based)
                 // operation, and the tree is reset automatically on every step of the simulation.
