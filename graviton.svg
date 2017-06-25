@@ -9,12 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744.09448819"
-   height="1052.3622047"
+   width="601.7373"
+   height="679.2182"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="New document 1">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="graviton.svg"
+   inkscape:export-filename="/home/zaven/Projects/Programming/Active/graviton/graviton.svg.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4">
     <filter
@@ -22,8 +25,7 @@
        inkscape:label="Comics cream"
        inkscape:menu="Non realistic 3D shaders"
        inkscape:menu-tooltip="Comics shader with creamy waves transparency"
-       color-interpolation-filters="sRGB"
-       style="color-interpolation-filters:sRGB;"
+       style="color-interpolation-filters:sRGB"
        x="-0.25"
        width="1.5"
        y="-0.5"
@@ -72,7 +74,6 @@
          result="composite1" />
       <feGaussianBlur
          id="feGaussianBlur3581"
-         in="composite"
          stdDeviation="2"
          result="blur" />
       <feOffset
@@ -105,7 +106,6 @@
          result="composite1" />
       <feGaussianBlur
          id="feGaussianBlur3593"
-         in="composite"
          stdDeviation="2"
          result="blur" />
       <feOffset
@@ -138,7 +138,6 @@
          result="composite1" />
       <feGaussianBlur
          id="feGaussianBlur3605"
-         in="composite"
          stdDeviation="2"
          result="blur" />
       <feOffset
@@ -171,7 +170,6 @@
          result="composite1" />
       <feGaussianBlur
          id="feGaussianBlur3617"
-         in="composite"
          stdDeviation="2"
          result="blur" />
       <feOffset
@@ -204,7 +202,6 @@
          result="composite1" />
       <feGaussianBlur
          id="feGaussianBlur3629"
-         in="composite"
          stdDeviation="2"
          result="blur" />
       <feOffset
@@ -255,7 +252,10 @@
          in="result4"
          operator="arithmetic"
          result="result2"
-         k1="1" />
+         k1="1"
+         k2="0"
+         k3="0"
+         k4="0" />
       <feComposite
          id="feComposite4101"
          in2="result2"
@@ -268,11 +268,11 @@
        inkscape:label="Chrome"
        inkscape:menu="Non realistic 3D shaders"
        inkscape:menu-tooltip="Non realistic chrome shader with strong speculars"
-       color-interpolation-filters="sRGB"
        x="-0.25"
        width="1.5"
        y="-0.25"
-       height="1.5">
+       height="1.5"
+       style="color-interpolation-filters:sRGB">
       <feGaussianBlur
          id="feGaussianBlur3665"
          result="result6"
@@ -337,7 +337,9 @@
          in="fbSourceGraphic"
          operator="arithmetic"
          k1="0.5"
-         k3="0.5" />
+         k3="0.5"
+         k2="0"
+         k4="0" />
       <feTurbulence
          id="feTurbulence3919"
          result="result11"
@@ -350,7 +352,8 @@
          result="result12"
          in="result10"
          xChannelSelector="R"
-         scale="10" />
+         scale="10"
+         yChannelSelector="A" />
       <feComposite
          id="feComposite3923"
          in2="result12"
@@ -359,7 +362,8 @@
          in="fbSourceGraphic"
          k1="0.25"
          k2="0.25"
-         k3="0.75" />
+         k3="0.75"
+         k4="0" />
       <feColorMatrix
          result="fbSourceGraphicAlpha"
          in="fbSourceGraphic"
@@ -416,7 +420,10 @@
          k1="3"
          in="result8"
          operator="arithmetic"
-         result="result2" />
+         result="result2"
+         k2="0"
+         k3="0"
+         k4="0" />
       <feComposite
          id="feComposite4135"
          in2="result2"
@@ -433,16 +440,20 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.26649033"
-     inkscape:cx="851.53021"
-     inkscape:cy="258.95363"
+     inkscape:cx="-775.75642"
+     inkscape:cy="152.68347"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1028"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-width="1859"
+     inkscape:window-height="1056"
+     inkscape:window-x="61"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -451,52 +462,37 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(-428.36884,-416.97308)">
     <rect
        style="fill:#000000"
        id="rect2997"
-       width="4725.7144"
-       height="2131.4285"
-       x="-1965.7142"
-       y="-344.78067" />
-    <path
-       sodipodi:type="arc"
+       width="601.7373"
+       height="679.2182"
+       x="428.36884"
+       y="416.97308" />
+    <circle
        style="fill:#008080;filter:url(#filter3071)"
        id="path2999"
-       sodipodi:cx="502.85715"
-       sodipodi:cy="823.79077"
-       sodipodi:rx="260"
-       sodipodi:ry="260"
-       d="m 762.85715,823.79077 a 260,260 0 1 1 -520,0 260,260 0 1 1 520,0 z" />
+       cx="722.46265"
+       cy="759.99854"
+       r="260" />
     <flowRoot
        xml:space="preserve"
-       id="flowRoot3639"
-       style="font-size:144px;font-style:normal;font-weight:normal;line-height:178.99999619000001871%;letter-spacing:0px;word-spacing:0px;fill:#008066;fill-opacity:1;stroke:none;filter:url(#filter3663);font-family:Sans"
-       transform="translate(-71.428572,594.28572)"><flowRegion
-         id="flowRegion3641"><rect
-           id="rect3643"
-           width="657.14288"
-           height="322.85715"
-           x="285.71429"
-           y="438.07648"
-           style="font-size:144px;line-height:178.99999619000001871%;fill:#008066;fill-opacity:1" /></flowRegion><flowPara
-         id="flowPara3645"
-         style="font-size:144px;line-height:178.99999619000001871%;fill:#008066;fill-opacity:1">Graviton</flowPara></flowRoot>    <flowRoot
-       xml:space="preserve"
        id="flowRoot3647"
-       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Sans;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
          id="flowRegion3649"><rect
            id="rect3651"
            width="754.28571"
            height="217.14285"
            x="-311.42856"
            y="472.36218" /></flowRegion><flowPara
-         id="flowPara3653"></flowPara></flowRoot>  </g>
+         id="flowPara3653" /></flowRoot>  </g>
 </svg>
