@@ -2,6 +2,8 @@
 
 A simple gravitational simulatoy. [skepsi.me/graviton](http://skepsi.me/graviton)
 
+![graviton](graviton.svg)
+
 ## Development
 
 Get the code and install the Node packages.
