@@ -2,7 +2,7 @@
 
 A simple gravitational simulatoy. [skepsi.me/graviton](http://skepsi.me/graviton)
 
-![graviton](graviton.svg)
+![graviton](graviton.png)
 
 ## Development
 
