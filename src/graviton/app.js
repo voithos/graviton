@@ -428,11 +428,11 @@ export default class GtApp {
             <menuitem id="pausebtn" style="display: none;" data-tooltip="Stop simulation">
                 <img src="assets/pause.svg" alt="Stop simulation">
             </menuitem>
-            <menuitem id="barneshutonbtn" data-tooltip="Toggle Barnes-Hut">
-                <img src="assets/barnes_hut_on.svg" alt="Toggle Barnes-Hut">
+            <menuitem id="barneshutonbtn" data-tooltip="Switch to brute force">
+                <img src="assets/barnes_hut_on.svg" alt="Switch to brute force">
             </menuitem>
-            <menuitem id="barneshutoffbtn" style="display: none;" data-tooltip="Toggle Barnes-Hut">
-                <img src="assets/barnes_hut_off.svg" alt="Toggle Barnes-Hut">
+            <menuitem id="barneshutoffbtn" style="display: none;" data-tooltip="Switch to Barnes-Hut">
+                <img src="assets/barnes_hut_off.svg" alt="Switch to Barnes-Hut">
             </menuitem>
             <menuitem id="quadtreeoffbtn" data-tooltip="Toggle quadtree lines">
                 <img src="assets/quadtree_off.svg" alt="Toggle quadtree lines">
