@@ -193,6 +193,10 @@ export default class GtApp {
                             break;
 
                         case KEYCODES.K_C:
+                            // Reset icon if needed
+                            if (this.simTimer.active) {
+                                this.toggleSim();
+                            }
                             // Clear simulation
                             this.sim.clear();
                             this.gfx.clear();
