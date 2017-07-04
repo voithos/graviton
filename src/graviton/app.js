@@ -61,6 +61,10 @@ export default class GtApp {
         this.barnesHutOffBtn = args.barnesHutOffBtn = this.controls.querySelector('#barneshutoffbtn');
         this.quadTreeOffBtn = args.quadTreeOffBtn = this.controls.querySelector('#quadtreeoffbtn');
         this.quadTreeOnBtn = args.quadTreeOnBtn = this.controls.querySelector('#quadtreeonbtn');
+        this.collisionsOffBtn = args.collisionsOffBtn =
+            this.controls.querySelector('#collisionsoffbtn');
+        this.collisionsOnBtn = args.collisionsOnBtn =
+            this.controls.querySelector('#collisionsonbtn');
         this.trailOffBtn = args.trailOffBtn = this.controls.querySelector('#trailoffbtn');
         this.trailOnBtn = args.trailOnBtn = this.controls.querySelector('#trailonbtn');
         this.helpBtn = args.helpBtn = this.controls.querySelector('#helpbtn');
@@ -256,6 +260,14 @@ export default class GtApp {
                     this.toggleQuadTreeLines();
                     break;
 
+                case CONTROLCODES.COLLISIONSOFFBTN:
+                    this.toggleCollisions();
+                    break;
+
+                case CONTROLCODES.COLLISIONSONBTN:
+                    this.toggleCollisions();
+                    break;
+
                 case CONTROLCODES.TRAILOFFBTN:
                     this.toggleTrails();
                     break;
@@ -311,6 +323,17 @@ export default class GtApp {
             this.barnesHutOffBtn.style.display = 'none';
         }
         this.updateQuadTreeLinesIcons();
+    }
+
+    toggleCollisions() {
+        this.sim.mergeCollisions = !this.sim.mergeCollisions;
+        if (this.sim.mergeCollisions) {
+            this.collisionsOffBtn.style.display = 'none';
+            this.collisionsOnBtn.style.display = '';
+        } else {
+            this.collisionsOffBtn.style.display = '';
+            this.collisionsOnBtn.style.display = 'none';
+        }
     }
 
     toggleTrails() {
@@ -439,6 +462,12 @@ export default class GtApp {
             </menuitem>
             <menuitem id="quadtreeonbtn" style="display: none;" data-tooltip="Toggle quadtree lines">
                 <img src="assets/quadtree_on.svg" alt="Toggle quadtree lines">
+            </menuitem>
+            <menuitem id="collisionsonbtn" data-tooltip="Toggle collisions">
+                <img src="assets/collisions_on.svg" alt="Toggle collisions">
+            </menuitem>
+            <menuitem id="collisionsoffbtn" style="display: none;" data-tooltip="Toggle collisions">
+                <img src="assets/collisions_off.svg" alt="Toggle collisions">
             </menuitem>
             <menuitem id="trailoffbtn" data-tooltip="Toggle trails">
                 <img src="assets/trail_off.svg" alt="Toggle trails">

@@ -94,7 +94,9 @@ export const CONTROLCODES = {
     QUADTREEOFFBTN: 2005,
     QUADTREEONBTN: 2006,
     BARNESHUTONBTN: 2007,
-    BARNESHUTOFFBTN: 2008
+    BARNESHUTOFFBTN: 2008,
+    COLLISIONSOFFBTN: 2009,
+    COLLISIONSONBTN: 2010
 };
 
 
@@ -115,6 +117,8 @@ export default class GtEvents {
         this.barnesHutOffBtn = args.barnesHutOffBtn;
         this.quadTreeOffBtn = args.quadTreeOffBtn;
         this.quadTreeOnBtn = args.quadTreeOnBtn;
+        this.collisionsOffBtn = args.collisionsOffBtn;
+        this.collisionsOnBtn = args.collisionsOnBtn;
         this.trailOffBtn = args.trailOffBtn;
         this.trailOnBtn = args.trailOnBtn;
         this.helpBtn = args.helpBtn;
@@ -169,6 +173,10 @@ export default class GtEvents {
                     CONTROLCODES.QUADTREEOFFBTN));
         this.quadTreeOnBtn.addEventListener('click', this.handleControlClick.bind(this,
                     CONTROLCODES.QUADTREEONBTN));
+        this.collisionsOnBtn.addEventListener('click', this.handleControlClick.bind(this,
+                    CONTROLCODES.COLLISIONSONBTN));
+        this.collisionsOffBtn.addEventListener('click', this.handleControlClick.bind(this,
+                    CONTROLCODES.COLLISIONSOFFBTN));
         this.trailOffBtn.addEventListener('click', this.handleControlClick.bind(this,
                     CONTROLCODES.TRAILOFFBTN));
         this.trailOnBtn.addEventListener('click', this.handleControlClick.bind(this,

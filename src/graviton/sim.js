@@ -133,6 +133,7 @@ export default class GtSim {
         args = args || {};
 
         this.useBruteForce = false;
+        this.mergeCollisions = true;
 
         this.G = args.G || 6.67384 * Math.pow(10, -11); // Gravitational constant
         this.multiplier = args.multiplier || 1500; // Timestep
@@ -160,7 +161,9 @@ export default class GtSim {
 
     /** Calculate a step of the simulation. */
     step(elapsed) {
-        this._mergeCollided();
+        if (this.mergeCollisions) {
+            this._mergeCollided();
+        }
         this._removeScattered();
 
         if (!this.useBruteForce) {
