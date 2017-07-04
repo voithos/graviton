@@ -137,16 +137,20 @@ export default class GtSim {
 
         this.G = args.G || 6.67384 * Math.pow(10, -11); // Gravitational constant
         this.multiplier = args.multiplier || 1500; // Timestep
-        this.scatterLimitX = args.scatterLimitX || args.width * 2;
-        this.scatterLimitY = args.scatterLimitY || args.height * 2;
+        this.scatterLimitWidth = args.scatterLimitWidth || args.width * 2;
+        this.scatterLimitHeight = args.scatterLimitHeight || args.height * 2;
+        this.scatterLimitStartX = (args.width - this.scatterLimitWidth) / 2;
+        this.scatterLimitStartY = (args.height - this.scatterLimitHeight) / 2;
+        this.scatterLimitEndX = this.scatterLimitStartX + this.scatterLimitWidth;
+        this.scatterLimitEndY = this.scatterLimitStartY + this.scatterLimitHeight;
 
         this.bodies = [];
         // Incorporate the scatter limit
         this.tree = new GtTree(
-                /* width */ this.scatterLimitX,
-                /* height */ this.scatterLimitY,
-                /* startX */ (args.width - this.scatterLimitX) / 2,
-                /* startY */ (args.height - this.scatterLimitY) / 2);
+                /* width */ this.scatterLimitWidth,
+                /* height */ this.scatterLimitHeight,
+                /* startX */ this.scatterLimitStartX,
+                /* startY */ this.scatterLimitStartY);
         this.time = 0;
 
         this.bruteForceSim = new GtBruteForceSim(this.G);
@@ -193,10 +197,10 @@ export default class GtSim {
         while (i < this.bodies.length) {
             const body = this.bodies[i];
 
-            if (body.x > this.scatterLimitX ||
-                body.x < -this.scatterLimitX ||
-                body.y > this.scatterLimitY ||
-                body.y < -this.scatterLimitY) {
+            if (body.x >= this.scatterLimitEndX ||
+                body.x <= this.scatterLimitStartX ||
+                body.y >= this.scatterLimitEndY ||
+                body.y <= this.scatterLimitStartY) {
                 // Remove from body collection
                 // We don't need to reset the tree here because this is a runtime (not user-based)
                 // operation, and the tree is reset automatically on every step of the simulation.

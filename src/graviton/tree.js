@@ -2,6 +2,8 @@
  * graviton/tree -- The gravitational body tree structure
  */
 
+const MAX_DEPTH = 1000;
+
 class GtTreeNode {
     constructor(width, height, startX, startY) {
         this.width = width;
@@ -25,12 +27,16 @@ class GtTreeNode {
     }
 
     /** Add a body to the tree, updating mass and centerpoint. */
-    addBody(body) {
+    addBody(body, depth = 1) {
+        if (depth > MAX_DEPTH) {
+            // Something's gone wrong.
+            return;
+        }
         this._updateMass(body);
         const quadrant = this._getQuadrant(body.x, body.y);
 
         if (this.children[quadrant] instanceof GtTreeNode) {
-            this.children[quadrant].addBody(body);
+            this.children[quadrant].addBody(body, depth + 1);
         } else if (!this.children[quadrant]) {
             this.children[quadrant] = body;
         } else {
@@ -39,8 +45,8 @@ class GtTreeNode {
             const quadY = existing.y > this.midY ? this.midY : this.startY;
             const node = new GtTreeNode(this.halfWidth, this.halfHeight, quadX, quadY);
 
-            node.addBody(existing);
-            node.addBody(body);
+            node.addBody(existing, depth + 1);
+            node.addBody(body, depth + 1);
 
             this.children[quadrant] = node;
         }
