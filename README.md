@@ -22,4 +22,6 @@ libraries:
 - Vex.js, for the dialogs
 - jscolor, for the color picker
 
+In addition, most of the icons are taken from the Material icon set.
+
 Thanks go to their creators, and also to the web platform itself.
