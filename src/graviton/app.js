@@ -192,7 +192,15 @@ export default class GtApp {
                             this.toggleSim();
                             break;
 
+                        case KEYCODES.K_B:
+                            this.toggleSimStrategy();
+                            break;
+
                         case KEYCODES.K_C:
+                            this.toggleCollisions();
+                            break;
+
+                        case KEYCODES.K_L:
                             // Reset icon if needed
                             if (this.simTimer.active) {
                                 this.toggleSim();
@@ -202,10 +210,6 @@ export default class GtApp {
                             this.gfx.clear();
                             this.simTimer.stop();
                             retval = false;
-                            break;
-
-                        case KEYCODES.K_B:
-                            this.toggleSimStrategy();
                             break;
 
                         case KEYCODES.K_Q:
@@ -390,13 +394,15 @@ export default class GtApp {
                     <tr>
                         <td><code>Enter</code> key</td> <td> start simulation</td></tr>
                     <tr>
-                        <td><code>C</code> key</td> <td> clear canvas</td></tr>
-                    <tr>
                         <td><code>B</code> key</td> <td> toggle brute-force/Barnes-Hut</td></tr>
                     <tr>
-                        <td><code>Q</code> key</td> <td> toggle quadtree lines</td></tr>
+                        <td><code>C</code> key</td> <td> toggle collisions</td></tr>
+                    <tr>
+                        <td><code>L</code> key</td> <td> clear canvas</td></tr>
                     <tr>
                         <td><code>P</code> key</td> <td> toggle repainting</td></tr>
+                    <tr>
+                        <td><code>Q</code> key</td> <td> toggle quadtree lines</td></tr>
                     <tr>
                         <td><code>R</code> key</td> <td> create random bodies</td></tr>
                     <tr>
