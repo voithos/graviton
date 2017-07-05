@@ -392,6 +392,8 @@ export default class GtApp {
                     <tr>
                         <td>Middle click</td> <td> change body color</td></tr>
                     <tr>
+                        <td>Mouse wheel</td> <td> change body size/mass</td></tr>
+                    <tr>
                         <td><code>Enter</code> key</td> <td> start simulation</td></tr>
                     <tr>
                         <td><code>B</code> key</td> <td> toggle brute-force/Barnes-Hut</td></tr>
