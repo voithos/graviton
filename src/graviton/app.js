@@ -411,6 +411,7 @@ export default class GtApp {
                         <td><code>?</code> key</td> <td> show help</td></tr>
                     </tbody>
                 </table>
+                <footer class="forklink">Made in 2017. <a href="https://github.com/voithos/graviton">Fork me on GitHub</a></footer>
                 `,
             afterClose: () => {
                 this.isHelpOpen = false;

@@ -541,11 +541,16 @@ body {
         1px 1px 0 #000;
 }
 .shortcuts {
+    margin-top: 15px;
     border-spacing: 15px 0;
     font-size: 0.9em;
 }
 code {
     background: #eee;
+}
+.forklink {
+    margin-top: 15px;
+    font-size: 15px;
 }
 /* Overrides for vex wireframe theme. */
 .vex.vex-theme-wireframe {
