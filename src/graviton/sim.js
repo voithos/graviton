@@ -243,11 +243,11 @@ export default class GtSim {
         for (const body of bodies) {
             if (body.mass > largestMass) {
                 newBodyArgs.x = body.x;
-                newBodyArgs.y = body.y;            
+                newBodyArgs.y = body.y;
                 largestMass = body.mass;
             }
             newBodyArgs.velX += body.mass*body.velX;
-            newBodyArgs.velY += body.mass*body.velY;   
+            newBodyArgs.velY += body.mass*body.velY;
             newBodyArgs.mass += body.mass;
             newBodyArgs.color = colors.blend(newBodyArgs.color, body.color);
         }
