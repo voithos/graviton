@@ -221,11 +221,10 @@ export default class GtApp {
                             break;
 
                         case KEYCODES.K_R:
-                            // Generate random objects
-                            this.generateBodies(10, {randomColors: true});
+                            this.generateRandomBodies(10, {randomColors: true});
                             break;
 
-                        case KEYCODES.K_T:
+                        case KEYCODES.K_1:
                             this.sim.addNewBody({
                                 x: this.options.width / 2, y: this.options.height / 2,
                                 velX: 0, velY: 0,
@@ -235,6 +234,24 @@ export default class GtApp {
                                 x: this.options.width - 400, y: this.options.height / 2,
                                 velX: 0, velY: 0.000025,
                                 mass: 1, radius: 5, color: '#787878'
+                            });
+                            break;
+
+                        case KEYCODES.K_2:
+                            this.generateRandomBodies(1000, {
+                                normalDistribution: true,
+                                maxRadius: 1
+                            });
+                            break;
+
+                        case KEYCODES.K_3:
+                            this.generateRandomBodies(1000, {
+                                galacticDistribution: true,
+                                minVelX: 0.000005,
+                                maxVelX: 0.00002,
+                                minVelY: 0.000005,
+                                maxVelY: 0.00002,
+                                maxRadius: 1
                             });
                             break;
 
@@ -408,7 +425,11 @@ export default class GtApp {
                     <tr>
                         <td><code>R</code> key</td> <td> create random bodies</td></tr>
                     <tr>
-                        <td><code>T</code> key</td> <td> create Titan</td></tr>
+                        <td><code>1</code> key</td> <td> create Titan</td></tr>
+                    <tr>
+                        <td><code>2</code> key</td> <td> create spherical galaxy</td></tr>
+                    <tr>
+                        <td><code>3</code> key</td> <td> create spiral galaxy</td></tr>
                     <tr>
                         <td><code>?</code> key</td> <td> show help</td></tr>
                     </tbody>
@@ -496,34 +517,91 @@ export default class GtApp {
         document.body.appendChild(this.controls);
     }
 
-    generateBodies(num, args) {
+    generateRandomBodies(num, args) {
         args = args || {};
 
-        let minX = args.minX || 0;
-        let maxX = args.maxX || this.options.width;
-        let minY = args.minY || 0;
-        let maxY = args.maxY || this.options.height;
+        const minX = args.minX || 0;
+        const maxX = args.maxX || this.options.width;
+        const minY = args.minY || 0;
+        const maxY = args.maxY || this.options.height;
+        const halfX = (maxX - minX) / 2;
+        const halfY = (maxY - minY) / 2;
+        const midX = minX + halfX;
+        const midY = minY + halfY;
 
-        let minVelX = args.minVelX || 0;
-        let maxVelX = args.maxVelX || 0.00001;
-        let minVelY = args.minVelY || 0;
-        let maxVelY = args.maxVelY || 0.00001;
+        const minVelX = args.minVelX || 0;
+        const maxVelX = args.maxVelX || 0.00001;
+        const minVelY = args.minVelY || 0;
+        const maxVelY = args.maxVelY || 0.00001;
 
-        let minRadius = args.minRadius || 1;
-        let maxRadius = args.maxRadius || 15;
+        const minRadius = args.minRadius || 1;
+        const maxRadius = args.maxRadius || 15;
+
+        // Galactic args
+        const numArms = args.numArms || 5;
+        const armSeparation = 2 * Math.PI / numArms;
+        const armOffsetMax = args.armOffsetMax || 0.5;
+        const rotationFactor = args.rotationFactor || 5;
+        const armRandomOffsetXY = args.armRandomOffsetXY || 0.04;
 
         let color = args.color;
 
         for (let i = 0; i < num; i++) {
-            if (args.randomColors === true) {
+            if (args.randomColors) {
                 color = random.color();
             }
 
+            let x, y, velX, velY;
+            if (args.galacticDistribution) {
+                // Choose a distance from the center of the galaxy.
+                const dist = Math.random() > 0.5 ?
+                    Math.pow(Math.random(), 1.5) :
+                    random.normalFromTo(0, 1);
+
+                const angle = Math.random() * 2 * Math.PI;
+                const armOffset = (Math.random() * armOffsetMax) - (armOffsetMax / 2);
+                const distArmOffset = armOffset / dist;
+                let squaredArmOffset = distArmOffset * distArmOffset;
+                if (armOffset < 0) {
+                    squaredArmOffset *= -1;
+                }
+
+                const rotation = dist * rotationFactor;
+                const polarAngle = Math.floor(angle / armSeparation) *
+                    armSeparation + squaredArmOffset + rotation;
+
+                // Convert polar coordinates to cartesian.
+                let relX = Math.cos(polarAngle) * dist;
+                let relY = Math.sin(polarAngle) * dist;
+
+                relX += Math.random() * armRandomOffsetXY;
+                relY += Math.random() * armRandomOffsetXY;
+
+                x = midX + relX * halfX;
+                y = midY + relY * halfY;
+
+                // Compute velocity by rotating the angle.
+                const vectorX = Math.cos(polarAngle - Math.PI / 2);
+                const vectorY = Math.sin(polarAngle - Math.PI / 2);
+                velX = random.number(minVelX, maxVelX) * vectorX * dist;
+                velY = random.number(minVelY, maxVelY) * vectorY * dist;
+            } else if (args.normalDistribution) {
+                x = random.normalFromTo(minX, maxX);
+                y = random.normalFromTo(minY, maxY);
+                velX = random.directional(minVelX, maxVelX);
+                velY = random.directional(minVelY, maxVelY);
+            } else {
+                x = random.number(minX, maxX);
+                y = random.number(minY, maxY);
+                velX = random.directional(minVelX, maxVelX);
+                velY = random.directional(minVelY, maxVelY);
+            }
+
             this.sim.addNewBody({
-                x: random.number(minX, maxX),
-                y: random.number(minY, maxY),
-                velX: random.directional(minVelX, maxVelX),
-                velY: random.directional(minVelY, maxVelY),
+                x: x,
+                y: y,
+                velX: velX,
+                velY: velY,
                 radius: random.number(minRadius, maxRadius),
                 color: color
             });
