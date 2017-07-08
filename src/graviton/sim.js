@@ -240,19 +240,21 @@ export default class GtSim {
     _mergeBodies(bodies) {
         const newBodyArgs = { x: 0, y: 0, velX: 0, velY: 0, mass: 0, color: bodies[0].color };
         let largestMass = 0;
+        let momentumX = 0;
+        let momentumY = 0;
         for (const body of bodies) {
             if (body.mass > largestMass) {
                 newBodyArgs.x = body.x;
                 newBodyArgs.y = body.y;
                 largestMass = body.mass;
             }
-            newBodyArgs.velX += body.mass*body.velX;
-            newBodyArgs.velY += body.mass*body.velY;
             newBodyArgs.mass += body.mass;
             newBodyArgs.color = colors.blend(newBodyArgs.color, body.color);
+            momentumX += body.mass * body.velX;
+            momentumY += body.mass * body.velY;
         }
-        newBodyArgs.velX /= newBodyArgs.mass;
-        newBodyArgs.velY /= newBodyArgs.mass;        
+        newBodyArgs.velX = momentumX / newBodyArgs.mass;
+        newBodyArgs.velY = momentumY / newBodyArgs.mass;
 
         return this.addNewBody(newBodyArgs);
     }
