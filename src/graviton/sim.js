@@ -246,11 +246,13 @@ export default class GtSim {
                 newBodyArgs.y = body.y;
                 largestMass = body.mass;
             }
-            newBodyArgs.velX += body.velX;
-            newBodyArgs.velY += body.velY;
+            newBodyArgs.velX += body.mass*body.velX;
+            newBodyArgs.velY += body.mass*body.velY;
             newBodyArgs.mass += body.mass;
             newBodyArgs.color = colors.blend(newBodyArgs.color, body.color);
         }
+        newBodyArgs.velX /= newBodyArgs.mass;
+        newBodyArgs.velY /= newBodyArgs.mass;        
 
         return this.addNewBody(newBodyArgs);
     }
